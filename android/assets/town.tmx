@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="16" tileheight="16" nextobjectid="1">
+ <tileset firstgid="1" name="town_tileset" tilewidth="16" tileheight="16" tilecount="30" columns="10" backgroundcolor="#000000">
+  <image source="town_tiles.png" trans="ff00ff" width="160" height="48"/>
+  <tile id="0">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="1">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="2">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="3">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="4">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="5">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="6">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="7">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="false"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="8">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="false"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="9">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="false"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="10">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="false"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="11">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="false"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="20">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="21">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="22">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="23">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="24">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="25">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="26">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="27">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="28">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+  <tile id="29">
+   <objectgroup draworder="index">
+    <properties>
+     <property name="Solid" type="bool" value="true"/>
+    </properties>
+   </objectgroup>
+  </tile>
+ </tileset>
+ <layer name="Bottom" width="16" height="9">
+  <data encoding="base64" compression="zlib">
+   eJzjZmBg4KYB5qGRWlL1E2O2BBBLArEUEEujyXFAMT79bEDMAsSMUEyKXg4CmNiw4UGiOdDESMWE3IyMARaJBik=
+  </data>
+ </layer>
+ <layer name="Top" width="16" height="9" opacity="0.49">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo4B8AAACQAAB
+  </data>
+ </layer>
+</map>
