@@ -14,7 +14,7 @@ public class Globals {
     public static final int MAGNIFICATION = 4;
     public static final int ANIMATION_COLUMNS = 3;
     public static final int ANIMATION_ROWS = 4;
-    public static final int ANIMATION_DURATION = 5;
+    public static final float ANIMATION_DURATION = 0.5f;
     public static final String ASSET_TMX_MAP = "town.tmx";
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;

@@ -1,6 +1,12 @@
-package com.mygdx.game.character;
+package com.mygdx.game.gameelements;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
+import com.badlogic.gdx.controllers.Controllers;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class will handle the controller interaction for a character
@@ -9,16 +15,20 @@ public class PlayerCharacter extends BaseCharacter {
 
 	private PlayerController controller;
 	private boolean hasAttacked, hasPaused;
+	private Set<Statue> statueSet;
+	private int Id;
 	private float dx, dy;
 
-	public PlayerCharacter(TYPE type, CharacterEventListener listener) {
-		super(type, listener);
+	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener, GameStateManager manager) {
+		super(type, listener, manager);
 		this.controller = new PlayerController(this);
+		this.statueSet = new HashSet<Statue>();
+		this.Id = Id;
 	}
 	
 	@Override
-	public void update() {
-		super.update();
+	public void update(float delta) {
+		super.update(delta);
 		if (isDead)
 			return;
         if(hasAttacked){
@@ -27,7 +37,8 @@ public class PlayerCharacter extends BaseCharacter {
         if(hasPaused){
             pause();
         }
-		this.handleMovement(dx, dy);
+
+		this.handleMovement(dx, dy, delta);
         // After handling buttons, reset them back to neutral(false)
 		// Do not do the same for axises since those will receive an
 		// event once the axis goes back to normal.
@@ -56,6 +67,35 @@ public class PlayerCharacter extends BaseCharacter {
 				break;
 		}
 	}
+
+	@Override
+	public void onKilled(PlayerCharacter killer) {
+		super.onKilled(killer);
+		this.listener.onPlayerDied(this, killer);
+	}
+
+	public void onStatueContact(Statue statue) {
+		if (!statueSet.contains(statue)){
+			statueSet.add(statue);
+			listener.onNewStatueTouched(statueSet.size(), this);
+		}
+	}
+
+	public int getId() {
+		return Id;
+	}
+
+	/***
+	 * This function will send an event to the listener that this character has attacked.
+	 */
+	protected void attack() {
+		this.listener.attack(this);
+	}
+
+	/***
+	 * Signal to the listener that this character has send a pause event.
+	 */
+	protected void pause() { this.listener.pause(this);}
 
 	public void setController(Controller controller) {
 		this.controller.setController(controller);

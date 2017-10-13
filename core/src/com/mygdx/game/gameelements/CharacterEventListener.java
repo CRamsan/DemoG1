@@ -1,4 +1,4 @@
-package com.mygdx.game.character;
+package com.mygdx.game.gameelements;
 
 /***
  * This interface should be implemented by the object that wants to recieve the events from the Character.
@@ -6,6 +6,8 @@ package com.mygdx.game.character;
  * when a character attacks, the listener should handle the event and determine if another character was killed.
  */
 public interface CharacterEventListener {
-    public void attack(BaseCharacter character);
-    public void pause(BaseCharacter character);
+    public void attack(PlayerCharacter character);
+    public void pause(PlayerCharacter character);
+    public void onNewStatueTouched(int statueCount, PlayerCharacter player);
+    public void onPlayerDied(PlayerCharacter victim, PlayerCharacter killer);
 }

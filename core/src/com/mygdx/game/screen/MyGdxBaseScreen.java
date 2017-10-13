@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.ControllerManager;
 import com.mygdx.game.Globals;
+import com.mygdx.game.TiledGameMap;
 import com.mygdx.game.ui.UISystem;
 
 public abstract class MyGdxBaseScreen implements Screen, ControllerManager.ControllerConnectionListener {
@@ -21,14 +23,21 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerManager.Contr
     protected SpriteBatch batch;
     protected ScreenViewport viewport;
 
-    protected float timeBuffer = 0;
+    protected FPSLogger logger;
+    protected float timeBuffer;
+    protected boolean isFrameLimited;
 
-    public MyGdxBaseScreen()
+    protected TiledGameMap map;
+
+    public MyGdxBaseScreen(boolean isFrameLimited)
     {
         batch = new SpriteBatch();
         timeBuffer = 0;
         cam = new OrthographicCamera();
         viewport = new ScreenViewport(cam);
+        logger = new FPSLogger();
+        this.isFrameLimited = isFrameLimited;
+        map = new TiledGameMap();
     }
 
     // This method will be called to configure objects. This is used to decouple the object initialization
@@ -43,22 +52,36 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerManager.Contr
             onControllerConnected(portIndex, controller);
             portIndex++;
         }
+        cam.position.set(map.getWidth()/2f, map.getHeight()/2f, 1);
     }
 
     @Override
     public final void render(float delta) {
-        timeBuffer += Gdx.graphics.getDeltaTime();
-        while (timeBuffer > Globals.FRAME_TIME) {
-            performCustomUpdate();
-            performRender();
-            timeBuffer-=Globals.FRAME_TIME;
+        if (isFrameLimited) {
+            performCustomUpdate(delta);
+            performRender(delta);
+        } else {
+            timeBuffer += Gdx.graphics.getDeltaTime();
+            while (timeBuffer > Globals.FRAME_TIME) {
+                performCustomUpdate();
+                performRender();
+                timeBuffer-=Globals.FRAME_TIME;
+            }
         }
+        logger.log();
     }
 
     /**
      * This method will render the scene always after a fixed time step
      */
     private final void performRender() {
+        performRender(Globals.FRAME_TIME);
+    }
+
+    /**
+     * This method will render the scene always after a fixed time step
+     */
+    private final void performRender(float delta) {
         viewport.apply();
         cam.update();
         Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -69,10 +92,12 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerManager.Contr
         performRenderSprites();
         batch.end();
         performDebugRender();
-        UISystem.draw(Globals.FRAME_TIME);
+        UISystem.draw(delta);
     }
 
     protected abstract void performCustomUpdate();
+
+    protected abstract void performCustomUpdate(float delta);
 
     protected abstract void performRenderMap();
 

@@ -1,58 +1,73 @@
 package com.mygdx.game.screen;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.Globals;
 import com.mygdx.game.TiledGameMap;
-import com.mygdx.game.character.AICharacter;
-import com.mygdx.game.character.BaseCharacter;
-import com.mygdx.game.character.CharacterEventListener;
-import com.mygdx.game.character.PlayerCharacter;
+import com.mygdx.game.gameelements.*;
 import com.mygdx.game.ui.UISystem;
 
 import java.util.*;
 
-public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListener {
+public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListener, GameStateManager {
 
-	private List<BaseCharacter> charactersList;
+	private List<BaseCharacter> characterList;
+	private List<PlayerCharacter> playerList;
+	private List<Statue> statueList;
 	private Map<Integer, PlayerCharacter> playerCharacterMap;
-	private TiledGameMap map;
 	private ShapeRenderer debugRenderer;
 
 	private boolean isPaused;
+	private int statueCount;
+	private int aiCount;
 
-	public MyGdxScreen()
+	public MyGdxScreen(boolean isFrameLimited)
 	{
-		super();
-		charactersList = new ArrayList<BaseCharacter>();
+		super(isFrameLimited);
+		characterList = new ArrayList<BaseCharacter>();
+		playerList = new ArrayList<PlayerCharacter>();
+		statueList = new ArrayList<Statue>();
 		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
-		map = new TiledGameMap();
 		debugRenderer = new ShapeRenderer();
 		isPaused = false;
+		statueCount = 4;
+		aiCount = 10;
 	}
 
 	@Override
 	public void ScreenInit() {
 		super.ScreenInit();
-		float viewHeight = map.getHeight();
-		float halfViewSize = (viewHeight / 2f);
-		cam.position.set(halfViewSize, halfViewSize, 1);
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < aiCount; i++) {
 			createAICharacter();
+		}
+		for (int i = 0; i < statueCount; i++) {
+			createStatue();
+		}
+	}
+
+	@Override
+	protected void performCustomUpdate(float delta) {
+		for (Statue statue : statueList) {
+			statue.update(delta);
+		}
+		for (GameElement character : characterList) {
+			character.update(delta);
+		}
+		for (PlayerCharacter player : playerList) {
+			if (player.hasMoved()) {
+				for (Statue statue : statueList) {
+					if (player.getCenterPosition().dst(statue.getCenterPosition()) < 1) {
+						player.onStatueContact(statue);
+					}
+				}
+			}
 		}
 	}
 
 	@Override
 	protected void performCustomUpdate() {
-		for (BaseCharacter character : charactersList) {
-			character.update();
-		}
+		performCustomUpdate(Globals.FRAME_TIME);
 	}
 
 	@Override
@@ -61,15 +76,21 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		debugRenderer.begin(ShapeRenderer.ShapeType.Line);
 		debugRenderer.setColor(Color.YELLOW);
 		debugRenderer.rect(0, 0, map.getWidth(), map.getHeight());
-		for (BaseCharacter character : charactersList) {
+		for (GameElement character : characterList) {
 			debugRenderer.rect(character.getX(), character.getY(), 1, 1);
+		}
+		for (GameElement statue : statueList) {
+			debugRenderer.rect(statue.getX(), statue.getY(), 1, 1);
 		}
 		debugRenderer.end();
 	}
 
 	@Override
 	protected void performRenderSprites() {
-		for (BaseCharacter charac : charactersList) {
+		for (Statue statue : statueList) {
+			statue.draw(batch);
+		}
+		for (GameElement charac : characterList) {
 			charac.draw(batch);
 		}
 	}
@@ -80,18 +101,24 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
 	private void createPlayerCharacter(int index, Controller controller) {
-		PlayerCharacter newChar = new PlayerCharacter(BaseCharacter.TYPE.EARTH, this);
+		PlayerCharacter newChar = new PlayerCharacter(index, GameElement.TYPE.EARTH, this, this);
 		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 		newChar.setController(controller);
-		charactersList.add(newChar);
+		characterList.add(newChar);
+		playerList.add(newChar);
 		playerCharacterMap.put(index, newChar);
 	}
 
 	private void createAICharacter() {
-		BaseCharacter.TYPE type = BaseCharacter.TYPE.values()[Globals.rand.nextInt(BaseCharacter.TYPE.values().length)];
-		AICharacter newChar = new AICharacter(type, this);
+		GameElement.TYPE type = GameElement.TYPE.LIGHT;
+		AICharacter newChar = new AICharacter(type, this, this);
 		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
-		charactersList.add(newChar);
+		characterList.add(newChar);
+	}
+
+	private void createStatue() {
+		Statue newStatue = new Statue(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
+		statueList.add(newStatue);
 	}
 
 	@Override
@@ -120,19 +147,19 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
 	@Override
-	public void attack(BaseCharacter character) {
-	    for (BaseCharacter otherCharacter : charactersList) {
+	public void attack(PlayerCharacter character) {
+	    for (BaseCharacter otherCharacter : characterList) {
 	        if (character.equals(otherCharacter))
 	            continue;
 	        if (character.getCenterPosition().dst(otherCharacter.getCenterPosition()) < 0.5) {
-	            otherCharacter.onKilled();
+	            otherCharacter.onKilled(character);
 	            break;
             }
         }
 	}
 
     @Override
-    public void pause(BaseCharacter character) {
+    public void pause(PlayerCharacter character) {
 	    if (isPaused)
         {
             UISystem.disposeMenu();
@@ -169,5 +196,24 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	private void disablePlayerCharacter(int port) {
 		PlayerCharacter character = playerCharacterMap.get(port);
 		character.removeController();
+	}
+
+	@Override
+	public boolean isSolid(int x, int y) {
+		return this.map.isSolid(x, y);
+	}
+
+	@Override
+	public void onNewStatueTouched(int statueCount, PlayerCharacter player) {
+		if (statueCount == this.statueCount) {
+
+		}
+	}
+
+	@Override
+	public void onPlayerDied(PlayerCharacter  victim, PlayerCharacter killer) {
+		if (playerCharacterMap.remove(victim.getId()) != null) {
+		}
+
 	}
 }

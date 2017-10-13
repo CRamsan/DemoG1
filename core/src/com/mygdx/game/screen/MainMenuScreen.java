@@ -3,24 +3,45 @@ package com.mygdx.game.screen;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.mygdx.game.ControllerManager;
+import com.mygdx.game.Globals;
+import com.mygdx.game.gameelements.*;
 import com.mygdx.game.ui.UISystem;
 
-public class MainMenuScreen extends MyGdxBaseScreen implements Screen, ControllerManager.ControllerConnectionListener {
+import java.util.ArrayList;
+import java.util.List;
 
-	public MainMenuScreen()
+public class MainMenuScreen extends MyGdxBaseScreen implements Screen, ControllerManager.ControllerConnectionListener, GameStateManager {
+
+	private List<BaseCharacter> characterList;
+
+	public MainMenuScreen(boolean isFrameLimited)
 	{
-		super();
+		super(isFrameLimited);
+		characterList = new ArrayList<BaseCharacter>();
 	}
 
 	@Override
 	public void ScreenInit() {
 		super.ScreenInit();
+		for (int i = 0; i < 20; i++) {
+			GameElement.TYPE type = GameElement.TYPE.FEMALE_VILLAGER;
+			AICharacter newChar = new AICharacter(type, null, this);
+			newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
+			characterList.add(newChar);
+		}
 		UISystem.displayMainMenu();
 	}
 
 	@Override
 	protected void performCustomUpdate() {
+		performCustomUpdate(Globals.FRAME_TIME);
+	}
 
+	@Override
+	protected void performCustomUpdate(float delta) {
+		for (GameElement character : characterList) {
+			character.update(delta);
+		}
 	}
 
 	@Override
@@ -30,12 +51,14 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 
 	@Override
 	protected void performRenderMap() {
-		// There is no map in this screen
+		map.render(cam);
 	}
 
 	@Override
 	protected void performRenderSprites() {
-		// There are no sprites in this screen
+		for (GameElement charac : characterList) {
+			charac.draw(batch);
+		}
 	}
 
 	@Override
@@ -73,5 +96,10 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 	@Override
 	public void onControllerDisconnected(int port, Controller controller) {
 
+	}
+
+	@Override
+	public boolean isSolid(int x, int y) {
+		return this.map.isSolid(x, y);
 	}
 }

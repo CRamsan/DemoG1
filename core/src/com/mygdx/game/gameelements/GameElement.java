@@ -1,7 +1,6 @@
-package com.mygdx.game.character;
+package com.mygdx.game.gameelements;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
@@ -12,10 +11,14 @@ import com.mygdx.game.SingleAssetManager;
  * Base class to be used for all characters, either NPCs or human players. This class will handle rendering, assets,
  * position. Any subclass should handle input and use the translate method to move this character.
  */
-public abstract class BaseCharacter
+public abstract class GameElement
 {
 	protected enum DIRECTION {
 		LEFT, RIGHT, UP, DOWN
+	}
+
+	protected enum AXIS {
+		X, Y
 	}
 
 	public enum TYPE {
@@ -26,22 +29,22 @@ public abstract class BaseCharacter
 	}
 
 	protected TYPE type;
+	protected boolean isDirty;
+	private DIRECTION direction;
 
-    private float walkSpeed;
-	private float x, y;
-    private AssetManager manager;
-    private Animation<TextureRegion> walkUpAnimation;
-    private Animation<TextureRegion> walkDownAnimation;
-    private Animation<TextureRegion> walkLeftAnimation;
-    private Animation<TextureRegion> walkRightAnimation;
-    private float state;
-    private boolean hasMoved;
-    private DIRECTION direction;
-    protected boolean isDead;
-    private Controller controller;
-    private CharacterEventListener listerner;
+	protected float x, y;
+    protected float state;
+	protected boolean isDead;
+	protected com.mygdx.game.gameelements.CharacterEventListener listener;
+	protected boolean shouldRender;
 
-    private static Texture texture;
+	private AssetManager manager;
+	private Animation<TextureRegion> walkUpAnimation;
+	private Animation<TextureRegion> walkDownAnimation;
+	private Animation<TextureRegion> walkLeftAnimation;
+	private Animation<TextureRegion> walkRightAnimation;
+
+	private static Texture texture;
     private static int instanceCount = 0;
 
     /***
@@ -51,24 +54,22 @@ public abstract class BaseCharacter
      * @param x value in world coordinates
      * @param y value in world coordinates
      */
-    public BaseCharacter (TYPE type, float x, float y, CharacterEventListener listerner) {
+    public GameElement(TYPE type, float x, float y, com.mygdx.game.gameelements.CharacterEventListener listener) {
         this.manager = SingleAssetManager.getAssetManager();
         this.type = type;
-        this.walkSpeed = 0.05f;
-        this.isDead = false;
         this.x = x;
         this.y = y;
-        this.direction = DIRECTION.values()[ Globals.rand.nextInt(4)];
-        this.listerner = listerner;
-        this.hasMoved = false;
-        init();
+        this.listener = listener;
+		this.direction = DIRECTION.values()[ Globals.rand.nextInt(4)];
+		this.isDirty = false;
+		init();
     }
 
     /***
      * Simple constructor that only takes a type as argument
      * @param type
      */
-    public BaseCharacter (TYPE type, CharacterEventListener listerner) {
+    public GameElement(TYPE type, com.mygdx.game.gameelements.CharacterEventListener listerner) {
         this(type, 0f, 0f, listerner);
     }
 
@@ -77,11 +78,11 @@ public abstract class BaseCharacter
      * assets. This should only be called by the constructor.
      */
     private void init() {
-		if (BaseCharacter.instanceCount == 0) {
+		if (GameElement.instanceCount == 0) {
 			manager.load(Globals.ASSET_SPRITE_SHEET, Texture.class);
 			manager.finishLoading();
 		}
-		BaseCharacter.instanceCount++;
+		GameElement.instanceCount++;
 		texture = manager.get(Globals.ASSET_SPRITE_SHEET);
 
 		TextureRegion[][] spriteRegion = TextureRegion.split(texture,
@@ -150,13 +151,13 @@ public abstract class BaseCharacter
 			}
 		}
 		state = 0;
+		shouldRender = true;
 	}
 
     /***
      * Call this method to update the state of the object. This method will handle inputs and updating sny state.
      */
-    public void update() {
-        hasMoved = false;
+    public void update(float delta) {
     }
 
     /***
@@ -164,9 +165,7 @@ public abstract class BaseCharacter
      * @param batch
      */
     public void draw(SpriteBatch batch) {
-        if (isDead)
-            return;
-        if (!hasMoved) {
+        if (!isDirty) {
         	state = 0;
 		}
         Animation<TextureRegion> currentAnimation = null;
@@ -189,34 +188,11 @@ public abstract class BaseCharacter
     }
 
     /***
-     * Receive input as two components of one vector. The resulting vector should not be greater than 1.
+	 * Helper method to determine the new direction
      * @param dx
      * @param dy
      */
-    protected void handleMovement(float dx, float dy){
-    	if (isDead)
-    		return;
-    	Vector2 movement = new Vector2(dx, dy);
-        if (movement.len() > 1) {
-			movement = movement.nor();
-		} else if (movement.len() == 0) {
-			return;
-		}
-		hasMoved = true;
-		state += movement.len();
-		movement.scl(walkSpeed);
-        translate(movement.x, movement.y);
-    }
-
-    /***
-     * Helper method to move the character by the provided values on world space coordinates. This method will also
-     * handle changing the direction that character is facing.
-     * @param dx
-     * @param dy
-     */
-	private void translate(float dx, float dy) {
-		this.x += dx;
-		this.y += dy;
+	protected void updateDirection(float dx, float dy) {
 		float absDx = Math.abs(dx);
 		float absDy = Math.abs(dy);
 		if (absDx == absDy)
@@ -250,8 +226,8 @@ public abstract class BaseCharacter
      * are unloaded, then the loaded assets will be disposed as well.
      */
 	public void unload() {
-		BaseCharacter.instanceCount--;
-		if (BaseCharacter.instanceCount == 0) {
+		GameElement.instanceCount--;
+		if (GameElement.instanceCount == 0) {
             manager.unload(Globals.ASSET_SPRITE_SHEET);
 		}
 	}
@@ -268,22 +244,11 @@ public abstract class BaseCharacter
 		return y;
 	}
 
-    /***
-     * Callback to be called when this character is killed.
-     */
-	public void onKilled() {
-	    this.isDead = true;
-    }
+	final public float getHeight() {
+		return 1;
+	}
 
-    /***
-     * This function will send an event to the listener that this character has attacked.
-     */
-    protected void attack() {
-	    this.listerner.attack(this);
-    }
-
-    /***
-     * Signal to the listener that this character has send a pause event.
-     */
-    protected void pause() { this.listerner.pause(this);}
+	final public float getWidth() {
+		return 1;
+	}
 }

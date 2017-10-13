@@ -56,8 +56,8 @@ public class UISystem {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
 
-        Table table = new Table();
-        table.setFillParent(true);
+        Table buttonTable = new Table();
+        //buttonTable.setFillParent(true);
         TextButton startGameButton = new TextButton("Button 1", skin);
         startGameButton.addListener(new ChangeListener() {
             @Override
@@ -66,7 +66,7 @@ public class UISystem {
                 MyGdxGame.startGameScreen();
             }
         });
-        table.add(startGameButton);
+        buttonTable.add(startGameButton);
 
         TextButton closeGameButton = new TextButton("Button 2", skin);
         closeGameButton.addListener(new ChangeListener() {
@@ -75,10 +75,18 @@ public class UISystem {
 
             }
         });
-        table.add(closeGameButton);
-        table.setDebug(true); // This is optional, but enables debug lines for tables.
+        buttonTable.add(closeGameButton);
+        buttonTable.setDebug(true); // This is optional, but enables debug lines for tables.
 
-        stage.addActor(table);
+        Table contentTable = new Table();
+        //contentTable.setFillParent(true);
+
+        HorizontalGroup mainPane = new HorizontalGroup();
+        mainPane.setFillParent(true);
+        mainPane.addActor(buttonTable);
+        mainPane.addActor(contentTable);
+
+        stage.addActor(mainPane);
         Gdx.input.setInputProcessor(stage);
         uiVisible = true;
     }
@@ -86,7 +94,6 @@ public class UISystem {
     public void render(float delta) {
         if (!uiVisible)
             return;
-        //stage.getViewport().apply();
         stage.act(delta);
         stage.draw();
     }

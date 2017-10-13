@@ -1,4 +1,4 @@
-package com.mygdx.game.character;
+package com.mygdx.game.gameelements;
 
 import com.badlogic.gdx.math.*;
 import com.mygdx.game.Globals;
@@ -11,15 +11,15 @@ public class AICharacter extends BaseCharacter
 	private Vector2 lastMovementVector;
 	private int aiState;
 	
-	public AICharacter(TYPE type, CharacterEventListener listerner) {
-		super(type, listerner);
+	public AICharacter(TYPE type, CharacterEventListener listerner, GameStateManager manager) {
+		super(type, listerner, manager);
         lastMovementVector = new Vector2();
         aiState = 0;
 	}
 
 	@Override
-	public void update() {
-		super.update();
+	public void update(float delta) {
+		super.update(delta);
 		if (isDead)
 			return;
 		aiState++;
@@ -29,6 +29,6 @@ public class AICharacter extends BaseCharacter
 			lastMovementVector = new Vector2((float)((Globals.rand.nextFloat() * 2) - 1)/ 3f,
 					(float)((Globals.rand.nextFloat() * 2) - 1)/ 3f);
 		}
-		this.handleMovement(lastMovementVector.x, lastMovementVector.y);
+		this.handleMovement(lastMovementVector.x, lastMovementVector.y, delta);
 	}
 }
