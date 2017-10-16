@@ -29,6 +29,7 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 			newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 			characterList.add(newChar);
 		}
+		UISystem.initMainMenu();
 		UISystem.displayMainMenu();
 	}
 
@@ -64,7 +65,7 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 	@Override
 	public void dispose()
 	{
-		UISystem.disposeMenu();
+		super.dispose();
 	}
 
 	@Override

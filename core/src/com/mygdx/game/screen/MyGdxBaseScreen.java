@@ -107,6 +107,7 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerManager.Contr
 
     @Override
     public void dispose() {
+        UISystem.disposeMenu();
     }
 
     @Override

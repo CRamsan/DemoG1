@@ -1,6 +1,7 @@
 package com.mygdx.game.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -17,8 +18,24 @@ public class UISystem {
     /**
      * Public API calls
      */
+    public static void initMainMenu() {
+        ourInstance.initMainMenuInternal();
+    }
+
+    public static void initPauseMenu() {
+        ourInstance.initPauseMenuInternal();
+    }
+
     public static void displayMainMenu() {
         ourInstance.displayMainMenuInternal();
+    }
+
+    public static void displayPauseMenu() {
+        ourInstance.displayPauseMenuInternal();
+    }
+
+    public static void hideMenu() {
+        ourInstance.hideMenuInternal();
     }
 
     public static void disposeMenu() {
@@ -39,54 +56,66 @@ public class UISystem {
 
     private static UISystem ourInstance = new UISystem();
 
-    private Stage stage;
     private Skin skin;
     private static final String SKIN_FILE_PATH = "uiskin.json";
     private ArrayList<Texture> loadedTextures;
     private boolean uiVisible;
 
+    private Stage stage;
+    private Actor mainMenu;
+    private Actor pauseMenu;
+
     private UISystem() {
         skin = new Skin(Gdx.files.internal(SKIN_FILE_PATH));
         loadedTextures = new ArrayList<Texture>();
-        stage = new Stage(new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT));
         uiVisible = false;
     }
 
-    public void displayMainMenuInternal() {
+    private void initMainMenuInternal() {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
 
-        Table buttonTable = new Table();
-        //buttonTable.setFillParent(true);
-        TextButton startGameButton = new TextButton("Button 1", skin);
-        startGameButton.addListener(new ChangeListener() {
+        Table mainPane = UIToolKit.GenerateParentChildContainer(skin);
+        UIToolKit.AddButtonToParentWithAction(mainPane,"Button 1", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 dispose();
                 MyGdxGame.startGameScreen();
             }
         });
-        buttonTable.add(startGameButton);
+        UIToolKit.AddButtonToParentWithAction(mainPane,"Button 2", skin, null);
+        UIToolKit.AddButtonToParentWithAction(mainPane,"Button 3", skin, null);
+        UIToolKit.AddActorToChild(mainPane, "Test text~", skin);
 
-        TextButton closeGameButton = new TextButton("Button 2", skin);
-        closeGameButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
+        mainMenu = mainPane;
+        stage = new Stage(new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT));
+        stage.setDebugAll(true);
+    }
 
-            }
-        });
-        buttonTable.add(closeGameButton);
-        buttonTable.setDebug(true); // This is optional, but enables debug lines for tables.
+    private void initPauseMenuInternal() {
+        if (loadedTextures.size() != 0)
+            throw new RuntimeException("Unload textures before loading more");
 
-        Table contentTable = new Table();
-        //contentTable.setFillParent(true);
+        Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
 
-        HorizontalGroup mainPane = new HorizontalGroup();
-        mainPane.setFillParent(true);
-        mainPane.addActor(buttonTable);
-        mainPane.addActor(contentTable);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 1", skin, null);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 2", skin, null);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 3", skin, null);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 4", skin, null);
 
-        stage.addActor(mainPane);
+        pauseMenu = mainPane;
+        stage = new Stage(new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT));
+        stage.setDebugAll(true);
+    }
+
+    public void displayMainMenuInternal() {
+        stage.addActor(mainMenu);
+        Gdx.input.setInputProcessor(stage);
+        uiVisible = true;
+    }
+
+    public void displayPauseMenuInternal() {
+        stage.addActor(pauseMenu);
         Gdx.input.setInputProcessor(stage);
         uiVisible = true;
     }
@@ -104,8 +133,12 @@ public class UISystem {
         stage.getViewport().update(width, height, true);
     }
 
-    public void dispose () {
+    public void hideMenuInternal () {
         uiVisible = false;
+        stage.clear();
+    }
+
+    public void dispose () {
         stage.dispose();
         for (Texture texture : loadedTextures) {
             texture.dispose();

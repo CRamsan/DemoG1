@@ -44,6 +44,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		for (int i = 0; i < statueCount; i++) {
 			createStatue();
 		}
+		UISystem.initPauseMenu();
 	}
 
 	@Override
@@ -124,6 +125,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	@Override
 	public void dispose()
 	{
+		super.dispose();
 	}
 
 	@Override
@@ -162,11 +164,11 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
     public void pause(PlayerCharacter character) {
 	    if (isPaused)
         {
-            UISystem.disposeMenu();
+            UISystem.hideMenu();
             isPaused = false;
         }
         else {
-            UISystem.displayMainMenu();
+            UISystem.displayPauseMenu();
             isPaused = true;
         }
     }
