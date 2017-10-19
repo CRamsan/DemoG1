@@ -208,7 +208,9 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	@Override
 	public void onNewStatueTouched(int statueCount, PlayerCharacter player) {
 		if (statueCount == this.statueCount) {
-
+			for (PlayerCharacter closingPlayer : playerList) {
+				closingPlayer.getCenterPosition();
+			}
 		}
 	}
 

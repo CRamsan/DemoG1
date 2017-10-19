@@ -34,7 +34,6 @@ public abstract class GameElement
 
 	protected float x, y;
     protected float state;
-	protected boolean isDead;
 	protected com.mygdx.game.gameelements.CharacterEventListener listener;
 	protected boolean shouldRender;
 

@@ -8,6 +8,8 @@ import com.mygdx.game.Globals;
 public abstract class BaseCharacter extends GameElement {
 
     protected GameStateManager manager;
+	protected boolean isDead;
+	protected boolean isRunning;
     private Controller controller;
     private float walkSpeed;
 
@@ -18,6 +20,7 @@ public abstract class BaseCharacter extends GameElement {
         this.walkSpeed = 2f;
         this.isDead = false;
         this.manager = manager;
+		this.isRunning = true;
     }
 
     /***
@@ -26,6 +29,8 @@ public abstract class BaseCharacter extends GameElement {
     @Override
     public void update(float delta) {
         super.update(delta);
+		if (!isRunning)
+			return;
         isDirty = false;
     }
 
@@ -35,7 +40,7 @@ public abstract class BaseCharacter extends GameElement {
      * @param dy
      */
     protected void handleMovement(float dx, float dy, float delta){
-        if (isDead)
+        if (isDead || !isRunning)
             return;
         Vector2 movement = new Vector2(dx, dy);
         if (movement.len() > 1) {
@@ -130,6 +135,10 @@ public abstract class BaseCharacter extends GameElement {
         }
     }
 
+	public void disableCharacter() {
+		isRunning = false;
+	}
+	
     /**
      * This method will return if the Character has moved.
      */
