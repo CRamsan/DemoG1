@@ -1,7 +1,6 @@
 package com.mygdx.game.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,12 +25,28 @@ public class UISystem {
         ourInstance.initPauseMenuInternal();
     }
 
+    public static void initEndGameMenu() {
+        ourInstance.initEndGameMenuInternal();
+    }
+
+    public static GetReadyMenuController initGetReadyMenu() {
+        return ourInstance.initGetReadyMenuInternal();
+    }
+
     public static void displayMainMenu() {
         ourInstance.displayMainMenuInternal();
     }
 
     public static void displayPauseMenu() {
         ourInstance.displayPauseMenuInternal();
+    }
+
+    public static void displayEndGameMenu() {
+        ourInstance.displayEndGameMenuInternal();
+    }
+
+    public static void displayGetReadyMenu() {
+        ourInstance.displayGetReadyMenuInternal();
     }
 
     public static void hideMenu() {
@@ -63,12 +78,21 @@ public class UISystem {
 
     private Stage stage;
     private Actor mainMenu;
+    private Actor getReadyMenu;
+    private Actor endGameMenu;
     private Actor pauseMenu;
 
     private UISystem() {
         skin = new Skin(Gdx.files.internal(SKIN_FILE_PATH));
         loadedTextures = new ArrayList<Texture>();
         uiVisible = false;
+    }
+
+    private void initSingleStage() {
+        if (stage != null)
+            return;
+        stage = new Stage(new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT));
+        stage.setDebugAll(true);
     }
 
     private void initMainMenuInternal() {
@@ -79,17 +103,15 @@ public class UISystem {
         UIToolKit.AddButtonToParentWithAction(mainPane,"Button 1", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                dispose();
-                MyGdxGame.startGameScreen();
+                UISystem.hideMenu();
+                UISystem.displayGetReadyMenu();
             }
         });
         UIToolKit.AddButtonToParentWithAction(mainPane,"Button 2", skin, null);
         UIToolKit.AddButtonToParentWithAction(mainPane,"Button 3", skin, null);
         UIToolKit.AddActorToChild(mainPane, "Test text~", skin);
-
         mainMenu = mainPane;
-        stage = new Stage(new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT));
-        stage.setDebugAll(true);
+        initSingleStage();
     }
 
     private void initPauseMenuInternal() {
@@ -104,8 +126,47 @@ public class UISystem {
         UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 4", skin, null);
 
         pauseMenu = mainPane;
-        stage = new Stage(new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT));
-        stage.setDebugAll(true);
+        initSingleStage();
+    }
+
+    private void initEndGameMenuInternal() {
+        if (loadedTextures.size() != 0)
+            throw new RuntimeException("Unload textures before loading more");
+
+        Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
+
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Restart", skin, null);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Back to Menu", skin, null);
+
+        endGameMenu = mainPane;
+        initSingleStage();
+    }
+
+    private GetReadyMenuController initGetReadyMenuInternal() {
+        if (loadedTextures.size() != 0)
+            throw new RuntimeException("Unload textures before loading more");
+
+        Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
+        Table containerPane = UIToolKit.GenerateHorizontalContainer(mainPane, skin);
+        GetReadyMenuController controller = new GetReadyMenuController(containerPane, skin);
+
+        UIToolKit.AddButtonToParentWithAction(mainPane,"Start", skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                MyGdxGame.startGameScreen();
+            }
+        });
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Back to Menu", skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.hideMenu();
+                UISystem.displayMainMenu();
+            }
+        });
+
+        getReadyMenu = mainPane;
+        initSingleStage();
+        return controller;
     }
 
     public void displayMainMenuInternal() {
@@ -116,6 +177,18 @@ public class UISystem {
 
     public void displayPauseMenuInternal() {
         stage.addActor(pauseMenu);
+        Gdx.input.setInputProcessor(stage);
+        uiVisible = true;
+    }
+
+    public void displayEndGameMenuInternal() {
+        stage.addActor(endGameMenu);
+        Gdx.input.setInputProcessor(stage);
+        uiVisible = true;
+    }
+
+    public void displayGetReadyMenuInternal() {
+        stage.addActor(getReadyMenu);
         Gdx.input.setInputProcessor(stage);
         uiVisible = true;
     }

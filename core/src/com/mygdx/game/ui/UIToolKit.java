@@ -33,6 +33,16 @@ public class UIToolKit {
         return mainPane;
     }
 
+    public static Table GenerateHorizontalContainer (Table root, Skin skin) {
+        Table containerTable = new Table(skin);
+        containerTable.setBackground("dialog");
+
+        Table parentTable = (Table) root.getChildren().get(0);
+        parentTable.add(containerTable).pad(30).row();
+
+        return containerTable;
+    }
+
     public static void AddButtonToParentWithAction(Table root, String label, Skin skin, EventListener listener) {
         TextButton startGameButton = new TextButton(label, skin);
         if (listener != null)

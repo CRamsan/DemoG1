@@ -45,6 +45,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 			createStatue();
 		}
 		UISystem.initPauseMenu();
+		UISystem.initEndGameMenu();
 	}
 
 	@Override
@@ -209,7 +210,8 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	public void onNewStatueTouched(int statueCount, PlayerCharacter player) {
 		if (statueCount == this.statueCount) {
 			for (PlayerCharacter closingPlayer : playerList) {
-				closingPlayer.getCenterPosition();
+				closingPlayer.disableCharacter();
+				UISystem.displayEndGameMenu();
 			}
 		}
 	}

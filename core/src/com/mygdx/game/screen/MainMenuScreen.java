@@ -5,19 +5,27 @@ import com.badlogic.gdx.controllers.Controller;
 import com.mygdx.game.ControllerManager;
 import com.mygdx.game.Globals;
 import com.mygdx.game.gameelements.*;
+import com.mygdx.game.ui.GetReadyMenuController;
 import com.mygdx.game.ui.UISystem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class MainMenuScreen extends MyGdxBaseScreen implements Screen, ControllerManager.ControllerConnectionListener, GameStateManager {
 
 	private List<BaseCharacter> characterList;
+	private HashMap<Integer, Controller> preInitControllerMap;
+	private GetReadyMenuController getReadyMenuController;
+	private boolean hasInitCompleted;
 
 	public MainMenuScreen(boolean isFrameLimited)
 	{
 		super(isFrameLimited);
+		hasInitCompleted = false;
 		characterList = new ArrayList<BaseCharacter>();
+		preInitControllerMap = new LinkedHashMap<Integer, Controller>();
 	}
 
 	@Override
@@ -30,7 +38,14 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 			characterList.add(newChar);
 		}
 		UISystem.initMainMenu();
+		getReadyMenuController = UISystem.initGetReadyMenu();
 		UISystem.displayMainMenu();
+		hasInitCompleted = true;
+		for (Integer port : preInitControllerMap.keySet()) {
+			Controller controller = preInitControllerMap.get(port);
+			onControllerConnected(port, controller);
+		}
+		preInitControllerMap.clear();
 	}
 
 	@Override
@@ -90,13 +105,17 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 
 	@Override
 	public void onControllerConnected(int port, Controller controller) {
-
+		if (hasInitCompleted) {
+			getReadyMenuController.addPlayer(controller.getName(), port);
+		} else {
+			preInitControllerMap.put(port, controller);
+		}
 	}
 
 
 	@Override
 	public void onControllerDisconnected(int port, Controller controller) {
-
+		getReadyMenuController.removePlayer(port);
 	}
 
 	@Override
