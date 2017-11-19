@@ -21,4 +21,6 @@ public class Globals {
     public static final float FRAME_TIME = 1f/60f;
 
     public static Random rand = new Random();
+
+    public enum UI_EVENTS { UP, DOWN, LEFT, RIGHT, SELECT, NOOP }
 }

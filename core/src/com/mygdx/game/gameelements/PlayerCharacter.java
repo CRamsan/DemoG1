@@ -18,12 +18,14 @@ public class PlayerCharacter extends BaseCharacter {
 	private Set<Statue> statueSet;
 	private int Id;
 	private float dx, dy;
+	private boolean isEventBased;
 
 	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener, GameStateManager manager) {
 		super(type, listener, manager);
 		this.controller = new PlayerController(this);
 		this.statueSet = new HashSet<Statue>();
 		this.Id = Id;
+		this.isEventBased = true;
 	}
 	
 	@Override
@@ -31,6 +33,9 @@ public class PlayerCharacter extends BaseCharacter {
 		super.update(delta);
 		if (isDead)
 			return;
+		if (!isEventBased) {
+			controller.poll();
+		}
         if(hasAttacked){
             attack();
         }
@@ -127,14 +132,27 @@ public class PlayerCharacter extends BaseCharacter {
 			if (this.controller != null)
 				throw new RuntimeException("Controller is already set");
 			this.controller = controller;
-			this.controller.addListener(this);
+			if (isEventBased)
+				this.controller.addListener(this);
+			else
+				throw new RuntimeException("Polling is not implemented yet");
 		}
 
 		public void removeController() {
 			if (controller == null)
 				throw new RuntimeException("Controller is already null");
-			this.controller.removeListener(this);
+			if (isEventBased)
+				this.controller.removeListener(this);
+			else
+				throw new RuntimeException("Polling is not implemented yet");
 			this.controller = null;
+		}
+
+		public void poll() {
+			if (isEventBased)
+				throw new RuntimeException("This method should not be called when using events");
+			else
+				throw new RuntimeException("Polling is not implemented yet");
 		}
 
 		@Override

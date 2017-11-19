@@ -1,16 +1,21 @@
 package com.mygdx.game.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.viewport.*;
+import com.mygdx.game.ControllerManager;
 import com.mygdx.game.Globals;
 import com.mygdx.game.MyGdxGame;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UISystem {
 
@@ -74,7 +79,9 @@ public class UISystem {
     private Skin skin;
     private static final String SKIN_FILE_PATH = "uiskin.json";
     private ArrayList<Texture> loadedTextures;
+    private HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap;
     private boolean uiVisible;
+    private Button selected;
 
     private Stage stage;
     private Actor mainMenu;
@@ -98,32 +105,41 @@ public class UISystem {
     private void initMainMenuInternal() {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
-
+        sequenceMap = new HashMap<Button, HashMap<Globals.UI_EVENTS, Button>>();
         Table mainPane = UIToolKit.GenerateParentChildContainer(skin);
-        UIToolKit.AddButtonToParentWithAction(mainPane,"Button 1", skin, new ChangeListener() {
+        Button startGameButton = UIToolKit.AddButtonToParentWithAction(mainPane,"Button 1", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 UISystem.hideMenu();
                 UISystem.displayGetReadyMenu();
             }
-        });
-        UIToolKit.AddButtonToParentWithAction(mainPane,"Button 2", skin, null);
-        UIToolKit.AddButtonToParentWithAction(mainPane,"Button 3", skin, null);
+        }, sequenceMap);
+        Button secondButton = UIToolKit.AddButtonToParentWithAction(mainPane,"Button 2", skin, null, sequenceMap);
+        Button thirdButton = UIToolKit.AddButtonToParentWithAction(mainPane,"Button 3", skin, null, sequenceMap);
         UIToolKit.AddActorToChild(mainPane, "Test text~", skin);
         mainMenu = mainPane;
         initSingleStage();
+        UIToolKit.LinkUpAndDown(startGameButton, secondButton, sequenceMap);
+        UIToolKit.LinkUpAndDown(secondButton, thirdButton, sequenceMap);
+        stage.addListener(new FocusListener() {
+            @Override
+            public boolean handle(Event event) {
+                return super.handle(event);
+            }
+        });
+        stage.setKeyboardFocus(startGameButton);
+        setSelected(startGameButton);
     }
 
     private void initPauseMenuInternal() {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
-
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
 
-        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 1", skin, null);
-        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 2", skin, null);
-        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 3", skin, null);
-        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 4", skin, null);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 1", skin, null, sequenceMap);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 2", skin, null, sequenceMap);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 3", skin, null, sequenceMap);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 4", skin, null, sequenceMap);
 
         pauseMenu = mainPane;
         initSingleStage();
@@ -132,11 +148,10 @@ public class UISystem {
     private void initEndGameMenuInternal() {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
-
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
 
-        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Restart", skin, null);
-        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Back to Menu", skin, null);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Restart", skin, null, sequenceMap);
+        UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Back to Menu", skin, null, sequenceMap);
 
         endGameMenu = mainPane;
         initSingleStage();
@@ -145,7 +160,6 @@ public class UISystem {
     private GetReadyMenuController initGetReadyMenuInternal() {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
-
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
         Table containerPane = UIToolKit.GenerateHorizontalContainer(mainPane, skin);
         GetReadyMenuController controller = new GetReadyMenuController(containerPane, skin);
@@ -155,14 +169,14 @@ public class UISystem {
             public void changed(ChangeEvent event, Actor actor) {
                 MyGdxGame.startGameScreen();
             }
-        });
+        }, sequenceMap);
         UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Back to Menu", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 UISystem.hideMenu();
                 UISystem.displayMainMenu();
             }
-        });
+        }, sequenceMap);
 
         getReadyMenu = mainPane;
         initSingleStage();
@@ -197,7 +211,29 @@ public class UISystem {
         if (!uiVisible)
             return;
         stage.act(delta);
+        processInput();
         stage.draw();
+    }
+
+    private void processInput() {
+        Globals.UI_EVENTS event = ControllerManager.getInstance().getNextUIEvent();
+        if (event == Globals.UI_EVENTS.DOWN || event == Globals.UI_EVENTS.UP || event == Globals.UI_EVENTS.LEFT || event == Globals.UI_EVENTS.RIGHT) {
+            Button newSelected = sequenceMap.get(selected).get(event);
+            if (newSelected != null)
+                setSelected(newSelected);
+        } else if (event == Globals.UI_EVENTS.SELECT) {
+            selected.setChecked(true);
+        }
+    }
+
+    private void setSelected(Button actor) {
+        if (selected != null) {
+            selected.setColor(Color.WHITE);
+            selected.setScale(1);
+        }
+        selected = actor;
+        selected.setScale(1.2f);
+        selected.setColor(Color.RED);
     }
 
     public void resize(int width, int height){

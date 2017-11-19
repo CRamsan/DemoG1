@@ -3,8 +3,9 @@ package com.mygdx.game.ui;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.Globals;
+
+import java.util.HashMap;
 
 public class UIToolKit {
     public static Table GenerateParentChildContainer(Skin skin) {
@@ -43,26 +44,41 @@ public class UIToolKit {
         return containerTable;
     }
 
-    public static void AddButtonToParentWithAction(Table root, String label, Skin skin, EventListener listener) {
+    public static Button AddButtonToParentWithAction(Table root, String label, Skin skin, EventListener listener, HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
         TextButton startGameButton = new TextButton(label, skin);
         if (listener != null)
             startGameButton.addListener(listener);
         Table parentTable = (Table) root.getChildren().get(0);
         parentTable.add(startGameButton).pad(30).row();
+        sequenceMap.put(startGameButton, new HashMap<Globals.UI_EVENTS, Button>());
+        return startGameButton;
     }
 
-    public static void AddActorToChild(Table root, String label, Skin skin) {
+    public static Label AddActorToChild(Table root, String label, Skin skin) {
         Label descriptionLabel = new Label(label, skin);
         descriptionLabel.setWrap(true);
         Table contentTable = (Table) root.getChildren().get(1);
         contentTable.add(descriptionLabel).width(200);
+        return descriptionLabel;
     }
 
-    public static void AddButtonToSinglePaneWithAction(Table root, String label, Skin skin, EventListener listener) {
+    public static Button AddButtonToSinglePaneWithAction(Table root, String label, Skin skin, EventListener listener, HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
         TextButton startGameButton = new TextButton(label, skin);
         if (listener != null)
             startGameButton.addListener(listener);
         Table contentTable = (Table) root.getChildren().get(0);
         contentTable.add(startGameButton).pad(30).row();
+        sequenceMap.put(startGameButton, new HashMap<Globals.UI_EVENTS, Button>());
+        return startGameButton;
+    }
+
+    public static void LinkUpAndDown(Button up, Button down, HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
+        sequenceMap.get(up).put(Globals.UI_EVENTS.DOWN, down);
+        sequenceMap.get(down).put(Globals.UI_EVENTS.UP, up);
+    }
+
+    public static void LinkLeftAndRight(Button left, Button right, HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
+        sequenceMap.get(left).put(Globals.UI_EVENTS.RIGHT, right);
+        sequenceMap.get(right).put(Globals.UI_EVENTS.LEFT, left);
     }
 }
