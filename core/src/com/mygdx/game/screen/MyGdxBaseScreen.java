@@ -53,6 +53,7 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerManager.Contr
             portIndex++;
         }
         cam.position.set(map.getWidth()/2f, map.getHeight()/2f, 1);
+	AudioManager.LoadAssets(levelId());
     }
 
     @Override
@@ -105,9 +106,12 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerManager.Contr
 
     protected abstract void performDebugRender();
 
+    protected abstract int levelId();
+
     @Override
     public void dispose() {
         UISystem.disposeMenu();
+	AudioManager.UnloadAssets();
     }
 
     @Override

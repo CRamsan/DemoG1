@@ -3,7 +3,25 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
+/* 
+ * Singleton class that provides a simple API to handle sound and music
+ */
 public class AudioManager {
+
+    /*
+     * Call this function when loading a scene and provide the level Id int
+     * This will load the required sounds as well as preperat the music playlist
+     */
+    public void LoadAssets(int level)
+    {
+    }
+    
+    /*
+     * Call this function to unload any assets for the current scene
+     */
+    public void UnloadAssets() 
+    {
+    }
 
     public void PlaySound() {
         ourInstance.PlaySoundInternal();
