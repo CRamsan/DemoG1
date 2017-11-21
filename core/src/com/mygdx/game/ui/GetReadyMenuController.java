@@ -13,11 +13,13 @@ public class GetReadyMenuController {
     private Skin skin;
     private HashMap<Integer, Label> tableMap;
     private boolean isVisible;
+    private int players;
 
     public GetReadyMenuController(Table contentTable, Skin skin){
         this.contentTable = contentTable;
         this.skin = skin;
         tableMap = new HashMap<Integer, Label>();
+        players = 0;
         for (int i = 0; i < 4; i++) {
             Label descriptionLabel = new Label("Not Connected", skin);
             descriptionLabel.setWrap(true);
@@ -26,13 +28,19 @@ public class GetReadyMenuController {
         }
     }
 
+    public boolean enoughPlayers() {
+        return players >= 2;
+    }
+
     public void addPlayer(String label, int number) {
         Label labelView = tableMap.get(number);
         labelView.setText(label);
+        players++;
     }
 
     public void removePlayer(int number) {
         Label labelView = tableMap.get(number);
         labelView.setText("Not Connected");
+        players--;
     }
 }

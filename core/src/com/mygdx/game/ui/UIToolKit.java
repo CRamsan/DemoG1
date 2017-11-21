@@ -46,8 +46,11 @@ public class UIToolKit {
 
     public static Button AddButtonToParentWithAction(Table root, String label, Skin skin, EventListener listener, HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
         TextButton startGameButton = new TextButton(label, skin);
-        if (listener != null)
+        if (listener != null) {
             startGameButton.addListener(listener);
+        } else {
+
+        }
         Table parentTable = (Table) root.getChildren().get(0);
         parentTable.add(startGameButton).pad(30).row();
         sequenceMap.put(startGameButton, new HashMap<Globals.UI_EVENTS, Button>());
@@ -62,7 +65,9 @@ public class UIToolKit {
         return descriptionLabel;
     }
 
-    public static Button AddButtonToSinglePaneWithAction(Table root, String label, Skin skin, EventListener listener, HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
+    public static Button AddButtonToSinglePaneWithAction(Table root, String label, Skin skin,
+                                                         EventListener listener,
+                                                         HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
         TextButton startGameButton = new TextButton(label, skin);
         if (listener != null)
             startGameButton.addListener(listener);
