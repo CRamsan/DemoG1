@@ -1,9 +1,6 @@
 package com.mygdx.game.gameelements;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
-import com.badlogic.gdx.controllers.Controllers;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +12,7 @@ public class PlayerCharacter extends BaseCharacter {
 
 	private PlayerController controller;
 	private boolean hasAttacked, hasPaused;
-	private Set<Statue> statueSet;
+	private Set<Collideable> collideableSet;
 	private int Id;
 	private float dx, dy;
 	private boolean isEventBased;
@@ -23,7 +20,7 @@ public class PlayerCharacter extends BaseCharacter {
 	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener, GameStateManager manager) {
 		super(type, listener, manager);
 		this.controller = new PlayerController(this);
-		this.statueSet = new HashSet<Statue>();
+		this.collideableSet = new HashSet<Collideable>();
 		this.Id = Id;
 		this.isEventBased = true;
 	}
@@ -79,10 +76,10 @@ public class PlayerCharacter extends BaseCharacter {
 		this.listener.onPlayerDied(this, killer);
 	}
 
-	public void onStatueContact(Statue statue) {
-		if (!statueSet.contains(statue)){
-			statueSet.add(statue);
-			listener.onNewStatueTouched(statueSet.size(), this);
+	public void onStatueContact(Collideable collideable) {
+		if (!collideableSet.contains(collideable)){
+			collideableSet.add(collideable);
+			listener.onNewCollideableTouched(collideableSet.size(), this);
 		}
 	}
 

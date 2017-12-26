@@ -8,26 +8,34 @@ import com.badlogic.gdx.audio.Sound;
  */
 public class AudioManager {
 
+    public enum MUSIC {
+
+    }
+
+    public enum SOUND {
+
+    }
+
     /*
      * Call this function when loading a scene and provide the level Id int
      * This will load the required sounds as well as preperat the music playlist
      */
-    public void LoadAssets(int level)
+    public static void LoadAssets(int level)
     {
     }
     
     /*
      * Call this function to unload any assets for the current scene
      */
-    public void UnloadAssets() 
+    public static void UnloadAssets()
     {
     }
 
-    public void PlaySound() {
+    public static void PlaySound(SOUND sound) {
         ourInstance.PlaySoundInternal();
     }
 
-    public void PlayMusic() {
+    public static void PlayMusic() {
         ourInstance.PlayMusicInternal();
     }
 

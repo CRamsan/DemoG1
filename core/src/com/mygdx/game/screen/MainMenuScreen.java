@@ -20,8 +20,7 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 	private GetReadyMenuController getReadyMenuController;
 	private boolean hasInitCompleted;
 
-	public MainMenuScreen(boolean isFrameLimited)
-	{
+	public MainMenuScreen(boolean isFrameLimited) {
 		super(isFrameLimited);
 		hasInitCompleted = false;
 		characterList = new ArrayList<BaseCharacter>();
@@ -78,8 +77,7 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 	}
 
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		super.dispose();
 	}
 
@@ -89,14 +87,12 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 	}
 
 	@Override
-	public void pause()
-	{
+	public void pause() {
 	}
 
 	@Override
-	public void resume()
-	{
-    }
+	public void resume() {
+	}
 
 	@Override
 	public void hide() {
@@ -121,5 +117,9 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 	@Override
 	public boolean isSolid(int x, int y) {
 		return this.map.isSolid(x, y);
+	}
+
+	protected int levelId() {
+			return 0;
 	}
 }

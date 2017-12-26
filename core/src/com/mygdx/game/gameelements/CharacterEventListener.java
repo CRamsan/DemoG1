@@ -8,6 +8,6 @@ package com.mygdx.game.gameelements;
 public interface CharacterEventListener {
     public void attack(PlayerCharacter character);
     public void pause(PlayerCharacter character);
-    public void onNewStatueTouched(int statueCount, PlayerCharacter player);
+    public void onNewCollideableTouched(int statueCount, PlayerCharacter player);
     public void onPlayerDied(PlayerCharacter victim, PlayerCharacter killer);
 }

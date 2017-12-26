@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.AudioManager;
 import com.mygdx.game.ControllerManager;
 import com.mygdx.game.Globals;
 import com.mygdx.game.TiledGameMap;
@@ -53,7 +54,7 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerManager.Contr
             portIndex++;
         }
         cam.position.set(map.getWidth()/2f, map.getHeight()/2f, 1);
-	AudioManager.LoadAssets(levelId());
+	    AudioManager.LoadAssets(levelId());
     }
 
     @Override

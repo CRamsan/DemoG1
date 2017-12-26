@@ -4,7 +4,6 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.Globals;
-import com.mygdx.game.TiledGameMap;
 import com.mygdx.game.gameelements.*;
 import com.mygdx.game.ui.UISystem;
 
@@ -14,7 +13,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 
 	private List<BaseCharacter> characterList;
 	private List<PlayerCharacter> playerList;
-	private List<Statue> statueList;
+	private List<Collideable> collideableList;
 	private Map<Integer, PlayerCharacter> playerCharacterMap;
 	private ShapeRenderer debugRenderer;
 
@@ -27,7 +26,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		super(isFrameLimited);
 		characterList = new ArrayList<BaseCharacter>();
 		playerList = new ArrayList<PlayerCharacter>();
-		statueList = new ArrayList<Statue>();
+		collideableList = new ArrayList<Collideable>();
 		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
 		debugRenderer = new ShapeRenderer();
 		isPaused = false;
@@ -50,17 +49,17 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 
 	@Override
 	protected void performCustomUpdate(float delta) {
-		for (Statue statue : statueList) {
-			statue.update(delta);
+		for (Collideable collideable : collideableList) {
+			collideable.update(delta);
 		}
 		for (GameElement character : characterList) {
 			character.update(delta);
 		}
 		for (PlayerCharacter player : playerList) {
 			if (player.hasMoved()) {
-				for (Statue statue : statueList) {
-					if (player.getCenterPosition().dst(statue.getCenterPosition()) < 1) {
-						player.onStatueContact(statue);
+				for (Collideable collideable : collideableList) {
+					if (player.getCenterPosition().dst(collideable.getCenterPosition()) < 1) {
+						player.onStatueContact(collideable);
 					}
 				}
 			}
@@ -81,7 +80,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		for (GameElement character : characterList) {
 			debugRenderer.rect(character.getX(), character.getY(), 1, 1);
 		}
-		for (GameElement statue : statueList) {
+		for (GameElement statue : collideableList) {
 			debugRenderer.rect(statue.getX(), statue.getY(), 1, 1);
 		}
 		debugRenderer.end();
@@ -89,8 +88,8 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 
 	@Override
 	protected void performRenderSprites() {
-		for (Statue statue : statueList) {
-			statue.draw(batch);
+		for (Collideable collideable : collideableList) {
+			collideable.draw(batch);
 		}
 		for (GameElement charac : characterList) {
 			charac.draw(batch);
@@ -119,8 +118,8 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
 	private void createStatue() {
-		Statue newStatue = new Statue(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
-		statueList.add(newStatue);
+		Collideable newCollideable = new Collideable(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
+		collideableList.add(newCollideable);
 	}
 
 	@Override
@@ -207,12 +206,12 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
 	@Override
-	public void onNewStatueTouched(int statueCount, PlayerCharacter player) {
+	public void onNewCollideableTouched(int statueCount, PlayerCharacter player) {
 		if (statueCount == this.statueCount) {
 			for (PlayerCharacter closingPlayer : playerList) {
 				closingPlayer.disableCharacter();
-				UISystem.displayEndGameMenu();
 			}
+			UISystem.displayEndGameMenu();
 		}
 	}
 
@@ -221,5 +220,9 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		if (playerCharacterMap.remove(victim.getId()) != null) {
 		}
 
+	}
+
+	protected int levelId() {
+		return 1;
 	}
 }
