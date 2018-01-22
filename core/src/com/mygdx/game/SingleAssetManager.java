@@ -2,6 +2,9 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.assets.AssetManager;
 
+/**
+ * Class that exposes the AssetManager as a singleton.
+ */
 public class SingleAssetManager {
     private static SingleAssetManager ourInstance = new SingleAssetManager();
 

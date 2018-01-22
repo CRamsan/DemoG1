@@ -2,24 +2,23 @@ package com.mygdx.game.gameelements;
 
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Globals;
 
+/**
+ * This class will handle all common logic required by characters, either NPCs or human players.
+ */
 public abstract class BaseCharacter extends GameElement {
 
-    protected GameStateManager manager;
 	protected boolean isDead;
 	protected boolean isRunning;
-    private Controller controller;
     private float walkSpeed;
 
-    public BaseCharacter(TYPE type, CharacterEventListener listerner, GameStateManager manager) {
+    public BaseCharacter(TYPE type, CharacterEventListener listerner) {
         super(type, listerner);
-        if (type == TYPE.DARK)
+        if (type == TYPE.STATUS)
             throw new RuntimeException("Characters cannot be of this type");
         this.walkSpeed = 2f;
         this.isDead = false;
-        this.manager = manager;
 		this.isRunning = true;
     }
 
@@ -56,17 +55,17 @@ public abstract class BaseCharacter extends GameElement {
         boolean processVectors = (absX == absY) ? Globals.rand.nextBoolean() : false;
 
         if (absX > absY || processVectors) {
-            movement.x = handleVectorMovement(movement.x, AXIS.X);
+            movement.x = testVectorMovement(movement.x, AXIS.X);
             this.x += movement.x;
             if (absY != 0) {
-                movement.y = handleVectorMovement(movement.y, AXIS.Y);
+                movement.y = testVectorMovement(movement.y, AXIS.Y);
                 this.y += movement.y;
             }
         } else if (absX < absY){
-            movement.y = handleVectorMovement(movement.y, AXIS.Y);
+            movement.y = testVectorMovement(movement.y, AXIS.Y);
             this.y += movement.y;
             if (absX != 0) {
-                movement.x = handleVectorMovement(movement.x, AXIS.X);
+                movement.x = testVectorMovement(movement.x, AXIS.X);
                 this.x += movement.x;
             }
         }
@@ -76,9 +75,17 @@ public abstract class BaseCharacter extends GameElement {
         updateDirection(movement.x, movement.y);
     }
 
-    private float handleVectorMovement(float value, AXIS axis) {
+    /**
+     * Private method that will return the distance that this character can move on the provided axis.
+     * This method will take in consideration collisions.
+     * @param value The distance the character wants to move
+     * @param axis The expected axis that wants to be tested
+     * @return The resulting distance that this character can move
+     */
+    private float testVectorMovement(float value, AXIS axis) {
         if (value == 0)
             throw new RuntimeException("Vector has value of 0");
+        /*
         int endXStart, endXEnd, endYStart, endYEnd;
         if (value > 0) {
             if (axis == AXIS.X){
@@ -88,7 +95,7 @@ public abstract class BaseCharacter extends GameElement {
                     endYEnd--;
                 }
                 endXEnd = (int)Math.floor(this.x + getWidth() + value);
-                if (manager.isSolid(endXEnd, endYStart) || manager.isSolid(endXEnd, endYEnd)) {
+                if (manager.isMapTileSolid(endXEnd, endYStart) || manager.isMapTileSolid(endXEnd, endYEnd)) {
                     return (float)Math.ceil(this.x + getWidth()) - (this.x + getWidth());
                 } else {
                     return value;
@@ -100,7 +107,7 @@ public abstract class BaseCharacter extends GameElement {
                 if (endXEnd == Math.floor(this.x + getWidth())) {
                     endXEnd--;
                 }
-                if (manager.isSolid(endXStart, endYEnd) || manager.isSolid(endXEnd, endYEnd)) {
+                if (manager.isMapTileSolid(endXStart, endYEnd) || manager.isMapTileSolid(endXEnd, endYEnd)) {
                     return (float)Math.ceil(this.y + getHeight()) - (this.y + getHeight());
                 } else {
                     return value;
@@ -114,7 +121,7 @@ public abstract class BaseCharacter extends GameElement {
                 if (endYEnd == Math.floor(this.y + getHeight())) {
                     endYEnd--;
                 }
-                if (manager.isSolid(endXStart, endYStart) || manager.isSolid(endXStart, endYEnd)) {
+                if (manager.isMapTileSolid(endXStart, endYStart) || manager.isMapTileSolid(endXStart, endYEnd)) {
                     return - (this.x) - (float)Math.floor(this.x);
                 } else {
                     return value;
@@ -126,13 +133,15 @@ public abstract class BaseCharacter extends GameElement {
                 if (endXEnd == Math.floor(this.x + getWidth())) {
                     endXEnd--;
                 }
-                if (manager.isSolid(endXStart, endYEnd) || manager.isSolid(endXEnd, endYEnd)) {
+                if (manager.isMapTileSolid(endXStart, endYEnd) || manager.isMapTileSolid(endXEnd, endYEnd)) {
                     return - (this.y) - (float)Math.floor(this.y);
                 } else {
                     return value;
                 }
             }
         }
+        */
+        return 0f;
     }
 
 	public void disableCharacter() {

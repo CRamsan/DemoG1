@@ -18,6 +18,10 @@ import com.mygdx.game.Globals;
 import com.mygdx.game.TiledGameMap;
 import com.mygdx.game.ui.UISystem;
 
+/**
+ * Base class to handle all code shared across all scenes. This class will confgure the camera, the background map
+ * as well as calling the update method.
+ */
 public abstract class MyGdxBaseScreen implements Screen, ControllerManager.ControllerConnectionListener {
 
     protected OrthographicCamera cam;

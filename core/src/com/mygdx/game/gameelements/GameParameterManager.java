@@ -1,5 +1,8 @@
 package com.mygdx.game.gameelements;
 
+/**
+ * This class will define the winning condition for a game.
+ */
 public class GameParameterManager {
 
     public enum GameType{

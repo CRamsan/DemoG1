@@ -1,12 +1,14 @@
 package com.mygdx.game.ui;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.mygdx.game.Globals;
 
 import java.util.HashMap;
 
+/**
+ * This class provides helped methods to create UI elements. Here is where the UI layout is defined.
+ */
 public class UIToolKit {
     public static Table GenerateParentChildContainer(Skin skin) {
         Table childTable = new Table(skin);

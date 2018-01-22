@@ -13,7 +13,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class MainMenuScreen extends MyGdxBaseScreen implements Screen, ControllerManager.ControllerConnectionListener, GameStateManager {
+/**
+ * Class to manage the main manu screen. It will initialize the UI components and any objects needed or the background.
+ */
+public class MainMenuScreen extends MyGdxBaseScreen implements Screen, ControllerManager.ControllerConnectionListener {
 
 	private List<BaseCharacter> characterList;
 	private HashMap<Integer, Controller> preInitControllerMap;
@@ -32,7 +35,7 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 		super.ScreenInit();
 		for (int i = 0; i < 20; i++) {
 			GameElement.TYPE type = GameElement.TYPE.FEMALE_VILLAGER;
-			AICharacter newChar = new AICharacter(type, null, this);
+			AICharacter newChar = new AICharacter(type, null);
 			newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 			characterList.add(newChar);
 		}
@@ -112,11 +115,6 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 	@Override
 	public void onControllerDisconnected(int port, Controller controller) {
 		getReadyMenuController.removePlayer(port);
-	}
-
-	@Override
-	public boolean isSolid(int x, int y) {
-		return this.map.isSolid(x, y);
 	}
 
 	protected int levelId() {

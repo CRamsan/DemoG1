@@ -7,7 +7,11 @@ import com.badlogic.gdx.graphics.*;
 
 import static com.mygdx.game.Globals.ASSET_TMX_MAP;
 
-public class TiledGameMap extends TiledMap
+/**
+ * This class will handle the tiled map. Both rendering and interaction with the tiled
+ * map will be done here.
+ */
+public class TiledGameMap
 {
 	private TiledMap map;
 	private TiledMapRenderer renderer;

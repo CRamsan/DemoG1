@@ -17,8 +17,8 @@ public class PlayerCharacter extends BaseCharacter {
 	private float dx, dy;
 	private boolean isEventBased;
 
-	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener, GameStateManager manager) {
-		super(type, listener, manager);
+	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener) {
+		super(type, listener);
 		this.controller = new PlayerController(this);
 		this.collideableSet = new HashSet<Collideable>();
 		this.Id = Id;
@@ -37,7 +37,7 @@ public class PlayerCharacter extends BaseCharacter {
             attack();
         }
         if(hasPaused){
-            pause();
+			onCharacterPause();
         }
 
 		this.handleMovement(dx, dy, delta);
@@ -73,13 +73,13 @@ public class PlayerCharacter extends BaseCharacter {
 	@Override
 	public void onKilled(PlayerCharacter killer) {
 		super.onKilled(killer);
-		this.listener.onPlayerDied(this, killer);
+		this.listener.onCharacterDied(this, killer);
 	}
 
 	public void onStatueContact(Collideable collideable) {
 		if (!collideableSet.contains(collideable)){
 			collideableSet.add(collideable);
-			listener.onNewCollideableTouched(collideableSet.size(), this);
+			listener.onCharacterCollideableTouched(collideableSet.size(), this);
 		}
 	}
 
@@ -91,13 +91,13 @@ public class PlayerCharacter extends BaseCharacter {
 	 * This function will send an event to the listener that this character has attacked.
 	 */
 	protected void attack() {
-		this.listener.attack(this);
+		this.listener.onCharacterAttack(this);
 	}
 
 	/***
 	 * Signal to the listener that this character has send a pause event.
 	 */
-	protected void pause() { this.listener.pause(this);}
+	protected void onCharacterPause() { this.listener.onCharacterPause(this);}
 
 	public void setController(Controller controller) {
 		this.controller.setController(controller);

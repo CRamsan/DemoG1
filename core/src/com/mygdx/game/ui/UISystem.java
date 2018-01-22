@@ -15,6 +15,9 @@ import com.mygdx.game.MyGdxGame;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This class provides static methods to configure UI components.
+ */
 public class UISystem {
 
     /**

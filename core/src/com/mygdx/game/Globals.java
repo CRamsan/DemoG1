@@ -1,7 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.assets.AssetManager;
-
 import java.util.Random;
 
 public class Globals {

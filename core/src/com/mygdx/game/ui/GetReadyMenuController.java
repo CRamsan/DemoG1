@@ -7,6 +7,9 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.HashMap;
 
+/**
+ * This controller will allow users to add or remove players before starting a game.
+ */
 public class GetReadyMenuController {
 
     private Table contentTable;

@@ -9,7 +9,7 @@ import com.mygdx.game.ui.UISystem;
 
 import java.util.*;
 
-public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListener, GameStateManager {
+public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListener {
 
 	private List<BaseCharacter> characterList;
 	private List<PlayerCharacter> playerList;
@@ -102,7 +102,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
 	private void createPlayerCharacter(int index, Controller controller) {
-		PlayerCharacter newChar = new PlayerCharacter(index, GameElement.TYPE.EARTH, this, this);
+		PlayerCharacter newChar = new PlayerCharacter(index, GameElement.TYPE.EARTH, this);
 		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 		newChar.setController(controller);
 		characterList.add(newChar);
@@ -112,7 +112,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 
 	private void createAICharacter() {
 		GameElement.TYPE type = GameElement.TYPE.LIGHT;
-		AICharacter newChar = new AICharacter(type, this, this);
+		AICharacter newChar = new AICharacter(type, this);
 		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 		characterList.add(newChar);
 	}
@@ -149,7 +149,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
 	@Override
-	public void attack(PlayerCharacter character) {
+	public void onCharacterAttack(PlayerCharacter character) {
 	    for (BaseCharacter otherCharacter : characterList) {
 	        if (character.equals(otherCharacter))
 	            continue;
@@ -161,7 +161,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
     @Override
-    public void pause(PlayerCharacter character) {
+    public void onCharacterPause(PlayerCharacter character) {
 	    if (isPaused)
         {
             UISystem.hideMenu();
@@ -201,12 +201,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
 	@Override
-	public boolean isSolid(int x, int y) {
-		return this.map.isSolid(x, y);
-	}
-
-	@Override
-	public void onNewCollideableTouched(int statueCount, PlayerCharacter player) {
+	public void onCharacterCollideableTouched(int statueCount, PlayerCharacter player) {
 		if (statueCount == this.statueCount) {
 			for (PlayerCharacter closingPlayer : playerList) {
 				closingPlayer.disableCharacter();
@@ -216,7 +211,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
 	@Override
-	public void onPlayerDied(PlayerCharacter  victim, PlayerCharacter killer) {
+	public void onCharacterDied(PlayerCharacter  victim, PlayerCharacter killer) {
 		if (playerCharacterMap.remove(victim.getId()) != null) {
 		}
 

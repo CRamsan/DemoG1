@@ -8,8 +8,9 @@ import com.mygdx.game.Globals;
 import com.mygdx.game.SingleAssetManager;
 
 /***
- * Base class to be used for all characters, either NPCs or human players. This class will handle rendering, assets,
- * position. Any subclass should handle input and use the translate method to move this character.
+ * Base class to be used for all elements that need to be rendered on the screen.
+ * This class will handle rendering, assets and position.
+ * Any subclass should handle input and use the translate method to move this character.
  */
 public abstract class GameElement
 {
@@ -17,13 +18,18 @@ public abstract class GameElement
 		LEFT, RIGHT, UP, DOWN
 	}
 
+
 	protected enum AXIS {
 		X, Y
 	}
 
+	/**
+	 * This needs to be moved out of here when we have a way to load all different
+	 * resources.
+	 */
 	public enum TYPE {
 		FIRE, WATER, PLANT,
-		EARTH, LIGHT, DARK,
+		EARTH, LIGHT, STATUS,
 		MALE_VILLAGER, FEMALE_VILLAGER, TRADER,
 		WIZARD, KNIGHT, PIRATE
 	}
@@ -89,7 +95,7 @@ public abstract class GameElement
 				texture.getHeight() / Globals.ASSET_SPRITE_SHEET_ROWS);
 		TextureRegion textureRegion = null;
 		switch (this.type) {
-			case DARK:
+			case STATUS:
 				textureRegion = spriteRegion[0][5];
 				break;
 			case EARTH:
