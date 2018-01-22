@@ -226,20 +226,32 @@ public class UISystem {
     }
 
     private void processInput(float delta) {
-        if (blockInput) {
-            waitBuffer += delta;
-            if (waitBuffer >= Globals.UI_WAIT) {
-                blockInput = false;
-                waitBuffer = 0;
-            }
-            return;
-        }
         Globals.UI_EVENTS event = ControllerManager.getInstance().getNextUIEvent();
-        if (event == Globals.UI_EVENTS.DOWN || event == Globals.UI_EVENTS.UP || event == Globals.UI_EVENTS.LEFT || event == Globals.UI_EVENTS.RIGHT) {
+        if (blockInput) {
+            // There was a UI event that is blocking other events
+            // If the new event is NOOP then the event was released.
+            // Otherwise wait for the timeout
+            if (event == Globals.UI_EVENTS.NOOP) {
+                blockInput = false;
+            } else {
+                // Wait until we reach the timeout.
+                waitBuffer += delta;
+                if (waitBuffer >= Globals.UI_WAIT) {
+                    blockInput = false;
+                    waitBuffer = 0;
+                } else {
+                    return;
+                }
+            }
+        }
+
+        if (event == Globals.UI_EVENTS.DOWN || event == Globals.UI_EVENTS.UP ||
+                event == Globals.UI_EVENTS.LEFT || event == Globals.UI_EVENTS.RIGHT) {
             Button newSelected = sequenceMap.get(selected).get(event);
             if (newSelected != null)
                 setSelected(newSelected);
             blockInput = true;
+            waitBuffer = 0;
         } else if (event == Globals.UI_EVENTS.SELECT) {
             selected.getClickListener().clicked(null, 0, 0);
             blockInput = true;

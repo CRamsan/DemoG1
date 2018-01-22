@@ -3,6 +3,7 @@ package com.mygdx.game.gameelements;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Globals;
+import com.mygdx.game.TiledGameMap;
 
 /**
  * This class will handle all common logic required by characters, either NPCs or human players.
@@ -12,9 +13,10 @@ public abstract class BaseCharacter extends GameElement {
 	protected boolean isDead;
 	protected boolean isRunning;
     private float walkSpeed;
+    private TiledGameMap map;
 
-    public BaseCharacter(TYPE type, CharacterEventListener listerner) {
-        super(type, listerner);
+    public BaseCharacter(TYPE type, CharacterEventListener listener, TiledGameMap map) {
+        super(type, listener);
         if (type == TYPE.STATUS)
             throw new RuntimeException("Characters cannot be of this type");
         this.walkSpeed = 2f;
@@ -85,7 +87,6 @@ public abstract class BaseCharacter extends GameElement {
     private float testVectorMovement(float value, AXIS axis) {
         if (value == 0)
             throw new RuntimeException("Vector has value of 0");
-        /*
         int endXStart, endXEnd, endYStart, endYEnd;
         if (value > 0) {
             if (axis == AXIS.X){
@@ -95,7 +96,7 @@ public abstract class BaseCharacter extends GameElement {
                     endYEnd--;
                 }
                 endXEnd = (int)Math.floor(this.x + getWidth() + value);
-                if (manager.isMapTileSolid(endXEnd, endYStart) || manager.isMapTileSolid(endXEnd, endYEnd)) {
+                if (map.isTileSolid(endXEnd, endYStart) || map.isTileSolid(endXEnd, endYEnd)) {
                     return (float)Math.ceil(this.x + getWidth()) - (this.x + getWidth());
                 } else {
                     return value;
@@ -107,7 +108,7 @@ public abstract class BaseCharacter extends GameElement {
                 if (endXEnd == Math.floor(this.x + getWidth())) {
                     endXEnd--;
                 }
-                if (manager.isMapTileSolid(endXStart, endYEnd) || manager.isMapTileSolid(endXEnd, endYEnd)) {
+                if (map.isTileSolid(endXStart, endYEnd) || map.isTileSolid(endXEnd, endYEnd)) {
                     return (float)Math.ceil(this.y + getHeight()) - (this.y + getHeight());
                 } else {
                     return value;
@@ -121,7 +122,7 @@ public abstract class BaseCharacter extends GameElement {
                 if (endYEnd == Math.floor(this.y + getHeight())) {
                     endYEnd--;
                 }
-                if (manager.isMapTileSolid(endXStart, endYStart) || manager.isMapTileSolid(endXStart, endYEnd)) {
+                if (map.isTileSolid(endXStart, endYStart) || map.isTileSolid(endXStart, endYEnd)) {
                     return - (this.x) - (float)Math.floor(this.x);
                 } else {
                     return value;
@@ -133,15 +134,13 @@ public abstract class BaseCharacter extends GameElement {
                 if (endXEnd == Math.floor(this.x + getWidth())) {
                     endXEnd--;
                 }
-                if (manager.isMapTileSolid(endXStart, endYEnd) || manager.isMapTileSolid(endXEnd, endYEnd)) {
+                if (map.isTileSolid(endXStart, endYEnd) || map.isTileSolid(endXEnd, endYEnd)) {
                     return - (this.y) - (float)Math.floor(this.y);
                 } else {
                     return value;
                 }
             }
         }
-        */
-        return 0f;
     }
 
 	public void disableCharacter() {

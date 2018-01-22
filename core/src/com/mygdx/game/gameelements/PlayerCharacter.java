@@ -1,6 +1,7 @@
 package com.mygdx.game.gameelements;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
+import com.mygdx.game.TiledGameMap;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,8 +18,8 @@ public class PlayerCharacter extends BaseCharacter {
 	private float dx, dy;
 	private boolean isEventBased;
 
-	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener) {
-		super(type, listener);
+	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener, TiledGameMap map) {
+		super(type, listener, map);
 		this.controller = new PlayerController(this);
 		this.collideableSet = new HashSet<Collideable>();
 		this.Id = Id;

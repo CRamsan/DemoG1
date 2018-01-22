@@ -102,7 +102,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
 	private void createPlayerCharacter(int index, Controller controller) {
-		PlayerCharacter newChar = new PlayerCharacter(index, GameElement.TYPE.EARTH, this);
+		PlayerCharacter newChar = new PlayerCharacter(index, GameElement.TYPE.EARTH, this, map);
 		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 		newChar.setController(controller);
 		characterList.add(newChar);
@@ -112,7 +112,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 
 	private void createAICharacter() {
 		GameElement.TYPE type = GameElement.TYPE.LIGHT;
-		AICharacter newChar = new AICharacter(type, this);
+		AICharacter newChar = new AICharacter(type, this, map);
 		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 		characterList.add(newChar);
 	}

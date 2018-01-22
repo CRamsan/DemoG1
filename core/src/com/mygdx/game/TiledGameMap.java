@@ -53,7 +53,7 @@ public class TiledGameMap
 		return map.getProperties().get("height", Integer.class);
 	}
 
-	public boolean isSolid(int x, int y) {
+	public boolean isTileSolid(int x, int y) {
 		if (x < 0 || y < 0 || x >= collisionMap.length || y >= collisionMap[0].length)
 			return true;
 		return collisionMap[x][y];
