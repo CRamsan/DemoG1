@@ -1,13 +1,17 @@
 package com.mygdx.game.screen;
 
-import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.Globals;
+import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.gameelements.*;
+import com.mygdx.game.gameelements.player.PlayerCharacter;
 import com.mygdx.game.ui.UISystem;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListener {
 
@@ -15,20 +19,22 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	private List<PlayerCharacter> playerList;
 	private List<Collideable> collideableList;
 	private Map<Integer, PlayerCharacter> playerCharacterMap;
+	private GameParameterManager gameParameters;
 	private ShapeRenderer debugRenderer;
 
 	private boolean isPaused;
 	private int statueCount;
 	private int aiCount;
 
-	public MyGdxScreen(boolean isFrameLimited)
+	public MyGdxScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
 		super(isFrameLimited);
 		characterList = new ArrayList<BaseCharacter>();
 		playerList = new ArrayList<PlayerCharacter>();
 		collideableList = new ArrayList<Collideable>();
-		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
 		debugRenderer = new ShapeRenderer();
+		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
+		gameParameters = parameterManager;
 		isPaused = false;
 		statueCount = 4;
 		aiCount = 10;
@@ -101,7 +107,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		map.render(cam);
 	}
 
-	private void createPlayerCharacter(int index, Controller controller) {
+	private void createPlayerCharacter(int index, PlayerController controller) {
 		PlayerCharacter newChar = new PlayerCharacter(index, GameElement.TYPE.EARTH, this, map);
 		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 		newChar.setController(controller);
@@ -174,7 +180,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
     }
 
 	@Override
-	public void onControllerConnected(int port, Controller controller) {
+	public void onControllerConnected(int port, PlayerController controller) {
 		if (playerCharacterMap.containsKey(port)) {
 			enablePlayerCharacter(port, controller);
 		} else {
@@ -183,14 +189,14 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	}
 
 	@Override
-	public void onControllerDisconnected(int port, Controller controller) {
+	public void onControllerDisconnected(int port, PlayerController controller) {
 		if (playerCharacterMap.containsKey(port)) {
 			disablePlayerCharacter(port);
 		} else {
 			throw new RuntimeException("Controller was not previously connected");
 		}
 	}
-	private void enablePlayerCharacter(int port, Controller controller) {
+	private void enablePlayerCharacter(int port, PlayerController controller) {
 		PlayerCharacter character = playerCharacterMap.get(port);
 		character.setController(controller);
 	}

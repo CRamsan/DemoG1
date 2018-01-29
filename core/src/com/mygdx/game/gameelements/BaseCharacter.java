@@ -1,9 +1,9 @@
 package com.mygdx.game.gameelements;
 
-import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Globals;
 import com.mygdx.game.TiledGameMap;
+import com.mygdx.game.gameelements.player.PlayerCharacter;
 
 /**
  * This class will handle all common logic required by characters, either NPCs or human players.
@@ -22,6 +22,7 @@ public abstract class BaseCharacter extends GameElement {
         this.walkSpeed = 2f;
         this.isDead = false;
 		this.isRunning = true;
+		this.map = map;
     }
 
     /***

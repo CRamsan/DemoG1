@@ -1,10 +1,12 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.controllers.Controller;
-import com.mygdx.game.ControllerManager;
 import com.mygdx.game.Globals;
-import com.mygdx.game.gameelements.*;
+import com.mygdx.game.controller.ControllerConnectionListener;
+import com.mygdx.game.controller.PlayerController;
+import com.mygdx.game.gameelements.AICharacter;
+import com.mygdx.game.gameelements.BaseCharacter;
+import com.mygdx.game.gameelements.GameElement;
 import com.mygdx.game.ui.GetReadyMenuController;
 import com.mygdx.game.ui.UISystem;
 
@@ -16,10 +18,10 @@ import java.util.List;
 /**
  * Class to manage the main manu screen. It will initialize the UI components and any objects needed or the background.
  */
-public class MainMenuScreen extends MyGdxBaseScreen implements Screen, ControllerManager.ControllerConnectionListener {
+public class MainMenuScreen extends MyGdxBaseScreen implements Screen, ControllerConnectionListener {
 
 	private List<BaseCharacter> characterList;
-	private HashMap<Integer, Controller> preInitControllerMap;
+	private HashMap<Integer, PlayerController> preInitControllerMap;
 	private GetReadyMenuController getReadyMenuController;
 	private boolean hasInitCompleted;
 
@@ -27,7 +29,7 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 		super(isFrameLimited);
 		hasInitCompleted = false;
 		characterList = new ArrayList<BaseCharacter>();
-		preInitControllerMap = new LinkedHashMap<Integer, Controller>();
+		preInitControllerMap = new LinkedHashMap<Integer, PlayerController>();
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 		UISystem.displayMainMenu();
 		hasInitCompleted = true;
 		for (Integer port : preInitControllerMap.keySet()) {
-			Controller controller = preInitControllerMap.get(port);
+			PlayerController controller = preInitControllerMap.get(port);
 			onControllerConnected(port, controller);
 		}
 		preInitControllerMap.clear();
@@ -103,7 +105,7 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 	}
 
 	@Override
-	public void onControllerConnected(int port, Controller controller) {
+	public void onControllerConnected(int port, PlayerController controller) {
 		if (hasInitCompleted) {
 			getReadyMenuController.addPlayer(controller.getName(), port);
 		} else {
@@ -113,7 +115,7 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 
 
 	@Override
-	public void onControllerDisconnected(int port, Controller controller) {
+	public void onControllerDisconnected(int port, PlayerController controller) {
 		getReadyMenuController.removePlayer(port);
 	}
 

@@ -2,27 +2,24 @@ package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.controllers.Controller;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.AudioManager;
-import com.mygdx.game.ControllerManager;
+import com.mygdx.game.controller.ControllerConnectionListener;
+import com.mygdx.game.controller.ControllerManager;
 import com.mygdx.game.Globals;
 import com.mygdx.game.TiledGameMap;
+import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.ui.UISystem;
 
 /**
  * Base class to handle all code shared across all scenes. This class will confgure the camera, the background map
  * as well as calling the update method.
  */
-public abstract class MyGdxBaseScreen implements Screen, ControllerManager.ControllerConnectionListener {
+public abstract class MyGdxBaseScreen implements Screen, ControllerConnectionListener {
 
     protected OrthographicCamera cam;
     protected SpriteBatch batch;
@@ -53,7 +50,7 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerManager.Contr
         viewport.setUnitsPerPixel(1f/(Globals.TILE_SIZE * Globals.MAGNIFICATION));
         int portIndex = 0;
         ControllerManager.setControllerConnectionListener(this);
-        for(Controller controller : ControllerManager.getConnectedControllers()) {
+        for(PlayerController controller : ControllerManager.getConnectedControllers()) {
             onControllerConnected(portIndex, controller);
             portIndex++;
         }

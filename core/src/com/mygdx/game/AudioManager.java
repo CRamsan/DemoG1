@@ -42,12 +42,10 @@ public class AudioManager {
     private static AudioManager ourInstance = new AudioManager();
 
     private void PlaySoundInternal() {
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("data/mysound.mp3"));
-        sound.play();
-        sound.dispose();
+        Gdx.app.log(this.getClass().toString(), "Sound");
     }
 
     private void PlayMusicInternal() {
-
+        Gdx.app.log(this.getClass().toString(), "Music");
     }
 }

@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.mygdx.game.gameelements.GameParameterManager;
 import com.mygdx.game.screen.MainMenuScreen;
 import com.mygdx.game.screen.MyGdxBaseScreen;
 import com.mygdx.game.screen.MyGdxScreen;
@@ -12,8 +13,8 @@ public class MyGdxGame extends Game {
 
     private static boolean isFrameLimited() { return ourInstance.isFrameLimited; }
 
-    public static void startGameScreen() {
-        startScreen(new MyGdxScreen(isFrameLimited()));
+    public static void startGameScreen(GameParameterManager parameterManager) {
+        startScreen(new MyGdxScreen(isFrameLimited(), parameterManager) );
     }
 
     public static void startMainMenuScreen() {

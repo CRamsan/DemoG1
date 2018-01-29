@@ -8,9 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.*;
-import com.mygdx.game.ControllerManager;
+import com.mygdx.game.controller.ControllerManager;
 import com.mygdx.game.Globals;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.gameelements.GameParameterManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,8 +85,6 @@ public class UISystem {
 
     private boolean uiVisible;
     private Button selected;
-    private float waitBuffer;
-    private boolean blockInput;
 
     private Stage stage;
     private Actor mainMenu;
@@ -183,7 +182,7 @@ public class UISystem {
             public void changed(ChangeEvent event, Actor actor) {
                 if (controller.enoughPlayers()) {
                     UISystem.hideMenu();
-                    MyGdxGame.startGameScreen();
+                    MyGdxGame.startGameScreen(GameParameterManager.createStatueHuntManager());
                 }
             }
         }, sequenceMap);
@@ -226,35 +225,17 @@ public class UISystem {
     }
 
     private void processInput(float delta) {
-        Globals.UI_EVENTS event = ControllerManager.getInstance().getNextUIEvent();
-        if (blockInput) {
-            // There was a UI event that is blocking other events
-            // If the new event is NOOP then the event was released.
-            // Otherwise wait for the timeout
-            if (event == Globals.UI_EVENTS.NOOP) {
-                blockInput = false;
-            } else {
-                // Wait until we reach the timeout.
-                waitBuffer += delta;
-                if (waitBuffer >= Globals.UI_WAIT) {
-                    blockInput = false;
-                    waitBuffer = 0;
-                } else {
-                    return;
-                }
-            }
-        }
+        Globals.UI_EVENTS event = ControllerManager.getInstance().getNextUIEvent(delta);
+        if (event == Globals.UI_EVENTS.NOOP)
+            return;
 
         if (event == Globals.UI_EVENTS.DOWN || event == Globals.UI_EVENTS.UP ||
                 event == Globals.UI_EVENTS.LEFT || event == Globals.UI_EVENTS.RIGHT) {
             Button newSelected = sequenceMap.get(selected).get(event);
             if (newSelected != null)
                 setSelected(newSelected);
-            blockInput = true;
-            waitBuffer = 0;
         } else if (event == Globals.UI_EVENTS.SELECT) {
             selected.getClickListener().clicked(null, 0, 0);
-            blockInput = true;
         }
     }
 
