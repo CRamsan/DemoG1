@@ -50,6 +50,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 			createStatue();
 		}
 		UISystem.initPauseMenu();
+		UISystem.initConfirmationMenu();
 		UISystem.initEndGameMenu();
 	}
 

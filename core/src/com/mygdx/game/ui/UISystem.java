@@ -32,6 +32,10 @@ public class UISystem {
         ourInstance.initPauseMenuInternal();
     }
 
+    public static void initConfirmationMenu() {
+        ourInstance.initConfirmationMenuInternal();
+    }
+
     public static void initEndGameMenu() {
         ourInstance.initEndGameMenuInternal();
     }
@@ -42,6 +46,10 @@ public class UISystem {
 
     public static void displayMainMenu() {
         ourInstance.displayMainMenuInternal();
+    }
+
+    public static void displayConfirmationMenu() {
+        ourInstance.displayConfirmationMenuInternal();
     }
 
     public static void displayPauseMenu() {
@@ -90,6 +98,7 @@ public class UISystem {
     private Actor mainMenu;
     private Actor getReadyMenu;
     private Actor endGameMenu;
+    private Actor confirmationMenu;
     private Actor pauseMenu;
 
     private UISystem() {
@@ -142,16 +151,48 @@ public class UISystem {
         initSingleStage();
 
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
-        Button button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 1", skin, null, sequenceMap);
-        Button button2 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 2", skin, null, sequenceMap);
-        Button button3 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 3", skin, null, sequenceMap);
-        Button button4 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Button 4", skin, null, sequenceMap );
+        Button button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Resume", skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.hideMenu();
+            }
+        }, sequenceMap);
+        Button button2 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Quit", skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.displayConfirmationMenu();
+            }
+        }, sequenceMap);
         UIToolKit.LinkUpAndDown(button1, button2, sequenceMap);
-        UIToolKit.LinkUpAndDown(button2, button3, sequenceMap);
-        UIToolKit.LinkUpAndDown(button3, button4, sequenceMap);
 
         pauseMenu = mainPane;
         setDefaultSelection(pauseMenu, button1);
+    }
+
+    private void initConfirmationMenuInternal() {
+        if (loadedTextures.size() != 0)
+            throw new RuntimeException("Unload textures before loading more");
+        initSingleStage();
+
+        Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
+        Button button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "No", skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.hideMenu();
+                UISystem.displayPauseMenu();
+            }
+        }, sequenceMap);
+        Button button2 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Yes", skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.hideMenu();
+                MyGdxGame.startMainMenuScreen();
+            }
+        }, sequenceMap);
+        UIToolKit.LinkUpAndDown(button1, button2, sequenceMap);
+
+        confirmationMenu = mainPane;
+        setDefaultSelection(confirmationMenu, button1);
     }
 
     private void initEndGameMenuInternal() {
@@ -160,8 +201,22 @@ public class UISystem {
         initSingleStage();
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
 
-        Button  button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Restart", skin, null, sequenceMap);
-        Button  button2 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane,"Back to Menu", skin, null, sequenceMap);
+        Button  button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Restart", skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.hideMenu();
+                // Since we are restarting the game with the same parameters we can pass null as the
+                // GameParameterManager. This will cause the Game object to reuse the previously set instance
+                MyGdxGame.startGameScreen(null);
+            }
+        }, sequenceMap);
+        Button  button2 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Back to Menu", skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.hideMenu();
+                MyGdxGame.startMainMenuScreen();
+            }
+        }, sequenceMap);
 
         UIToolKit.LinkUpAndDown(button1, button2, sequenceMap);
 
@@ -215,6 +270,11 @@ public class UISystem {
     public void displayGetReadyMenuInternal() {
         setActorAsVisible(getReadyMenu);
     }
+
+    private void displayConfirmationMenuInternal() {
+        setActorAsVisible(confirmationMenu);
+    }
+
 
     public void render(float delta) {
         if (!uiVisible)
