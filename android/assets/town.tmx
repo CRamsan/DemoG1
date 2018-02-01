@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="16" tileheight="16" nextobjectid="1">
- <tileset firstgid="1" name="town_tileset" tilewidth="16" tileheight="16" tilecount="30" columns="10" backgroundcolor="#000000">
-  <image source="town_tiles.png" trans="ff00ff" width="160" height="48"/>
+<map version="1.0" tiledversion="1.1.0" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="32" tileheight="32" infinite="0" nextobjectid="1">
+ <tileset firstgid="1" name="town_tileset" tilewidth="32" tileheight="32" tilecount="30" columns="10" backgroundcolor="#000000">
+  <image source="town_tiles.png" trans="ff00ff" width="320" height="96"/>
   <tile id="0">
    <objectgroup draworder="index">
     <properties>

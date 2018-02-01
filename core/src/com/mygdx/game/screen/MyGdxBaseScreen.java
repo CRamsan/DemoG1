@@ -6,12 +6,13 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.AudioManager;
-import com.mygdx.game.controller.ControllerConnectionListener;
-import com.mygdx.game.controller.ControllerManager;
 import com.mygdx.game.Globals;
 import com.mygdx.game.TiledGameMap;
+import com.mygdx.game.controller.ControllerConnectionListener;
+import com.mygdx.game.controller.ControllerManager;
 import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.ui.UISystem;
 
@@ -23,7 +24,8 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerConnectionLis
 
     protected OrthographicCamera cam;
     protected SpriteBatch batch;
-    protected ScreenViewport viewport;
+    //protected ScreenViewport viewport;
+    protected Viewport viewport;
 
     protected FPSLogger logger;
     protected float timeBuffer;
@@ -35,8 +37,9 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerConnectionLis
     {
         batch = new SpriteBatch();
         timeBuffer = 0;
-        cam = new OrthographicCamera();
-        viewport = new ScreenViewport(cam);
+        cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
+        //viewport = new ScreenViewport(cam);
+        viewport = new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, cam);
         logger = new FPSLogger();
         this.isFrameLimited = isFrameLimited;
         map = new TiledGameMap();
@@ -47,7 +50,7 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerConnectionLis
     public void ScreenInit() {
         cam.setToOrtho(false);
         cam.update();
-        viewport.setUnitsPerPixel(1f/(Globals.TILE_SIZE * Globals.MAGNIFICATION));
+        //viewport.setUnitsPerPixel(1f/(Globals.TILE_SIZE * Globals.MAGNIFICATION));
         int portIndex = 0;
         ControllerManager.setControllerConnectionListener(this);
         for(PlayerController controller : ControllerManager.getConnectedControllers()) {
@@ -113,7 +116,7 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerConnectionLis
     @Override
     public void dispose() {
         UISystem.disposeMenu();
-	AudioManager.UnloadAssets();
+	    AudioManager.UnloadAssets();
     }
 
     @Override

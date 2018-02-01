@@ -10,6 +10,13 @@ import java.util.HashMap;
  * This class provides helped methods to create UI elements. Here is where the UI layout is defined.
  */
 public class UIToolKit {
+
+    public static int DIALOG_WIDTH = 200;
+    public static int INTERNAL_WIDTH = 40;
+    public static int DIALOG_PAD = 10;
+    public static int DIALOG_TABLE_PAD = 5;
+    public static int DIALOG_CHILD_WIDTH = 0;
+
     public static Table GenerateParentChildContainer(Skin skin) {
         Table childTable = new Table(skin);
         Table parentTable = new Table(skin);
@@ -19,8 +26,8 @@ public class UIToolKit {
 
         Table mainPane = new Table();
         mainPane.setFillParent(true);
-        mainPane.add(parentTable).width(400).pad(10);
-        mainPane.add(childTable).width(400).pad(10).fillY();
+        mainPane.add(parentTable).width(DIALOG_WIDTH).pad(DIALOG_PAD);
+        mainPane.add(childTable).width(DIALOG_WIDTH).pad(DIALOG_PAD).fillY();
 
         return mainPane;
     }
@@ -31,7 +38,7 @@ public class UIToolKit {
 
         Table mainPane = new Table();
         mainPane.setFillParent(true);
-        mainPane.add(contentTable).width(400).pad(10);
+        mainPane.add(contentTable).width(DIALOG_WIDTH).pad(DIALOG_PAD);
 
         return mainPane;
     }
@@ -41,7 +48,7 @@ public class UIToolKit {
         containerTable.setBackground("dialog");
 
         Table parentTable = (Table) root.getChildren().get(0);
-        parentTable.add(containerTable).pad(30).row();
+        parentTable.add(containerTable).pad(DIALOG_TABLE_PAD).row();
 
         return containerTable;
     }
@@ -54,7 +61,7 @@ public class UIToolKit {
 
         }
         Table parentTable = (Table) root.getChildren().get(0);
-        parentTable.add(startGameButton).pad(30).row();
+        parentTable.add(startGameButton).pad(DIALOG_TABLE_PAD).row();
         sequenceMap.put(startGameButton, new HashMap<Globals.UI_EVENTS, Button>());
         return startGameButton;
     }
@@ -63,7 +70,7 @@ public class UIToolKit {
         Label descriptionLabel = new Label(label, skin);
         descriptionLabel.setWrap(true);
         Table contentTable = (Table) root.getChildren().get(1);
-        contentTable.add(descriptionLabel).width(200);
+        contentTable.add(descriptionLabel).width(DIALOG_CHILD_WIDTH);
         return descriptionLabel;
     }
 
@@ -74,7 +81,7 @@ public class UIToolKit {
         if (listener != null)
             startGameButton.addListener(listener);
         Table contentTable = (Table) root.getChildren().get(0);
-        contentTable.add(startGameButton).pad(30).row();
+        contentTable.add(startGameButton).pad(DIALOG_TABLE_PAD).row();
         sequenceMap.put(startGameButton, new HashMap<Globals.UI_EVENTS, Button>());
         return startGameButton;
     }

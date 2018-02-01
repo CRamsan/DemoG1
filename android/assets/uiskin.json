@@ -11,7 +11,9 @@ com.badlogic.gdx.graphics.Color: {
 	black: { a: 1 }
 },
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
-	commodore-64: { file: commodore-64.fnt }
+	commodore-64: {
+		file: commodore-64.fnt
+	}
 },
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	dialogDim: {

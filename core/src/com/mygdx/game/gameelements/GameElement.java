@@ -189,7 +189,10 @@ public abstract class GameElement
                 break;
         }
         TextureRegion currentFrame = currentAnimation.getKeyFrame(state, true);
-        batch.draw(currentFrame, x, y, 1, 1);
+        batch.draw(currentFrame, x * Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH,
+				y * Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT,
+				Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH,
+				Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT);
     }
 
     /***

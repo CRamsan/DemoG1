@@ -21,7 +21,7 @@ public class TiledGameMap
 		map = new TmxMapLoader().load(ASSET_TMX_MAP);
 
 		// TODO Make this a global constant or a runtime value
-		renderer = new OrthogonalTiledMapRenderer(map, 1/(float)Globals.TILE_SIZE);
+		renderer = new OrthogonalTiledMapRenderer(map);
 		int columns = this.getWidth();
 		int rows = this.getHeight();
 		collisionMap = new boolean[columns][rows];

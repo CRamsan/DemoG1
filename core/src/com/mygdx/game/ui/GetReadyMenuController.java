@@ -3,7 +3,6 @@ package com.mygdx.game.ui;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Array;
 
 import java.util.HashMap;
 
@@ -26,7 +25,7 @@ public class GetReadyMenuController {
         for (int i = 0; i < 4; i++) {
             Label descriptionLabel = new Label("Not Connected", skin);
             descriptionLabel.setWrap(true);
-            contentTable.add(descriptionLabel).width(200).pad(10);
+            contentTable.add(descriptionLabel).width(UIToolKit.INTERNAL_WIDTH).pad(UIToolKit.DIALOG_PAD);
             tableMap.put(i, descriptionLabel);
         }
     }

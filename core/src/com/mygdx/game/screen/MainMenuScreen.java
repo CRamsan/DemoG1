@@ -1,5 +1,7 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.mygdx.game.Globals;
 import com.mygdx.game.controller.ControllerConnectionListener;
@@ -66,7 +68,14 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 
 	@Override
 	protected void performDebugRender() {
-
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+			cam.zoom = cam.zoom + 0.01f;
+			System.out.println(cam.zoom);
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+			cam.zoom = cam.zoom - 0.01f;
+			System.out.println(cam.zoom);
+		}
 	}
 
 	@Override
