@@ -92,25 +92,25 @@ public abstract class BaseCharacter extends GameElement {
         if (value > 0) {
             if (axis == AXIS.X){
                 endYStart = (int)Math.floor(this.y);
-                endYEnd = (int)Math.floor(this.y + getHeight());
-                if (Math.floor(this.y + getHeight()) == endYEnd) {
+                endYEnd = (int)Math.floor(this.y + 1f);
+                if (Math.floor(this.y + 1f) == endYEnd) {
                     endYEnd--;
                 }
-                endXEnd = (int)Math.floor(this.x + getWidth() + value);
+                endXEnd = (int)Math.floor(this.x + 1f + value);
                 if (map.isTileSolid(endXEnd, endYStart) || map.isTileSolid(endXEnd, endYEnd)) {
-                    return (float)Math.ceil(this.x + getWidth()) - (this.x + getWidth());
+                    return (float)Math.ceil(this.x + 1f) - (this.x + 1f);
                 } else {
                     return value;
                 }
             } else {
                 endXStart = (int)Math.floor(this.x);
-                endXEnd = (int)Math.floor(this.x + getWidth());
-                endYEnd = (int)Math.floor(this.y + getHeight() + value);
-                if (endXEnd == Math.floor(this.x + getWidth())) {
+                endXEnd = (int)Math.floor(this.x + 1f);
+                endYEnd = (int)Math.floor(this.y + 1f + value);
+                if (endXEnd == Math.floor(this.x + 1f)) {
                     endXEnd--;
                 }
                 if (map.isTileSolid(endXStart, endYEnd) || map.isTileSolid(endXEnd, endYEnd)) {
-                    return (float)Math.ceil(this.y + getHeight()) - (this.y + getHeight());
+                    return (float)Math.ceil(this.y + 1f) - (this.y + 1f);
                 } else {
                     return value;
                 }
@@ -118,9 +118,9 @@ public abstract class BaseCharacter extends GameElement {
         } else {
             if (axis == AXIS.X){
                 endYStart = (int)Math.floor(this.y);
-                endYEnd = (int)Math.floor(this.y + getHeight());
+                endYEnd = (int)Math.floor(this.y + 1f);
                 endXStart = (int)Math.floor(this.x + value);
-                if (endYEnd == Math.floor(this.y + getHeight())) {
+                if (endYEnd == Math.floor(this.y + 1f)) {
                     endYEnd--;
                 }
                 if (map.isTileSolid(endXStart, endYStart) || map.isTileSolid(endXStart, endYEnd)) {
@@ -130,9 +130,9 @@ public abstract class BaseCharacter extends GameElement {
                 }
             } else {
                 endXStart = (int)Math.floor(this.x);
-                endXEnd = (int)Math.floor(this.x + getWidth());
+                endXEnd = (int)Math.floor(this.x + 1f);
                 endYEnd = (int)Math.floor(this.y + value);
-                if (endXEnd == Math.floor(this.x + getWidth())) {
+                if (endXEnd == Math.floor(this.x + 1f)) {
                     endXEnd--;
                 }
                 if (map.isTileSolid(endXStart, endYEnd) || map.isTileSolid(endXEnd, endYEnd)) {

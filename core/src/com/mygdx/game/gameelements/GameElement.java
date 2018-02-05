@@ -38,7 +38,7 @@ public abstract class GameElement
 	protected boolean isDirty;
 	private DIRECTION direction;
 
-	protected float x, y;
+	protected float x, y, width, height;
     protected float state;
 	protected com.mygdx.game.gameelements.CharacterEventListener listener;
 	protected boolean shouldRender;
@@ -156,6 +156,8 @@ public abstract class GameElement
 			}
 		}
 		state = 0;
+		width = Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH;
+		height = Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT;
 		shouldRender = true;
 	}
 
@@ -189,10 +191,7 @@ public abstract class GameElement
                 break;
         }
         TextureRegion currentFrame = currentAnimation.getKeyFrame(state, true);
-        batch.draw(currentFrame, x * Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH,
-				y * Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT,
-				Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH,
-				Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT);
+        batch.draw(currentFrame, x * width, y * height, width, height);
     }
 
     /***
@@ -253,10 +252,10 @@ public abstract class GameElement
 	}
 
 	final public float getHeight() {
-		return 1;
+		return height;
 	}
 
 	final public float getWidth() {
-		return 1;
+		return width;
 	}
 }

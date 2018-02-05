@@ -44,8 +44,8 @@ public class ControllerManager extends ControllerAdapter {
             connected(controller);
         }
         Controllers.addListener(this);
-
-        //connected(new KeyboardController());
+        addPlayerController(new KeyboardController());
+        addPlayerController(new DummyController(1));
     }
 
 
@@ -118,6 +118,21 @@ public class ControllerManager extends ControllerAdapter {
         return event;
     }
 
+    public void addPlayerController(PlayerController newController) {
+        int index = newController.getControllerIndex();
+        if (index == controllerList.size()) {
+            controllerList.add(newController);
+        } else {
+            if (controllerList.get(index) == null)
+                controllerList.set(index, newController);
+            else
+                throw new RuntimeException("Another controller is already set to this port");
+        }
+        if (this.listener != null) {
+            this.listener.onControllerConnected(index, newController);
+        }
+    }
+
     @Override
     public void connected (Controller newController) {
         int i = 0;
@@ -129,15 +144,8 @@ public class ControllerManager extends ControllerAdapter {
         }
 
         PlayerController newPlayerController = new ExternalController(newController, i);
-        if (i == controllerList.size()) {
-            controllerList.add(newPlayerController);
-        } else {
-            controllerList.set(i, newPlayerController);
-        }
+        addPlayerController(newPlayerController);
         controllerMap.put(newController, newPlayerController);
-        if (this.listener != null) {
-            this.listener.onControllerConnected(i, newPlayerController);
-        }
     }
 
     @Override

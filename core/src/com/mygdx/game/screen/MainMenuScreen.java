@@ -37,7 +37,7 @@ public class MainMenuScreen extends MyGdxBaseScreen implements Screen, Controlle
 	@Override
 	public void ScreenInit() {
 		super.ScreenInit();
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 1; i++) {
 			GameElement.TYPE type = GameElement.TYPE.FEMALE_VILLAGER;
 			AICharacter newChar = new AICharacter(type, null, map);
 			newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));

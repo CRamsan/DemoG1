@@ -16,7 +16,7 @@ public class KeyboardController implements PlayerController {
     public boolean getButton(int buttonCode) {
         switch (buttonCode) {
             case 0:
-                return Gdx.input.isKeyPressed(Input.Keys.UP);
+                return Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isKeyPressed(Input.Keys.SPACE);
             case 1:
                 return Gdx.input.isKeyPressed(Input.Keys.DOWN);
             case 2:
@@ -24,7 +24,7 @@ public class KeyboardController implements PlayerController {
             case 3:
                 return Gdx.input.isKeyPressed(Input.Keys.RIGHT);
             case 4:
-                return Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isKeyPressed(Input.Keys.SPACE);
+                return Gdx.input.isKeyPressed(Input.Keys.UP);
             case 5:
                 return Gdx.input.isKeyPressed(Input.Keys.BACKSPACE);
             default:
@@ -36,7 +36,6 @@ public class KeyboardController implements PlayerController {
     public float getAxis(int axisCode) {
         switch (axisCode) {
             case 0:
-
                 if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
                     return 1;
                 else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))

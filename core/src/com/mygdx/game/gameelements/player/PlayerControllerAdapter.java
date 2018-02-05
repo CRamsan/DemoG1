@@ -24,8 +24,6 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 		this.controller = controller;
 		if (controller.supportsEvents())
 			this.controller.addListener(this);
-		else
-			throw new RuntimeException("Polling is not implemented yet");
 	}
 
 	public void removeController() {
@@ -33,16 +31,26 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 			throw new RuntimeException("Controller is already null");
 		if (controller.supportsEvents())
 			this.controller.removeListener(this);
-		else
-			throw new RuntimeException("Polling is not implemented yet");
 		this.controller = null;
 	}
 
 	public void poll() {
 		if (controller.supportsEvents())
 			throw new RuntimeException("This method should not be called when using events");
-		else
-			throw new RuntimeException("Polling is not implemented yet");
+
+		float value;
+		boolean isPressed;
+		for(int axis = 0; axis < 2; axis++)
+		{
+			value = controller.getAxis(axis);
+			if (value != 0)
+				axisMoved(controller, axis, value);
+		}
+
+		for(int code = 0; code < 10; code++)
+		{
+			isPressed = controller.getButton(code);
+		}
 	}
 
 	@Override

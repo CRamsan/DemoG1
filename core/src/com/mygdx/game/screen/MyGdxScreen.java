@@ -36,8 +36,8 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
 		gameParameters = parameterManager;
 		isPaused = false;
-		statueCount = 4;
-		aiCount = 10;
+		statueCount = 1;
+		aiCount = 1;
 	}
 
 	@Override
@@ -83,12 +83,11 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		debugRenderer.setProjectionMatrix(cam.combined);
 		debugRenderer.begin(ShapeRenderer.ShapeType.Line);
 		debugRenderer.setColor(Color.YELLOW);
-		debugRenderer.rect(0, 0, map.getWidth(), map.getHeight());
 		for (GameElement character : characterList) {
-			debugRenderer.rect(character.getX(), character.getY(), 1, 1);
+			debugRenderer.rect(character.getX() * character.getWidth(), character.getY() * character.getHeight(), character.getWidth(), character.getHeight());
 		}
 		for (GameElement statue : collideableList) {
-			debugRenderer.rect(statue.getX(), statue.getY(), 1, 1);
+			debugRenderer.rect(statue.getX() * statue.getWidth(), statue.getY() * statue.getHeight(), statue.getWidth(), statue.getHeight());
 		}
 		debugRenderer.end();
 	}
