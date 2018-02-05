@@ -7,8 +7,8 @@ public class Globals {
     public static final String ASSET_SKIN_FILE = "uiskin.json";
     public static final int ASSET_SPRITE_SHEET_ROWS = 2;
     public static final int ASSET_SPRITE_SHEET_COLUMNS = 6;
-    public static final int ASSET_SPRITE_SHEET_SPRITE_WIDTH = 16;
-    public static final int ASSET_SPRITE_SHEET_SPRITE_HEIGHT = 16;
+    public static final int ASSET_SPRITE_SHEET_SPRITE_WIDTH = 32;
+    public static final int ASSET_SPRITE_SHEET_SPRITE_HEIGHT = 32;
     public static final int TILE_SIZE = 1;
     public static final int MAGNIFICATION = 4;
     public static final int ANIMATION_COLUMNS = 3;

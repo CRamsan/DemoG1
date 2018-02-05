@@ -6,12 +6,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.viewport.*;
-import com.mygdx.game.controller.ControllerManager;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.Globals;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.controller.ControllerManager;
 import com.mygdx.game.gameelements.GameParameterManager;
 
 import java.util.ArrayList;
@@ -105,7 +108,7 @@ public class UISystem {
     private UISystem() {
         skin = new Skin(Gdx.files.internal(Globals.ASSET_SKIN_FILE));
         BitmapFont font = skin.getFont("commodore-64");
-        font.getData().setScale(0.5f);
+        //font.getData().setScale(0.5f);
         loadedTextures = new ArrayList<Texture>();
         uiVisible = false;
     }
@@ -113,7 +116,8 @@ public class UISystem {
     private void initSingleStage() {
         if (stage != null)
             return;
-        stage = new Stage(new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT));
+        //stage = new Stage(new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT));
+        stage = new Stage(new ScreenViewport());
         sequenceMap = new HashMap<Button, HashMap<Globals.UI_EVENTS, Button>>();
         defaultSelectionMap = new HashMap<Actor, Button>();
         stage.setDebugAll(true);

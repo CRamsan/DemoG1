@@ -12,7 +12,7 @@ public class MyGdxGame extends Game {
 
     private static MyGdxGame getInstance() { return ourInstance; }
 
-    private static boolean isFrameLimited() { return ourInstance.isFrameLimited; }
+    private static boolean isFrameLimited() { return ourInstance.useFixedStep; }
 
     public static void startGameScreen(GameParameterManager parameterManager) {
         if (MyGdxGame.parameterManager == null) {
@@ -36,10 +36,10 @@ public class MyGdxGame extends Game {
         getInstance().setScreen(screen);
     }
 
-    private boolean isFrameLimited;
+    private boolean useFixedStep;
 
-    public MyGdxGame(boolean isFrameLimited) {
-        this.isFrameLimited = isFrameLimited;
+    public MyGdxGame(boolean useFixedStep) {
+        this.useFixedStep = useFixedStep;
     }
 
     @Override

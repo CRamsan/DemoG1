@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.AudioManager;
 import com.mygdx.game.Globals;
@@ -29,19 +29,19 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerConnectionLis
 
     protected FPSLogger logger;
     protected float timeBuffer;
-    protected boolean isFrameLimited;
+    protected boolean useFixedStep;
 
     protected TiledGameMap map;
 
-    public MyGdxBaseScreen(boolean isFrameLimited)
+    public MyGdxBaseScreen(boolean useFixedStep)
     {
         batch = new SpriteBatch();
         timeBuffer = 0;
         cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
-        //viewport = new ScreenViewport(cam);
-        viewport = new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, cam);
+        viewport = new ScreenViewport(cam);
+        //viewport = new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, cam);
         logger = new FPSLogger();
-        this.isFrameLimited = isFrameLimited;
+        this.useFixedStep = useFixedStep;
         map = new TiledGameMap();
     }
 
@@ -63,16 +63,16 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerConnectionLis
 
     @Override
     public final void render(float delta) {
-        if (isFrameLimited) {
-            performCustomUpdate(delta);
-            performRender(delta);
-        } else {
+        if (useFixedStep) {
             timeBuffer += Gdx.graphics.getDeltaTime();
             while (timeBuffer > Globals.FRAME_TIME) {
                 performCustomUpdate();
                 performRender();
                 timeBuffer-=Globals.FRAME_TIME;
             }
+        } else {
+            performCustomUpdate(delta);
+            performRender(delta);
         }
         logger.log();
     }
