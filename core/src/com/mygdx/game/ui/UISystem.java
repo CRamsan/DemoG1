@@ -334,8 +334,6 @@ public class UISystem {
     }
 
     public void resize(int width, int height){
-        if (!uiVisible)
-            return;
         stage.getViewport().update(width, height, true);
     }
 

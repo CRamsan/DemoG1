@@ -22,6 +22,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	private Map<Integer, PlayerCharacter> playerCharacterMap;
 	private GameParameterManager gameParameters;
 	private ShapeRenderer debugRenderer;
+	private PlayerCharacter pauseCaller;
 
 	private boolean isPaused;
 	private int statueCount;
@@ -178,12 +179,15 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
     public void onCharacterPause(PlayerCharacter character) {
 	    if (isPaused)
         {
-            UISystem.hideMenu();
-            isPaused = false;
+        	if (pauseCaller == character) {
+				UISystem.hideMenu();
+				isPaused = false;
+			}
         }
         else {
             UISystem.displayPauseMenu();
             isPaused = true;
+            pauseCaller = character;
         }
     }
 
@@ -242,5 +246,6 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 	@Override
 	public void onPauseMenuDisappeared() {
 		isPaused = false;
+		pauseCaller = null;
 	}
 }
