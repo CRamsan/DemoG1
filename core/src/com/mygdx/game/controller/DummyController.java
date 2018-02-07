@@ -5,7 +5,7 @@ import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.math.Vector3;
 
 /**
- * Class that implements the PlayerControllerAdapter but does not do any action.
+ * Class that implements the PlayerController but does not do any action.
  * Great for testing and simulating other controllers.
  */
 public class DummyController implements PlayerController {

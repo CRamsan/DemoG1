@@ -1,6 +1,6 @@
 package com.mygdx.game.gameelements;
 
-import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Globals;
 import com.mygdx.game.TiledGameMap;
 
@@ -19,8 +19,7 @@ public class AICharacter extends BaseCharacter
 	}
 
 	@Override
-	public void update(float delta) {
-		super.update(delta);
+	public void updateInputs() {
 		if (isDead)
 			return;
 		aiState++;
@@ -30,6 +29,13 @@ public class AICharacter extends BaseCharacter
 			lastMovementVector = new Vector2((float)((Globals.rand.nextFloat() * 2) - 1)/ 3f,
 					(float)((Globals.rand.nextFloat() * 2) - 1)/ 3f);
 		}
+	}
+
+	@Override
+	public void update(float delta) {
+		super.update(delta);
+		if (isDead)
+			return;
 		this.handleMovement(lastMovementVector.x, lastMovementVector.y, delta);
 	}
 }

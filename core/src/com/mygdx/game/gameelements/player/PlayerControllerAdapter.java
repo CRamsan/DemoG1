@@ -7,13 +7,21 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.controller.ExternalControllerListener;
 import com.mygdx.game.controller.PlayerController;
 
+import java.util.HashMap;
+
 public class PlayerControllerAdapter implements ExternalControllerListener, ControllerListener {
 
 	private PlayerController controller;
 	private PlayerControllerAdapterInterface player;
+	private HashMap<Integer, Boolean> buttonStateMap;
 
 	public PlayerControllerAdapter(PlayerControllerAdapterInterface player) {
 		this.player = player;
+		this.buttonStateMap = new HashMap<Integer, Boolean>();
+		for(int code = 0; code < 10; code++)
+		{
+			buttonStateMap.put(code, false);
+		}
 	}
 
 	public void setController(PlayerController controller) {
@@ -43,13 +51,28 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 		for(int axis = 0; axis < 2; axis++)
 		{
 			value = controller.getAxis(axis);
-			if (value != 0)
-				axisMoved(controller, axis, value);
+			axisMoved(controller, axis, value);
 		}
 
-		for(int code = 0; code < 10; code++)
+		for(int code = 0; code < 8; code++)
 		{
 			isPressed = controller.getButton(code);
+			if (isPressed) {
+				// Check if the button was already pressed.
+				// Only call the callback if the button was not
+				// previously pressed.
+				if (!buttonStateMap.get(code)) {
+					buttonDown(controller, code);
+					buttonStateMap.put(code, true);
+				}
+			} else {
+				// Same thing. Only call buttonUp if the
+				// button was previously pressed.
+				if (buttonStateMap.get(code)) {
+					buttonUp(controller, code);
+					buttonStateMap.put(code, false);
+				}
+			}
 		}
 	}
 
@@ -67,11 +90,7 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 
 	@Override
 	public boolean axisMoved(PlayerController controller, int axisCode, float value) {
-		float modifier = 1f;
-		if (axisCode == 1)
-			modifier = -1f;
-
-		this.player.handleControllerInput(axisCode, value * modifier);
+		this.player.handleControllerInput(axisCode, value);
 		return false;
 	}
 
@@ -89,7 +108,10 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 
 	@Override
 	public boolean axisMoved(Controller controller, int axisCode, float value) {
-		return this.axisMoved(this.controller, axisCode, value);
+		float modifier = 1f;
+		if (axisCode == 1)
+			modifier = -1f;
+		return this.axisMoved(this.controller, axisCode, value * modifier);
 	}
 
 	@Override

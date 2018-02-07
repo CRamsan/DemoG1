@@ -26,7 +26,12 @@ public abstract class BaseCharacter extends GameElement {
     }
 
     /***
-     * Call this method to update the state of the object. This method will handle inputs and updating sny state.
+     * Call this method to handle inputs. This will not change the state of the character.
+     */
+    public abstract void updateInputs();
+
+    /***
+     * Call this method to update the state of the object. This method will not handle inputs, only updating the state.
      */
     @Override
     public void update(float delta) {
@@ -64,7 +69,7 @@ public abstract class BaseCharacter extends GameElement {
                 movement.y = testVectorMovement(movement.y, AXIS.Y);
                 this.y += movement.y;
             }
-        } else if (absX < absY){
+        } else {
             movement.y = testVectorMovement(movement.y, AXIS.Y);
             this.y += movement.y;
             if (absX != 0) {

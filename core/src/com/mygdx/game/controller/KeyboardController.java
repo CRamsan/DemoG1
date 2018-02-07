@@ -7,7 +7,7 @@ import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.math.Vector3;
 
 /**
- * Class that exposes the keyboard as a controller by implementing the PlayerControllerAdapter
+ * Class that exposes the keyboard as a controller by implementing the PlayerController
  * interface.
  */
 public class KeyboardController implements PlayerController {
@@ -27,8 +27,10 @@ public class KeyboardController implements PlayerController {
                 return Gdx.input.isKeyPressed(Input.Keys.UP);
             case 5:
                 return Gdx.input.isKeyPressed(Input.Keys.BACKSPACE);
+            case 7:
+                return Gdx.input.isKeyPressed(Input.Keys.P);
             default:
-                throw new RuntimeException("Not Implemented");
+                return false;
         }
     }
 
@@ -37,9 +39,9 @@ public class KeyboardController implements PlayerController {
         switch (axisCode) {
             case 0:
                 if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-                    return 1;
-                else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
                     return -1;
+                else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+                    return 1;
                 else
                     return 0;
             case 1:

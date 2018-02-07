@@ -6,7 +6,7 @@ import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.math.Vector3;
 
 /**
- * Public class that wraps around the natvie libgdx Controller
+ * Public class that wraps around the native libgdx Controller
  * This method expands with controller by implementing the PlayerControllerAdapter interface
  * and an index that represents the port of the controller.
  */

@@ -32,8 +32,8 @@ public class UISystem {
         ourInstance.initMainMenuInternal();
     }
 
-    public static void initPauseMenu() {
-        ourInstance.initPauseMenuInternal();
+    public static void initPauseMenu(PauseMenuEventListener pauseMenuListener) {
+        ourInstance.initPauseMenuInternal(pauseMenuListener);
     }
 
     public static void initConfirmationMenu() {
@@ -95,6 +95,8 @@ public class UISystem {
     private HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap;
     private HashMap<Actor, Button> defaultSelectionMap;
 
+    private PauseMenuEventListener pauseMenuListener;
+
     private boolean uiVisible;
     private Button selected;
 
@@ -152,16 +154,18 @@ public class UISystem {
         setDefaultSelection(mainPane, firstButton);
     }
 
-    private void initPauseMenuInternal() {
+    private void initPauseMenuInternal(PauseMenuEventListener listener) {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
         initSingleStage();
 
+        this.pauseMenuListener = listener;
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
         Button button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Resume", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 UISystem.hideMenu();
+                pauseMenuListener.onPauseMenuDisappeared();
             }
         }, sequenceMap);
         Button button2 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Quit", skin, new ChangeListener() {
@@ -268,6 +272,7 @@ public class UISystem {
 
     public void displayPauseMenuInternal() {
         setActorAsVisible(pauseMenu);
+        pauseMenuListener.onPauseMenuAppeared();
     }
 
     public void displayEndGameMenuInternal() {

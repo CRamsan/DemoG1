@@ -25,30 +25,37 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		this.controller = new PlayerControllerAdapter(this);
 		this.collideableSet = new HashSet<Collideable>();
 		this.Id = Id;
-		this.isEventBased = true;
+		this.isEventBased = false;
 	}
-	
+
+	@Override
+	public void updateInputs() {
+		if (isDead)
+			return;
+
+		if (!isEventBased) {
+			controller.poll();
+		}
+		if(hasAttacked){
+			attack();
+		}
+		if(hasPaused){
+			onCharacterPause();
+		}
+		// After handling buttons, reset them back to neutral(false)
+		// Do not do the same for axises since those will receive an
+		// event once the axis goes back to normal.
+		hasAttacked = false;
+		hasPaused = false;
+	}
+
 	@Override
 	public void update(float delta) {
 		super.update(delta);
 		if (isDead)
 			return;
-		if (!isEventBased) {
-			controller.poll();
-		}
-        if(hasAttacked){
-            attack();
-        }
-        if(hasPaused){
-			onCharacterPause();
-        }
 
 		this.handleMovement(dx, dy, delta);
-        // After handling buttons, reset them back to neutral(false)
-		// Do not do the same for axises since those will receive an
-		// event once the axis goes back to normal.
-        hasAttacked = false;
-        hasPaused = false;
 	}
 
 	public void handleControllerInput(int buttonCode, boolean value) {
@@ -104,6 +111,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 
 	public void setController(PlayerController controller) {
 		this.controller.setController(controller);
+		this.isEventBased = controller.supportsEvents();
 	}
 
 	public void removeController() {

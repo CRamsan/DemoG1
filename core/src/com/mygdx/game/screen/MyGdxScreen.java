@@ -6,6 +6,7 @@ import com.mygdx.game.Globals;
 import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.gameelements.*;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
+import com.mygdx.game.ui.PauseMenuEventListener;
 import com.mygdx.game.ui.UISystem;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListener {
+public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListener, PauseMenuEventListener {
 
 	private List<BaseCharacter> characterList;
 	private List<PlayerCharacter> playerList;
@@ -36,8 +37,8 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
 		gameParameters = parameterManager;
 		isPaused = false;
-		statueCount = 1;
-		aiCount = 1;
+		statueCount = 4;
+		aiCount = 10;
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		for (int i = 0; i < statueCount; i++) {
 			createStatue();
 		}
-		UISystem.initPauseMenu();
+		UISystem.initPauseMenu(this);
 		UISystem.initConfirmationMenu();
 		UISystem.initEndGameMenu();
 	}
@@ -59,7 +60,14 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		for (Collideable collideable : collideableList) {
 			collideable.update(delta);
 		}
-		for (GameElement character : characterList) {
+		for (BaseCharacter character : characterList) {
+			character.updateInputs();
+		}
+
+		if (isPaused)
+			return;
+
+		for (BaseCharacter character : characterList) {
 			character.update(delta);
 		}
 		for (PlayerCharacter player : playerList) {
@@ -225,5 +233,14 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 
 	protected int levelId() {
 		return 1;
+	}
+
+	@Override
+	public void onPauseMenuAppeared() {
+	}
+
+	@Override
+	public void onPauseMenuDisappeared() {
+		isPaused = false;
 	}
 }
