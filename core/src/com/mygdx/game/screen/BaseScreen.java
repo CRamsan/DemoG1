@@ -17,14 +17,13 @@ import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.ui.UISystem;
 
 /**
- * Base class to handle all code shared across all scenes. This class will confgure the camera, the background map
+ * Base class to handle all code shared across all scenes. This class will configure the camera, the background map
  * as well as calling the update method.
  */
-public abstract class MyGdxBaseScreen implements Screen, ControllerConnectionListener {
+public abstract class BaseScreen implements Screen, ControllerConnectionListener {
 
     protected OrthographicCamera cam;
     protected SpriteBatch batch;
-    //protected ScreenViewport viewport;
     protected Viewport viewport;
 
     protected FPSLogger logger;
@@ -33,7 +32,7 @@ public abstract class MyGdxBaseScreen implements Screen, ControllerConnectionLis
 
     protected TiledGameMap map;
 
-    public MyGdxBaseScreen(boolean useFixedStep)
+    public BaseScreen(boolean useFixedStep)
     {
         batch = new SpriteBatch();
         timeBuffer = 0;

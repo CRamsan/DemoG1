@@ -96,6 +96,7 @@ public class UISystem {
     private HashMap<Actor, Button> defaultSelectionMap;
 
     private PauseMenuEventListener pauseMenuListener;
+    private GameParameterManager gameParams;
 
     private boolean uiVisible;
     private Button selected;
@@ -136,14 +137,43 @@ public class UISystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 UISystem.hideMenu();
+                gameParams = GameParameterManager.createNinjaPartyManager();
                 UISystem.displayGetReadyMenu();
             }
         }, sequenceMap);
 
-        Button secondButton = UIToolKit.AddButtonToParentWithAction(mainPane,Globals.TEXT_LABEL_CATCH_A_THIEF, skin, null, sequenceMap);
-        Button thirdButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_KNIGHTS_VS_NINJAS, skin, null, sequenceMap);
-        Button fourthButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_DEATH_RACE, skin, null, sequenceMap);
-        Button fifthButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_ASSASSIN, skin, null, sequenceMap);
+        Button secondButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_CATCH_A_THIEF, skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.hideMenu();
+                gameParams = GameParameterManager.createCatchAThiefManager();
+                UISystem.displayGetReadyMenu();
+            }
+        }, sequenceMap);
+        Button thirdButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_KNIGHTS_VS_NINJAS, skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.hideMenu();
+                gameParams = GameParameterManager.createKnightsVsThiefsManager();
+                UISystem.displayGetReadyMenu();
+            }
+        }, sequenceMap);
+        Button fourthButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_DEATH_RACE, skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.hideMenu();
+                gameParams = GameParameterManager.createDeathRaceManager();
+                UISystem.displayGetReadyMenu();
+            }
+        }, sequenceMap);
+        Button fifthButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_ASSASSIN, skin, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                UISystem.hideMenu();
+                gameParams = GameParameterManager.createAssassinsManager();
+                UISystem.displayGetReadyMenu();
+            }
+        }, sequenceMap);
 
         UIToolKit.LinkUpAndDown(firstButton, secondButton, sequenceMap);
         UIToolKit.LinkUpAndDown(secondButton, thirdButton, sequenceMap);
@@ -248,7 +278,7 @@ public class UISystem {
             public void changed(ChangeEvent event, Actor actor) {
                 if (controller.enoughPlayers()) {
                     UISystem.hideMenu();
-                    MyGdxGame.startGameScreen(GameParameterManager.createStatueHuntManager());
+                    MyGdxGame.startGameScreen(gameParams);
                 }
             }
         }, sequenceMap);

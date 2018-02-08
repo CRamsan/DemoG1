@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Class to manage the main manu screen. It will initialize the UI components and any objects needed or the background.
  */
-public class MainMenuScreen extends MyGdxBaseScreen implements Screen, ControllerConnectionListener {
+public class MainMenuScreen extends BaseScreen implements Screen, ControllerConnectionListener {
 
 	private List<BaseCharacter> characterList;
 	private HashMap<Integer, PlayerController> preInitControllerMap;

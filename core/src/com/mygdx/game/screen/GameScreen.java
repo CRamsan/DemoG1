@@ -14,21 +14,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListener, PauseMenuEventListener {
+public abstract class GameScreen extends BaseScreen implements CharacterEventListener, PauseMenuEventListener {
 
 	private List<BaseCharacter> characterList;
 	private List<PlayerCharacter> playerList;
 	private List<Collideable> collideableList;
 	private Map<Integer, PlayerCharacter> playerCharacterMap;
-	private GameParameterManager gameParameters;
 	private ShapeRenderer debugRenderer;
 	private PlayerCharacter pauseCaller;
 
 	private boolean isPaused;
-	private int statueCount;
-	private int aiCount;
 
-	public MyGdxScreen(boolean isFrameLimited, GameParameterManager parameterManager)
+	public GameScreen(boolean isFrameLimited)
 	{
 		super(isFrameLimited);
 		characterList = new ArrayList<BaseCharacter>();
@@ -36,21 +33,12 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		collideableList = new ArrayList<Collideable>();
 		debugRenderer = new ShapeRenderer();
 		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
-		gameParameters = parameterManager;
 		isPaused = false;
-		statueCount = 4;
-		aiCount = 10;
 	}
 
 	@Override
 	public void ScreenInit() {
 		super.ScreenInit();
-		for (int i = 0; i < aiCount; i++) {
-			createAICharacter();
-		}
-		for (int i = 0; i < statueCount; i++) {
-			createStatue();
-		}
 		UISystem.initPauseMenu(this);
 		UISystem.initConfirmationMenu();
 		UISystem.initEndGameMenu();
@@ -116,7 +104,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		map.render(cam);
 	}
 
-	private void createPlayerCharacter(int index, PlayerController controller) {
+	protected void createPlayerCharacter(int index, PlayerController controller) {
 		PlayerCharacter newChar = new PlayerCharacter(index, GameElement.TYPE.EARTH, this, map);
 		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 		newChar.setController(controller);
@@ -125,16 +113,12 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		playerCharacterMap.put(index, newChar);
 	}
 
-	private void createAICharacter() {
-		GameElement.TYPE type = GameElement.TYPE.LIGHT;
-		AICharacter newChar = new AICharacter(type, this, map);
-		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
-		characterList.add(newChar);
+	protected void addAICharacter(AICharacter character) {
+		characterList.add(character);
 	}
 
-	private void createStatue() {
-		Collideable newCollideable = new Collideable(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
-		collideableList.add(newCollideable);
+	protected void addCollidable(Collideable collideable) {
+		collideableList.add(collideable);
 	}
 
 	@Override
@@ -208,6 +192,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 			throw new RuntimeException("Controller was not previously connected");
 		}
 	}
+
 	private void enablePlayerCharacter(int port, PlayerController controller) {
 		PlayerCharacter character = playerCharacterMap.get(port);
 		character.setController(controller);
@@ -218,15 +203,14 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 		character.removeController();
 	}
 
-	@Override
-	public void onCharacterCollideableTouched(int statueCount, PlayerCharacter player) {
-		if (statueCount == this.statueCount) {
-			for (PlayerCharacter closingPlayer : playerList) {
-				closingPlayer.disableCharacter();
-			}
-			UISystem.displayEndGameMenu();
+	protected void disableAllPlayers() {
+		for (BaseCharacter closingPlayer : characterList) {
+			closingPlayer.disableCharacter();
 		}
 	}
+
+	@Override
+	public abstract void onCharacterCollideableTouched(int collideableIndex, PlayerCharacter player);
 
 	@Override
 	public void onCharacterDied(PlayerCharacter  victim, PlayerCharacter killer) {
@@ -235,9 +219,7 @@ public class MyGdxScreen extends MyGdxBaseScreen implements CharacterEventListen
 
 	}
 
-	protected int levelId() {
-		return 1;
-	}
+	protected abstract int levelId();
 
 	@Override
 	public void onPauseMenuAppeared() {
