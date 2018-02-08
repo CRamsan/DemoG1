@@ -1,4 +1,5 @@
 package com.mygdx.game.gameelements.player;
+import com.mygdx.game.AudioManager;
 import com.mygdx.game.TiledGameMap;
 import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.gameelements.BaseCharacter;
@@ -101,6 +102,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	 * This function will send an event to the listener that this character has attacked.
 	 */
 	protected void attack() {
+		AudioManager.PlaySound(AudioManager.SOUND.ATTACK);
 		this.listener.onCharacterAttack(this);
 	}
 

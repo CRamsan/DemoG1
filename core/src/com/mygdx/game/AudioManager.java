@@ -1,19 +1,25 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+
+import java.util.HashMap;
 
 /**
  * Singleton class that provides a simple API to handle sound and music
  */
 public class AudioManager {
 
-    public enum MUSIC {
+    private static HashMap<MUSIC, Music> musicMap;
+    private static HashMap<SOUND, Sound> soundMap;
 
+    public enum MUSIC {
+        BG_1
     }
 
     public enum SOUND {
-
+        ATTACK
     }
 
     /**
@@ -22,6 +28,12 @@ public class AudioManager {
      */
     public static void LoadAssets(int level)
     {
+        musicMap = new HashMap<MUSIC, Music>();
+        soundMap = new HashMap<SOUND, Sound>();
+        Music music = Gdx.audio.newMusic(Gdx.files.internal("bg_music.wav"));
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("knife-slash.ogg"));
+        musicMap.put(MUSIC.BG_1, music);
+        soundMap.put(SOUND.ATTACK, sound);
     }
     
     /**
@@ -29,6 +41,10 @@ public class AudioManager {
      */
     public static void UnloadAssets()
     {
+        soundMap.get(SOUND.ATTACK).dispose();
+        musicMap.get(MUSIC.BG_1).dispose();
+        soundMap = null;
+        musicMap = null;
     }
 
     public static void PlaySound(SOUND sound) {
@@ -42,10 +58,10 @@ public class AudioManager {
     private static AudioManager ourInstance = new AudioManager();
 
     private void PlaySoundInternal() {
-        Gdx.app.log(this.getClass().toString(), "Sound");
+        soundMap.get(SOUND.ATTACK).play();
     }
 
     private void PlayMusicInternal() {
-        Gdx.app.log(this.getClass().toString(), "Music");
+        musicMap.get(MUSIC.BG_1).play();
     }
 }

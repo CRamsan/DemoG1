@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.AudioManager;
 import com.mygdx.game.Globals;
@@ -37,8 +37,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         batch = new SpriteBatch();
         timeBuffer = 0;
         cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
-        viewport = new ScreenViewport(cam);
-        //viewport = new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, cam);
+        //viewport = new ScreenViewport(cam);
+        viewport = new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, cam);
         logger = new FPSLogger();
         this.useFixedStep = useFixedStep;
         map = new TiledGameMap();
@@ -56,8 +56,10 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             onControllerConnected(portIndex, controller);
             portIndex++;
         }
-        cam.position.set(map.getWidth()/2f, map.getHeight()/2f, 1);
+        cam.position.set(Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getWidth()/2f,
+                Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getHeight()/2f, 1);
 	    AudioManager.LoadAssets(levelId());
+        AudioManager.PlayMusic();
     }
 
     @Override
