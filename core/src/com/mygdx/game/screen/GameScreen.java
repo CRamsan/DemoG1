@@ -22,10 +22,11 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	private Map<Integer, PlayerCharacter> playerCharacterMap;
 	private ShapeRenderer debugRenderer;
 	private PlayerCharacter pauseCaller;
+	private GameParameterManager parameterManager;
 
 	private boolean isPaused;
 
-	public GameScreen(boolean isFrameLimited)
+	public GameScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
 		super(isFrameLimited);
 		characterList = new ArrayList<BaseCharacter>();
@@ -34,6 +35,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		debugRenderer = new ShapeRenderer();
 		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
 		isPaused = false;
+		this.parameterManager = parameterManager;
 	}
 
 	@Override
@@ -62,8 +64,8 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		for (PlayerCharacter player : playerList) {
 			if (player.hasMoved()) {
 				for (Collideable collideable : collideableList) {
-					if (player.getCenterPosition().dst(collideable.getCenterPosition()) < 1) {
-						player.onStatueContact(collideable);
+					if (player.getCenterPosition().dst(collideable.getCenterPosition()) < (player.getRadious() + collideable.getRadious())) {
+						player.onCollideableContact(collideable);
 					}
 				}
 			}
@@ -81,10 +83,10 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		debugRenderer.begin(ShapeRenderer.ShapeType.Line);
 		debugRenderer.setColor(Color.YELLOW);
 		for (GameElement character : characterList) {
-			debugRenderer.rect(character.getX() * character.getWidth(), character.getY() * character.getHeight(), character.getWidth(), character.getHeight());
+			debugRenderer.rect(character.getX() * Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT, character.getY() * Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT, character.getWidth(), character.getHeight());
 		}
 		for (GameElement statue : collideableList) {
-			debugRenderer.rect(statue.getX() * statue.getWidth(), statue.getY() * statue.getHeight(), statue.getWidth(), statue.getHeight());
+			debugRenderer.rect(statue.getX() * Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT, statue.getY() * Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT, statue.getWidth(), statue.getHeight());
 		}
 		debugRenderer.end();
 	}
@@ -104,8 +106,15 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		map.render(cam);
 	}
 
-	protected void createPlayerCharacter(int index, PlayerController controller) {
-		PlayerCharacter newChar = new PlayerCharacter(index, GameElement.TYPE.EARTH, this, map);
+	protected void createPlayerCharacter(int index, PlayerController controller, GameElement.TYPE type) {
+		PlayerCharacter newChar = new PlayerCharacter(index, type, this, map);
+		if (type == GameElement.TYPE.EARTH) {
+
+        } else if(type == GameElement.TYPE.PIRATE){
+
+        } else {
+		    throw new RuntimeException("Type not supported for PlayerCharacter" + type);
+        }
 		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 		newChar.setController(controller);
 		characterList.add(newChar);
@@ -119,6 +128,10 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	protected void addCollidable(Collideable collideable) {
 		collideableList.add(collideable);
+	}
+
+	protected void removeCollidable(Collideable collideable) {
+		collideableList.remove(collideable);
 	}
 
 	@Override
@@ -152,6 +165,10 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	    for (BaseCharacter otherCharacter : characterList) {
 	        if (character.equals(otherCharacter))
 	            continue;
+	        if (otherCharacter.getType() == GameElement.TYPE.PIRATE) {
+	        	// Ignore collisions with other Snipers
+	        	continue;
+			}
 	        if (character.getCenterPosition().dst(otherCharacter.getCenterPosition()) < 0.5) {
 	            otherCharacter.onKilled(character);
 	            break;
@@ -177,10 +194,11 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	@Override
 	public void onControllerConnected(int port, PlayerController controller) {
+		GameElement.TYPE type = parameterManager.getTypeForPlayer(port);
 		if (playerCharacterMap.containsKey(port)) {
 			enablePlayerCharacter(port, controller);
 		} else {
-			createPlayerCharacter(port, controller);
+			createPlayerCharacter(port, controller, type);
 		}
 	}
 
@@ -210,13 +228,17 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	@Override
-	public abstract void onCharacterCollideableTouched(int collideableIndex, PlayerCharacter player);
+	public abstract void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player);
 
 	@Override
 	public void onCharacterDied(PlayerCharacter  victim, PlayerCharacter killer) {
-		if (playerCharacterMap.remove(victim.getId()) != null) {
+		victim.disableCharacter();
+		playerCharacterMap.remove(victim.getId());
+		playerList.remove(victim);
+		if (playerList.size() == 1) {
+			disableAllPlayers();
+			UISystem.displayEndGameMenu();
 		}
-
 	}
 
 	protected abstract int levelId();

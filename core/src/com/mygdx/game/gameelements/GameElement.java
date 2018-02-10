@@ -29,7 +29,7 @@ public abstract class GameElement
 	 */
 	public enum TYPE {
 		FIRE, WATER, PLANT,
-		EARTH, LIGHT, STATUS,
+		EARTH, LIGHT, STATUE,
 		MALE_VILLAGER, FEMALE_VILLAGER, TRADER,
 		WIZARD, KNIGHT, PIRATE
 	}
@@ -38,7 +38,7 @@ public abstract class GameElement
 	protected boolean isDirty;
 	private DIRECTION direction;
 
-	protected float x, y, width, height;
+	protected float x, y, width, height, scale;
     protected float state;
 	protected com.mygdx.game.gameelements.CharacterEventListener listener;
 	protected boolean shouldRender;
@@ -64,6 +64,7 @@ public abstract class GameElement
         this.type = type;
         this.x = x;
         this.y = y;
+        this.scale = 1f;
         this.listener = listener;
 		this.direction = DIRECTION.values()[ Globals.rand.nextInt(4)];
 		this.isDirty = false;
@@ -95,7 +96,7 @@ public abstract class GameElement
 				texture.getHeight() / Globals.ASSET_SPRITE_SHEET_ROWS);
 		TextureRegion textureRegion = null;
 		switch (this.type) {
-			case STATUS:
+			case STATUE:
 				textureRegion = spriteRegion[0][5];
 				break;
 			case EARTH:
@@ -190,8 +191,10 @@ public abstract class GameElement
                 currentAnimation = walkRightAnimation;
                 break;
         }
+        float xPos = x * Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH;
+        float yPos = y * Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH;
         TextureRegion currentFrame = currentAnimation.getKeyFrame(state, true);
-        batch.draw(currentFrame, x * width, y * height, width, height);
+        batch.draw(currentFrame, xPos, yPos, width, height);
     }
 
     /***
@@ -218,7 +221,7 @@ public abstract class GameElement
 	}
 
     /***
-     * This helper methos will transport the character to the provided coordinates in world space. The direction will
+     * This helper method will transport the character to the provided coordinates in world space. The direction will
      * not be affected by this call.
      * @param x
      * @param y
@@ -240,8 +243,18 @@ public abstract class GameElement
 	}
 
 	final public Vector2 getCenterPosition() {
-	    return new Vector2(x + 0.5f, y + 0.5f);
+	    return new Vector2(x + (scale/2f), y + (scale/2));
     }
+
+    final public float getRadious() {
+		return scale / 2f;
+	}
+
+	final public void setScale(float scale) {
+		this.width = this.width * scale;
+		this.height = this.height * scale;
+		this.scale = scale;
+	}
 
     final public float getX() {
 		return x;
@@ -257,5 +270,13 @@ public abstract class GameElement
 
 	final public float getWidth() {
 		return width;
+	}
+
+	final public TYPE getType() {
+		return type;
+	}
+
+	final public void setType(TYPE type) {
+		this.type = type;
 	}
 }

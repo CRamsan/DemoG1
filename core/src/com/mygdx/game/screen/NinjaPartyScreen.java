@@ -15,7 +15,7 @@ public class NinjaPartyScreen extends GameScreen {
 
 	public NinjaPartyScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
-		super(isFrameLimited);
+		super(isFrameLimited, parameterManager);
 		statueCount = parameterManager.getGoal();
 		aiCount = 10;
 	}
@@ -44,7 +44,7 @@ public class NinjaPartyScreen extends GameScreen {
 	}
 
 	@Override
-	public void onCharacterCollideableTouched(int collideableIndex, PlayerCharacter player) {
+	public void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player) {
 		if (collideableIndex == this.statueCount) {
 			disableAllPlayers();
 			UISystem.displayEndGameMenu();

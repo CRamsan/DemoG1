@@ -8,16 +8,20 @@ import com.mygdx.game.gameelements.GameParameterManager;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
 import com.mygdx.game.ui.UISystem;
 
+import java.util.ArrayList;
+
 public class CatchAThiefScreen extends GameScreen {
 
-	private int statueCount;
+	private int countCount;
 	private int aiCount;
+	private ArrayList<Collideable> removedQueue;
 
 	public CatchAThiefScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
-		super(isFrameLimited);
-		statueCount = 4;
+		super(isFrameLimited, parameterManager);
+		countCount = parameterManager.getGoal();
 		aiCount = 10;
+		removedQueue = new ArrayList<Collideable>();
 	}
 
 	@Override
@@ -26,12 +30,13 @@ public class CatchAThiefScreen extends GameScreen {
 		for (int i = 0; i < aiCount; i++) {
 			createAICharacter();
 		}
-		for (int i = 0; i < statueCount; i++) {
-			createStatue();
+		for (int i = 0; i < countCount; i++) {
+			createCoin();
 		}
 	}
-	private void createStatue() {
+	private void createCoin() {
 		Collideable newCollideable = new Collideable(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
+		newCollideable.setScale(0.2f);
 		addCollidable(newCollideable);
 	}
 
@@ -43,8 +48,19 @@ public class CatchAThiefScreen extends GameScreen {
 	}
 
 	@Override
-	public void onCharacterCollideableTouched(int collideableIndex, PlayerCharacter player) {
-		if (collideableIndex == this.statueCount) {
+	protected void performCustomUpdate(float delta) {
+		super.performCustomUpdate(delta);
+		for (Collideable collideable : removedQueue)
+		{
+			removeCollidable(collideable);
+		}
+		removedQueue.clear();
+	}
+
+	@Override
+	public void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player) {
+		removedQueue.add(collideable);
+		if (collideableIndex == this.countCount) {
 			disableAllPlayers();
 			UISystem.displayEndGameMenu();
 		}

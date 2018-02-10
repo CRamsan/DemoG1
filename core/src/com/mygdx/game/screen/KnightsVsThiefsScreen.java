@@ -15,7 +15,7 @@ public class KnightsVsThiefsScreen extends GameScreen {
 
 	public KnightsVsThiefsScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
-		super(isFrameLimited);
+		super(isFrameLimited, parameterManager);
 		statueCount = 4;
 		aiCount = 10;
 	}
@@ -43,7 +43,7 @@ public class KnightsVsThiefsScreen extends GameScreen {
 	}
 
 	@Override
-	public void onCharacterCollideableTouched(int collideableIndex, PlayerCharacter player) {
+	public void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player) {
 		if (collideableIndex == this.statueCount) {
 			disableAllPlayers();
 			UISystem.displayEndGameMenu();

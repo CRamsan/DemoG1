@@ -3,6 +3,7 @@ package com.mygdx.game.ui;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.mygdx.game.gameelements.GameParameterManager;
 
 import java.util.HashMap;
 
@@ -14,7 +15,6 @@ public class GetReadyMenuController {
     private Table contentTable;
     private Skin skin;
     private HashMap<Integer, Label> tableMap;
-    private boolean isVisible;
     private int players;
 
     public GetReadyMenuController(Table contentTable, Skin skin){
@@ -28,6 +28,16 @@ public class GetReadyMenuController {
             contentTable.add(descriptionLabel).width(UIToolKit.INTERNAL_WIDTH).pad(UIToolKit.DIALOG_PAD);
             tableMap.put(i, descriptionLabel);
         }
+        Label descriptionLabel = new Label("Press ?? to change teams", skin);
+        descriptionLabel.setWrap(true);
+        contentTable.add(descriptionLabel).width(UIToolKit.INTERNAL_WIDTH).pad(UIToolKit.DIALOG_PAD);
+        tableMap.put(4, descriptionLabel);
+    }
+
+    public void updateState(GameParameterManager parameterManager) {
+        // TODO Move this label to it's appropriate location
+        Label labelView = tableMap.get(4);
+        labelView.setText(parameterManager.allowTeamChange() ? "Press ?? to change teams" : "-");
     }
 
     public boolean enoughPlayers() {

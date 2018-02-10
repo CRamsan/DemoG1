@@ -17,7 +17,7 @@ public abstract class BaseCharacter extends GameElement {
 
     public BaseCharacter(TYPE type, CharacterEventListener listener, TiledGameMap map) {
         super(type, listener);
-        if (type == TYPE.STATUS)
+        if (type == TYPE.STATUE)
             throw new RuntimeException("Characters cannot be of this type");
         this.walkSpeed = 2f;
         this.isDead = false;

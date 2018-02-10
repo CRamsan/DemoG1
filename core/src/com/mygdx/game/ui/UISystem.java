@@ -96,6 +96,7 @@ public class UISystem {
 
     private PauseMenuEventListener pauseMenuListener;
     private GameParameterManager gameParams;
+    private GetReadyMenuController getReadyMenuController;
 
     private boolean uiVisible;
     private Button selected;
@@ -269,11 +270,11 @@ public class UISystem {
 
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
         Table containerPane = UIToolKit.GenerateHorizontalContainer(mainPane, skin);
-        final GetReadyMenuController controller = new GetReadyMenuController(containerPane, skin);
+        getReadyMenuController = new GetReadyMenuController(containerPane, skin);
         Button  buttonStart = UIToolKit.AddButtonToParentWithAction(mainPane,Globals.TEXT_LABEL_START, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (controller.enoughPlayers()) {
+                if (getReadyMenuController.enoughPlayers()) {
                     UISystem.hideMenu();
                     MyGdxGame.startGameScreen(gameParams);
                 }
@@ -290,7 +291,7 @@ public class UISystem {
 
         getReadyMenu = mainPane;
         setDefaultSelection(getReadyMenu, buttonStart);
-        return controller;
+        return getReadyMenuController;
     }
 
     public void displayMainMenuInternal() {
@@ -307,6 +308,7 @@ public class UISystem {
     }
 
     public void displayGetReadyMenuInternal() {
+        getReadyMenuController.updateState(gameParams);
         setActorAsVisible(getReadyMenu);
     }
 

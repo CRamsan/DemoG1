@@ -31,7 +31,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 
 	@Override
 	public void updateInputs() {
-		if (isDead)
+		if (isDead || !isRunning)
 			return;
 
 		if (!isEventBased) {
@@ -87,10 +87,10 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		this.listener.onCharacterDied(this, killer);
 	}
 
-	public void onStatueContact(Collideable collideable) {
+	public void onCollideableContact(Collideable collideable) {
 		if (!collideableSet.contains(collideable)){
 			collideableSet.add(collideable);
-			listener.onCharacterCollideableTouched(collideableSet.size(), this);
+			listener.onCharacterCollideableTouched(collideable, collideableSet.size(), this);
 		}
 	}
 
