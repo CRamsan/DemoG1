@@ -108,9 +108,9 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	protected void createPlayerCharacter(int index, PlayerController controller, GameElement.TYPE type) {
 		PlayerCharacter newChar = new PlayerCharacter(index, type, this, map);
-		if (type == GameElement.TYPE.EARTH) {
+		if (type == GameElement.TYPE.CHAR_HUMAN) {
 
-        } else if(type == GameElement.TYPE.PIRATE){
+        } else if(type == GameElement.TYPE.CHAR_RETICLE){
 
         } else {
 		    throw new RuntimeException("Type not supported for PlayerCharacter" + type);
@@ -165,7 +165,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	    for (BaseCharacter otherCharacter : characterList) {
 	        if (character.equals(otherCharacter))
 	            continue;
-	        if (otherCharacter.getType() == GameElement.TYPE.PIRATE) {
+	        if (otherCharacter.getType() == GameElement.TYPE.CHAR_RETICLE) {
 	        	// Ignore collisions with other Snipers
 	        	continue;
 			}

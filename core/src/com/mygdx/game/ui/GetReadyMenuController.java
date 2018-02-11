@@ -3,9 +3,14 @@ package com.mygdx.game.ui;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.mygdx.game.Globals;
+import com.mygdx.game.controller.ControllerManager;
+import com.mygdx.game.controller.PlayerController;
+import com.mygdx.game.gameelements.GameElement;
 import com.mygdx.game.gameelements.GameParameterManager;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This controller will allow users to add or remove players before starting a game.
@@ -16,6 +21,8 @@ public class GetReadyMenuController {
     private Skin skin;
     private HashMap<Integer, Label> tableMap;
     private int players;
+    private GameParameterManager parameterManager;
+    private boolean allowTeamChange;
 
     public GetReadyMenuController(Table contentTable, Skin skin){
         this.contentTable = contentTable;
@@ -34,24 +41,46 @@ public class GetReadyMenuController {
         tableMap.put(4, descriptionLabel);
     }
 
-    public void updateState(GameParameterManager parameterManager) {
+    public void update(float delta) {
+        if (!allowTeamChange)
+            return;
+
+        List<ControllerManager.ControllerEventTuple> tupleList = ControllerManager.getInstance().getUIEvents();
+        for (ControllerManager.ControllerEventTuple tuple : tupleList) {
+            Globals.UI_EVENTS event = tuple.event;
+            handleGetReadyEvent(tuple.index, event);
+        }
+    }
+
+    private void handleGetReadyEvent(int index, Globals.UI_EVENTS event) {
+        if (event == Globals.UI_EVENTS.RIGHT || event == Globals.UI_EVENTS.LEFT) {
+            this.parameterManager.setTypeForPlayer(index,
+                    parameterManager.getTypeForPlayer(index) == GameElement.TYPE.CHAR_HUMAN ?
+                            GameElement.TYPE.CHAR_RETICLE :
+                            GameElement.TYPE.CHAR_HUMAN);
+        }
+    }
+
+    public void updateGameParams(GameParameterManager parameterManager) {
         // TODO Move this label to it's appropriate location
         Label labelView = tableMap.get(4);
         labelView.setText(parameterManager.allowTeamChange() ? "Press ?? to change teams" : "-");
+        this.parameterManager = parameterManager;
+        this.allowTeamChange = parameterManager.allowTeamChange();
     }
 
     public boolean enoughPlayers() {
         return players >= 2;
     }
 
-    public void addPlayer(String label, int number) {
-        Label labelView = tableMap.get(number);
-        labelView.setText(label);
+    public void addPlayer(PlayerController controller) {
+        Label labelView = tableMap.get(controller.getControllerIndex());
+        labelView.setText(controller.getName());
         players++;
     }
 
-    public void removePlayer(int number) {
-        Label labelView = tableMap.get(number);
+    public void removePlayer(PlayerController controller) {
+        Label labelView = tableMap.get(controller.getControllerIndex());
         labelView.setText("Not Connected");
         players--;
     }

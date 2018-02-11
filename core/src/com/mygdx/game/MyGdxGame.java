@@ -21,22 +21,22 @@ public class MyGdxGame extends Game {
         } else if (parameterManager != null)
             throw new RuntimeException("GameParameterManager already set and cannot be overriden");
 
-        GameScreen screen = null;
-        switch (parameterManager.getType()) {
+        GameScreen screen;
+        switch (MyGdxGame.parameterManager.getType()) {
             case ASSASSIN:
-                screen = new AssassinScreen(isFrameLimited(), parameterManager);
+                screen = new AssassinScreen(isFrameLimited(), MyGdxGame.parameterManager);
                 break;
             case DEATH_RACE:
-                screen = new DeathRaceScreen(isFrameLimited(), parameterManager);
+                screen = new DeathRaceScreen(isFrameLimited(), MyGdxGame.parameterManager);
                 break;
             case NINJA_PARTY:
-                screen = new NinjaPartyScreen(isFrameLimited(), parameterManager);
+                screen = new NinjaPartyScreen(isFrameLimited(), MyGdxGame.parameterManager);
                 break;
             case CATCH_A_THIEF:
-                screen = new CatchAThiefScreen(isFrameLimited(), parameterManager);
+                screen = new CatchAThiefScreen(isFrameLimited(), MyGdxGame.parameterManager);
                 break;
             case KNIGHTS_VS_THIEFS:
-                screen = new KnightsVsThiefsScreen(isFrameLimited(), parameterManager);
+                screen = new KnightsVsThiefsScreen(isFrameLimited(), MyGdxGame.parameterManager);
                 break;
             default:
                 throw new RuntimeException("Invalid game type");

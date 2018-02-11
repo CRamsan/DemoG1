@@ -22,6 +22,9 @@ public class GameParameterManager {
 
     private GameParameterManager() {
         playerTypeMap = new HashMap<Integer, GameElement.TYPE>();
+        for (int i = 0; i < 4; i++) {
+            playerTypeMap.put(i, GameElement.TYPE.CHAR_HUMAN);
+        }
     }
 
     public static GameParameterManager createNinjaPartyManager() {

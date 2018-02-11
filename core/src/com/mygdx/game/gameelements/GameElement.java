@@ -29,9 +29,9 @@ public abstract class GameElement
 	 */
 	public enum TYPE {
 		FIRE, WATER, PLANT,
-		EARTH, LIGHT, STATUE,
+		CHAR_HUMAN, LIGHT, CHAR_STATUE,
 		MALE_VILLAGER, FEMALE_VILLAGER, TRADER,
-		WIZARD, KNIGHT, PIRATE
+		WIZARD, KNIGHT, CHAR_RETICLE
 	}
 
 	protected TYPE type;
@@ -100,10 +100,10 @@ public abstract class GameElement
 				texture.getHeight() / Globals.ASSET_SPRITE_SHEET_ROWS);
 		TextureRegion textureRegion = null;
 		switch (this.type) {
-			case STATUE:
+			case CHAR_STATUE:
 				textureRegion = spriteRegion[0][5];
 				break;
-			case EARTH:
+			case CHAR_HUMAN:
 				textureRegion = spriteRegion[0][3];
 				break;
 			case FIRE:
@@ -121,7 +121,7 @@ public abstract class GameElement
 			case KNIGHT:
 				textureRegion = spriteRegion[1][4];
 				break;
-			case PIRATE:
+			case CHAR_RETICLE:
 				textureRegion = spriteRegion[1][5];
 				break;
 			case TRADER:

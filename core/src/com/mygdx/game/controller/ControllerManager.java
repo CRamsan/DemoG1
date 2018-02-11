@@ -17,6 +17,20 @@ import java.util.List;
  */
 public class ControllerManager extends ControllerAdapter {
 
+    /**
+     * Small class that wraps around an UI_EVENT and the controller
+     * that it came from.
+     */
+    public class ControllerEventTuple {
+        public Globals.UI_EVENTS event;
+        public int index;
+
+        public ControllerEventTuple(Globals.UI_EVENTS event, int index) {
+            this.event = event;
+            this.index = index;
+        }
+    }
+
     private static ControllerManager ourInstance = new ControllerManager();
 
     public static ControllerManager getInstance() {
@@ -34,12 +48,16 @@ public class ControllerManager extends ControllerAdapter {
     private ControllerConnectionListener listener;
     private List<PlayerController> controllerList;
     private HashMap<Controller, PlayerController> controllerMap;
-    private float waitBuffer;
-    private boolean blockInput;
+    private HashMap<Integer, Float> blockedMap;
+    private ArrayList<ControllerEventTuple> tupleList;
 
     private ControllerManager() {
         controllerList = new ArrayList<PlayerController>();
         controllerMap = new HashMap<Controller, PlayerController>();
+        blockedMap = new HashMap<Integer, Float>();
+        tupleList = new ArrayList<ControllerEventTuple>();
+        addPlayerController(new KeyboardController());
+        addPlayerController(new DummyController(1));
         for (Controller controller : Controllers.getControllers()) {
             connected(controller);
         }
@@ -56,11 +74,11 @@ public class ControllerManager extends ControllerAdapter {
         return controllerList;
     }
 
-    public Globals.UI_EVENTS getNextUIEvent (float delta) {
-
-        Globals.UI_EVENTS event = Globals.UI_EVENTS.NOOP;
-
+    public void update(float delta) {
+        tupleList.clear();
         for (PlayerController controller : controllerList) {
+            Globals.UI_EVENTS event = Globals.UI_EVENTS.NOOP;
+
             if (controller == null) // An unplugged controller can leave a null controller
                 continue;
             float dx = controller.getAxis(0);
@@ -72,13 +90,13 @@ public class ControllerManager extends ControllerAdapter {
                 if (absDx > absDy) {
                     if (dx > 0) {
                         event = Globals.UI_EVENTS.RIGHT;
-                    } else {
+                    } else if (dx < 0) {
                         event = Globals.UI_EVENTS.LEFT;
                     }
                 } else {
                     if (dy > 0) {
                         event = Globals.UI_EVENTS.UP;
-                    } else {
+                    } else if (dy < 0) {
                         event = Globals.UI_EVENTS.DOWN;
                     }
                 }
@@ -87,33 +105,38 @@ public class ControllerManager extends ControllerAdapter {
             boolean isSelected = controller.getButton(0);
             if (isSelected)
                 event = Globals.UI_EVENTS.SELECT;
-        }
 
-        if (blockInput) {
-            // There was a UI event that is blocking other events
-            // If the new event is NOOP then the event was released.
-            // Otherwise wait for the timeout
-            if (event == Globals.UI_EVENTS.NOOP) {
-                blockInput = false;
-            } else {
-                // Wait until we reach the timeout.
-                waitBuffer += delta;
-                if (waitBuffer >= Globals.UI_WAIT) {
-                    blockInput = false;
-                    waitBuffer = 0;
+            if (blockedMap.containsKey(controller.getControllerIndex())) {
+                // There was a UI event that is blocking other events
+                // If the new event is NOOP then the event was released.
+                // Otherwise wait for the timeout
+                float waitBuffer = blockedMap.get(controller.getControllerIndex());
+                if (event == Globals.UI_EVENTS.NOOP) {
+                    blockedMap.remove(controller.getControllerIndex());
                 } else {
-                    return Globals.UI_EVENTS.NOOP;
+                    // Wait until we reach the timeout.
+                    waitBuffer += delta;
+                    if (waitBuffer >= Globals.UI_WAIT) {
+                        blockedMap.remove(controller.getControllerIndex());
+                    } else {
+                        blockedMap.put(controller.getControllerIndex(), waitBuffer);
+                        event = Globals.UI_EVENTS.NOOP;
+                    }
                 }
             }
-        }
 
-        if (event == Globals.UI_EVENTS.DOWN || event == Globals.UI_EVENTS.UP ||
-                event == Globals.UI_EVENTS.LEFT || event == Globals.UI_EVENTS.RIGHT ||
-                event == Globals.UI_EVENTS.SELECT) {
-            blockInput = true;
-            waitBuffer = 0;
+            if (event == Globals.UI_EVENTS.DOWN || event == Globals.UI_EVENTS.UP ||
+                    event == Globals.UI_EVENTS.LEFT || event == Globals.UI_EVENTS.RIGHT ||
+                    event == Globals.UI_EVENTS.SELECT) {
+                blockedMap.put(controller.getControllerIndex(), 0f);
+            }
+            ControllerEventTuple tuple = new ControllerEventTuple(event, controller.getControllerIndex());
+            tupleList.add(tuple);
         }
-        return event;
+    }
+
+    public List<ControllerEventTuple> getUIEvents () {
+        return tupleList;
     }
 
     public void addPlayerController(PlayerController newController) {

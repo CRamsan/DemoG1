@@ -18,6 +18,7 @@ import com.mygdx.game.gameelements.GameParameterManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class provides static methods to configure UI components.
@@ -312,7 +313,7 @@ public class UISystem {
     }
 
     public void displayGetReadyMenuInternal() {
-        getReadyMenuController.updateState(gameParams);
+        getReadyMenuController.updateGameParams(gameParams);
         setActorAsVisible(getReadyMenu);
     }
 
@@ -325,13 +326,17 @@ public class UISystem {
         if (!uiVisible)
             return;
         stage.act(delta);
-        processInput(delta);
+        ControllerManager.getInstance().update(delta);
+        processInput();
         stage.draw();
     }
 
-    private void processInput(float delta) {
-        Globals.UI_EVENTS event = ControllerManager.getInstance().getNextUIEvent(delta);
-        handleEvent(event);
+    private void processInput() {
+        List<ControllerManager.ControllerEventTuple> tupleList = ControllerManager.getInstance().getUIEvents();
+        for (ControllerManager.ControllerEventTuple tuple : tupleList) {
+            Globals.UI_EVENTS event = tuple.event;
+            handleEvent(event);
+        }
     }
 
     private void handleEvent(Globals.UI_EVENTS event) {

@@ -46,6 +46,10 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 		UISystem.initMainMenu();
 		getReadyMenuController = UISystem.initGetReadyMenu();
 		UISystem.displayMainMenu();
+
+		// Now  call onControllerConnected for all the controllers in the preInitMap.
+		// This will add the controllers to the GetReadyManager and then clear the mapping
+		// since it is not needed anymore.
 		hasInitCompleted = true;
 		for (Integer port : preInitControllerMap.keySet()) {
 			PlayerController controller = preInitControllerMap.get(port);
@@ -61,6 +65,7 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 
 	@Override
 	protected void performCustomUpdate(float delta) {
+		getReadyMenuController.update(delta);
 		for (GameElement character : characterList) {
 			character.update(delta);
 		}
@@ -116,7 +121,7 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 	@Override
 	public void onControllerConnected(int port, PlayerController controller) {
 		if (hasInitCompleted) {
-			getReadyMenuController.addPlayer(controller.getName(), port);
+			getReadyMenuController.addPlayer(controller);
 		} else {
 			preInitControllerMap.put(port, controller);
 		}
@@ -125,7 +130,7 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 
 	@Override
 	public void onControllerDisconnected(int port, PlayerController controller) {
-		getReadyMenuController.removePlayer(port);
+		getReadyMenuController.removePlayer(controller);
 	}
 
 	protected int levelId() {
