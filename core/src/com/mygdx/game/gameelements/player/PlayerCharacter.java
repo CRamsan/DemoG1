@@ -84,7 +84,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	@Override
 	public void onKilled(PlayerCharacter killer) {
 		super.onKilled(killer);
-		this.listener.onCharacterDied(this, killer);
+		this.listener.onPlayerCharacterDied(this, killer);
 	}
 
 	public void onCollideableContact(Collideable collideable) {

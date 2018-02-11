@@ -3,6 +3,7 @@ package com.mygdx.game.gameelements;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Globals;
 import com.mygdx.game.TiledGameMap;
+import com.mygdx.game.gameelements.player.PlayerCharacter;
 
 /**
  * This class will handle the AI movement.
@@ -37,5 +38,11 @@ public class AICharacter extends BaseCharacter
 		if (isDead)
 			return;
 		this.handleMovement(lastMovementVector.x, lastMovementVector.y, delta);
+	}
+
+	@Override
+	public void onKilled(PlayerCharacter killer) {
+		super.onKilled(killer);
+		this.listener.onAICharacterDied(this, killer);
 	}
 }

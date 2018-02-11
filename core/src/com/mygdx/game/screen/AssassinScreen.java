@@ -10,14 +10,14 @@ import com.mygdx.game.ui.UISystem;
 
 public class AssassinScreen extends GameScreen {
 
-	private int statueCount;
 	private int aiCount;
+	private int aiKilled;
 
 	public AssassinScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
 		super(isFrameLimited, parameterManager);
-		statueCount = 4;
-		aiCount = 10;
+		aiCount = 2;
+		aiKilled = 0;
 	}
 
 	@Override
@@ -26,13 +26,6 @@ public class AssassinScreen extends GameScreen {
 		for (int i = 0; i < aiCount; i++) {
 			createAICharacter();
 		}
-		for (int i = 0; i < statueCount; i++) {
-			createStatue();
-		}
-	}
-	private void createStatue() {
-		Collideable newCollideable = new Collideable(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
-		addCollidable(newCollideable);
 	}
 
 	protected void createAICharacter() {
@@ -44,7 +37,13 @@ public class AssassinScreen extends GameScreen {
 
 	@Override
 	public void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player) {
-		if (collideableIndex == this.statueCount) {
+
+	}
+
+	@Override
+	public void onAICharacterDied(AICharacter victim, PlayerCharacter killer) {
+		aiKilled++;
+		if(aiKilled == aiCount) {
 			disableAllPlayers();
 			UISystem.displayEndGameMenu();
 		}
@@ -52,6 +51,6 @@ public class AssassinScreen extends GameScreen {
 
 	@Override
 	protected int levelId() {
-		return 2;
+		return 6;
 	}
 }

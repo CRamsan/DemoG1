@@ -231,7 +231,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	public abstract void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player);
 
 	@Override
-	public void onCharacterDied(PlayerCharacter  victim, PlayerCharacter killer) {
+	public void onPlayerCharacterDied(PlayerCharacter  victim, PlayerCharacter killer) {
 		victim.disableCharacter();
 		playerCharacterMap.remove(victim.getId());
 		playerList.remove(victim);
@@ -239,6 +239,11 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 			disableAllPlayers();
 			UISystem.displayEndGameMenu();
 		}
+	}
+
+	@Override
+	public void onAICharacterDied(AICharacter victim, PlayerCharacter killer) {
+
 	}
 
 	protected abstract int levelId();
