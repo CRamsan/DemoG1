@@ -83,6 +83,10 @@ public class UISystem {
         ourInstance.resize(width, height);
     }
 
+    public static void injectUIEvent(Globals.UI_EVENTS event) {
+        ourInstance.injectUIEventInternal(event);
+    }
+
     /**
      * Private calls
      */
@@ -327,6 +331,10 @@ public class UISystem {
 
     private void processInput(float delta) {
         Globals.UI_EVENTS event = ControllerManager.getInstance().getNextUIEvent(delta);
+        handleEvent(event);
+    }
+
+    private void handleEvent(Globals.UI_EVENTS event) {
         if (event == Globals.UI_EVENTS.NOOP)
             return;
 
@@ -338,6 +346,14 @@ public class UISystem {
         } else if (event == Globals.UI_EVENTS.SELECT) {
             selected.getClickListener().clicked(null, 0, 0);
         }
+    }
+
+    /**
+     * This method should only be used for tests.
+     * @param event
+     */
+    private void injectUIEventInternal(Globals.UI_EVENTS event) {
+        handleEvent(event);
     }
 
     private void setSelected(Button actor) {

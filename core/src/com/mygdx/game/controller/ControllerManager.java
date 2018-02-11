@@ -40,8 +40,6 @@ public class ControllerManager extends ControllerAdapter {
     private ControllerManager() {
         controllerList = new ArrayList<PlayerController>();
         controllerMap = new HashMap<Controller, PlayerController>();
-        addPlayerController(new KeyboardController());
-        addPlayerController(new DummyController(1));
         for (Controller controller : Controllers.getControllers()) {
             connected(controller);
         }
