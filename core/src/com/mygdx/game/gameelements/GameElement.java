@@ -88,6 +88,10 @@ public abstract class GameElement
 			manager.load(Globals.ASSET_SPRITE_SHEET, Texture.class);
 			manager.finishLoading();
 		}
+		if (type == null) {
+			throw new RuntimeException("Type cannot be null");
+		}
+
 		GameElement.instanceCount++;
 		texture = manager.get(Globals.ASSET_SPRITE_SHEET);
 

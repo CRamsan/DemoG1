@@ -39,12 +39,19 @@ allprojects {
 project(":desktop") {
     apply plugin: "java"
 
+    sourceSets.test.java.srcDirs = ["test"]
 
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
+
+        testCompile "junit:junit:4.12"
+        testCompile "org.mockito:mockito-core:2.2.7"
+        testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        testCompile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        testCompile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
     }
 }
 
@@ -70,11 +77,9 @@ project(":android") {
 project(":core") {
     apply plugin: "java"
 
-
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        
     }
 }
 
