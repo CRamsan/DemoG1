@@ -29,7 +29,7 @@ public abstract class GameElement
 	 */
 	public enum TYPE {
 		FIRE, WATER, PLANT,
-		CHAR_HUMAN, LIGHT, CHAR_STATUE,
+		CHAR_HUMAN, CHAR_BASEAI, CHAR_STATUE,
 		MALE_VILLAGER, FEMALE_VILLAGER, TRADER,
 		WIZARD, KNIGHT, CHAR_RETICLE
 	}
@@ -109,7 +109,7 @@ public abstract class GameElement
 			case FIRE:
 				textureRegion = spriteRegion[0][0];
 				break;
-			case LIGHT:
+			case CHAR_BASEAI:
 				textureRegion = spriteRegion[0][4];
 				break;
 			case PLANT:

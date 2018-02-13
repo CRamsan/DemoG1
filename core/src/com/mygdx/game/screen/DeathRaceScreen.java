@@ -36,7 +36,7 @@ public class DeathRaceScreen extends GameScreen {
 	}
 
 	protected void createAICharacter() {
-		GameElement.TYPE type = GameElement.TYPE.LIGHT;
+		GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
 		AICharacter newChar = new AICharacter(type, this, map);
 		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
 		addAICharacter(newChar);

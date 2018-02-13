@@ -1,7 +1,5 @@
 package com.mygdx.game.screen;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.Globals;
 import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.gameelements.*;
@@ -20,7 +18,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	private List<PlayerCharacter> playerList;
 	private List<Collideable> collideableList;
 	private Map<Integer, PlayerCharacter> playerCharacterMap;
-	private ShapeRenderer debugRenderer;
 	private PlayerCharacter pauseCaller;
 	private GameParameterManager parameterManager;
 
@@ -32,7 +29,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		characterList = new ArrayList<BaseCharacter>();
 		playerList = new ArrayList<PlayerCharacter>();
 		collideableList = new ArrayList<Collideable>();
-		debugRenderer = new ShapeRenderer();
 		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
 		isPaused = false;
 		this.parameterManager = parameterManager;
@@ -44,6 +40,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		UISystem.initPauseMenu(this);
 		UISystem.initConfirmationMenu();
 		UISystem.initEndGameMenu();
+		setIllumination(0.3f);
 	}
 
 	@Override
@@ -78,20 +75,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	@Override
-	protected void performDebugRender() {
-		debugRenderer.setProjectionMatrix(cam.combined);
-		debugRenderer.begin(ShapeRenderer.ShapeType.Line);
-		debugRenderer.setColor(Color.YELLOW);
-		for (GameElement character : characterList) {
-			debugRenderer.rect(character.getX() * Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT, character.getY() * Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT, character.getWidth(), character.getHeight());
-		}
-		for (GameElement statue : collideableList) {
-			debugRenderer.rect(statue.getX() * Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT, statue.getY() * Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT, statue.getWidth(), statue.getHeight());
-		}
-		debugRenderer.end();
-	}
-
-	@Override
 	protected void performRenderSprites() {
 		for (Collideable collideable : collideableList) {
 			collideable.draw(batch);
@@ -120,6 +103,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		characterList.add(newChar);
 		playerList.add(newChar);
 		playerCharacterMap.put(index, newChar);
+		lightSources.add(newChar);
 	}
 
 	protected void addAICharacter(AICharacter character) {
