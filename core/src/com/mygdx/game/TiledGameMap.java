@@ -55,7 +55,7 @@ public class TiledGameMap
 
 	public boolean isTileSolid(int x, int y) {
 		if (x < 0 || y < 0 || x >= collisionMap.length || y >= collisionMap[0].length)
-			return true;
+			return false;
 		return collisionMap[x][y];
 	}
 }

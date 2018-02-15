@@ -63,7 +63,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     public void ScreenInit() {
         cam.setToOrtho(false);
         cam.update();
-        //viewport.setUnitsPerPixel(1f/(Globals.TILE_SIZE * Globals.MAGNIFICATION));
         int portIndex = 0;
         ControllerManager.setControllerConnectionListener(this);
         for(PlayerController controller : ControllerManager.getConnectedControllers()) {
@@ -72,13 +71,14 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         }
 
         lightTexture = new Texture(Gdx.files.internal("light.png"));
-        lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, false);
+        lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, map.getWidth() * 32, map.getHeight() * 32, false);
         lightBuffer.getColorBufferTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        lightBufferRegion = new TextureRegion(lightBuffer.getColorBufferTexture(),0,0, Globals.SCREEN_WIDTH,Globals.SCREEN_HEIGHT);
-        lightBufferRegion.flip(false, false);
+        lightBufferRegion = new TextureRegion(lightBuffer.getColorBufferTexture(),0,0, lightBuffer.getWidth(), lightBuffer.getHeight());
+        lightBufferRegion.flip(false, true);
 
         cam.position.set(Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getWidth()/2f,
                 Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getHeight()/2f, 1);
+
 	    AudioManager.LoadAssets(levelId());
         AudioManager.PlayMusic();
     }
@@ -136,19 +136,26 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         Gdx.gl.glEnable(GL30.GL_BLEND);
         // set the ambient color values, this is the "global" light of your scene
         // imagine it being the sun.  Usually the alpha value is just 1, and you change the darkness/brightness with the Red, Green and Blue values for best effect
-        Gdx.gl.glClearColor(1f,0.0f,0.0f, illumination);
+        Gdx.gl.glClearColor(0.0f,0.0f,0.0f, illumination);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
         // start rendering the lights to our spriteBatch
-        batch.setProjectionMatrix(cam.combined);
+
+        //batch.setProjectionMatrix(cam.combined);
         batch.begin();
         // set the color of your light (red,green,blue,alpha values)
         batch.setColor(1f, 1f, 1f, 1f);
+
+        batch.draw(lightTexture, 0, 0, 32, 32);
+
         for (GameElement lightSource : lightSources) {
             Vector2 center = lightSource.getCenterPosition();
             // and render the sprite
-            float origX = center.x * 32f - (lightTexture.getWidth() / 2f);
-            float origY = center.y * 32f - (lightTexture.getHeight() / 2f);
-            batch.draw(lightTexture, origX, origY, lightTexture.getWidth(),lightTexture.getHeight());
+            float spriteh = lightTexture.getHeight() / 2f;
+            float spritew = lightTexture.getWidth() / 2f;
+            float origX = center.x * 32 - (spriteh);
+            float origY = center.y * 32 - (spriteh);
+
+            batch.draw(lightTexture, origX, origY, spritew * 2, spriteh * 2);
         }
         batch.end();
         lightBuffer.end();
@@ -156,7 +163,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         // with the right blending !
         Gdx.gl.glBlendFunc(GL30.GL_DST_COLOR, GL30.GL_ZERO);
         batch.begin();
-        batch.draw(lightBufferRegion, 0, 0, Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
+        batch.draw(lightBufferRegion, 0, 0, lightBufferRegion.getRegionWidth(), lightBufferRegion.getRegionHeight());
         batch.end();
     }
 

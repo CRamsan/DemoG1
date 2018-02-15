@@ -103,8 +103,13 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		characterList.add(newChar);
 		playerList.add(newChar);
 		playerCharacterMap.put(index, newChar);
-		lightSources.add(newChar);
+		if (!playerFound) {
+			lightSources.add(newChar);
+			playerFound = true;
+		}
 	}
+
+	private boolean playerFound;
 
 	protected void addAICharacter(AICharacter character) {
 		characterList.add(character);
