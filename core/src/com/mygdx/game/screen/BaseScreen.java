@@ -37,12 +37,9 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     protected boolean useFixedStep;
 
     protected TiledGameMap map;
-    protected float illumination;
-    protected Texture lightTexture;
     protected ArrayList<GameElement> lightSources;
-    private FrameBuffer lightBuffer;
-    private TextureRegion lightBufferRegion;
-
+	protected float illumination = 0f;
+	
     public BaseScreen(boolean useFixedStep)
     {
         batch = new SpriteBatch();
@@ -69,12 +66,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             onControllerConnected(portIndex, controller);
             portIndex++;
         }
-
-        lightTexture = new Texture(Gdx.files.internal("light.png"));
-        lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, map.getWidth() * 32, map.getHeight() * 32, false);
-        lightBuffer.getColorBufferTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        lightBufferRegion = new TextureRegion(lightBuffer.getColorBufferTexture(),0,0, lightBuffer.getWidth(), lightBuffer.getHeight());
-        lightBufferRegion.flip(false, true);
 
         cam.position.set(Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getWidth()/2f,
                 Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getHeight()/2f, 1);
@@ -128,53 +119,57 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         UISystem.draw(delta);
     }
 
-    protected void performLightingRender(){
-        // start rendering to the lightBuffer
-        lightBuffer.begin();
-        // setup the right blending
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE);
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        // set the ambient color values, this is the "global" light of your scene
-        // imagine it being the sun.  Usually the alpha value is just 1, and you change the darkness/brightness with the Red, Green and Blue values for best effect
-        Gdx.gl.glClearColor(0.0f,0.0f,0.0f, illumination);
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-        // start rendering the lights to our spriteBatch
+	/**
+	 * Implement logic here that specific to each implementation of
+	 * this class. This method will use the provided time delta for 
+	 * the step. This update method is called before each frame.
+	 */
+    protected abstract void performCustomUpdate(float delta);
 
-        //batch.setProjectionMatrix(cam.combined);
-        batch.begin();
-        // set the color of your light (red,green,blue,alpha values)
-        batch.setColor(1f, 1f, 1f, 1f);
+	/**
+	 * Implement logic here that specific to each implementation of
+	 * this class. This method will use the default time step defined
+	 * in Globals.FRAME_TIME.
+	 */
+    protected abstract void performCustomUpdate();
 
-        batch.draw(lightTexture, 0, 0, 32, 32);
+	/**
+	 * First render call
+	 * Implement logic here to draw into the background. This 
+	 * will be mostly used to dran the map. But it can be used to 
+	 * also render anything else behind the sprites.
+	 */	
+    protected abstract void performRenderMap();
+
+	/**
+	 * Second render call
+	 * Implement logic here to draw sprites and most other game 
+	 * elements. 
+	 */	
+    protected abstract void performRenderSprites();
+
+	/**
+	 * Third render call
+	 * Implement logic here to draw the lighting and post processing.
+	 * Anything rendered here will not affect the UI since that will 
+	 * happen last.
+	 */
+	protected void performLightingRender(){
+		// Configure the light in the scene
 
         for (GameElement lightSource : lightSources) {
             Vector2 center = lightSource.getCenterPosition();
-            // and render the sprite
-            float spriteh = lightTexture.getHeight() / 2f;
-            float spritew = lightTexture.getWidth() / 2f;
-            float origX = center.x * 32 - (spriteh);
-            float origY = center.y * 32 - (spriteh);
-
-            batch.draw(lightTexture, origX, origY, spritew * 2, spriteh * 2);
+			// Light the scene using this light source
         }
-        batch.end();
-        lightBuffer.end();
-        // now we render the lightBuffer to the default "frame buffer"
-        // with the right blending !
-        Gdx.gl.glBlendFunc(GL30.GL_DST_COLOR, GL30.GL_ZERO);
-        batch.begin();
-        batch.draw(lightBufferRegion, 0, 0, lightBufferRegion.getRegionWidth(), lightBufferRegion.getRegionHeight());
-        batch.end();
+
+		// If using a light buffer, make sure to write the lighting 
+		// back to the main buffer.
     }
-
-    protected abstract void performCustomUpdate();
-
-    protected abstract void performCustomUpdate(float delta);
-
-    protected abstract void performRenderMap();
-
-    protected abstract void performRenderSprites();
-
+	
+	/**
+	 * This method must be implemented as a way to identify differnt 
+	 * child classes. It's use is still not well defined.
+	 */
     protected abstract int levelId();
 
     @Override
