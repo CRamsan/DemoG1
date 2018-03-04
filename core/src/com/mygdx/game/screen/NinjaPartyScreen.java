@@ -8,6 +8,10 @@ import com.mygdx.game.gameelements.GameParameterManager;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
 import com.mygdx.game.ui.UISystem;
 
+/**
+ * There are two winning conditions. Either touch the five statues or
+ * be the last player alive. You have one smoke bomb that you can use.
+ */
 public class NinjaPartyScreen extends GameScreen {
 
 	private int statueCount;

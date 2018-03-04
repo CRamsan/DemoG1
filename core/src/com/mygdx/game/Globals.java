@@ -19,7 +19,8 @@ public class Globals {
     public static final int SCREEN_WIDTH = 640;
     public static final int SCREEN_HEIGHT = 480;
     public static final float FRAME_TIME = 1f/60f;
-
+    public static final float POISON_TIME = 5f;
+	
     public static final String TEXT_LABEL_NINJA_PARTY = "Ninja Party";
     public static final String TEXT_LABEL_CATCH_A_THIEF = "Catch A Thief";
     public static final String TEXT_LABEL_KNIGHTS_VS_NINJAS = "Knights vs Ninjas";

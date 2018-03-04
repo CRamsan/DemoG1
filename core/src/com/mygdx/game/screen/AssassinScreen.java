@@ -1,13 +1,15 @@
 package com.mygdx.game.screen;
 
-import com.mygdx.game.Globals;
-import com.mygdx.game.gameelements.AICharacter;
-import com.mygdx.game.gameelements.Collideable;
-import com.mygdx.game.gameelements.GameElement;
-import com.mygdx.game.gameelements.GameParameterManager;
-import com.mygdx.game.gameelements.player.PlayerCharacter;
-import com.mygdx.game.ui.UISystem;
+import com.mygdx.game.*;
+import com.mygdx.game.gameelements.*;
+import com.mygdx.game.gameelements.player.*;
+import com.mygdx.game.ui.*;
 
+/**
+ * There are two teams, assasins and snipers. The assasins are
+ * trying to kill all NPCs while snipers are trying to kill 
+ * all assasins. 
+ */
 public class AssassinScreen extends GameScreen {
 
 	private int aiCount;
@@ -16,7 +18,7 @@ public class AssassinScreen extends GameScreen {
 	public AssassinScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
 		super(isFrameLimited, parameterManager);
-		aiCount = 2;
+		aiCount = 10;
 		aiKilled = 0;
 	}
 
@@ -40,6 +42,32 @@ public class AssassinScreen extends GameScreen {
 
 	}
 
+	@Override
+	public void onCharacterAttack(final PlayerCharacter character) {
+	    for (final BaseCharacter otherCharacter : characterList) {
+	        if (character.equals(otherCharacter))
+	            continue;
+			
+	        if (otherCharacter.getType() == GameElement.TYPE.CHAR_RETICLE) {
+	        	// Ignore collisions with other Snipers
+	        	continue;
+			}
+			
+			// TODO: If the attacker is coming from an assasin, then ignore hits to other assasins
+
+	        if (character.getCenterPosition().dst(otherCharacter.getCenterPosition()) < 0.5) {
+				callbackManager.registerEventFromNow(Globals.POISON_TIME, new CallbackManager.ExecutioBlockInterface() {
+						@Override
+						public void execute()
+						{
+							otherCharacter.onKilled(character);							
+						}
+				});
+	            break;
+            }
+        }
+	}
+	
 	@Override
 	public void onAICharacterDied(AICharacter victim, PlayerCharacter killer) {
 		aiKilled++;

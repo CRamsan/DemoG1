@@ -13,15 +13,16 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class GameScreen extends BaseScreen implements CharacterEventListener, PauseMenuEventListener {
-
-	private List<BaseCharacter> characterList;
-	private List<PlayerCharacter> playerList;
-	private List<Collideable> collideableList;
+	
 	private Map<Integer, PlayerCharacter> playerCharacterMap;
 	private PlayerCharacter pauseCaller;
 	private GameParameterManager parameterManager;
 
 	private boolean isPaused;
+
+	protected List<BaseCharacter> characterList;
+	protected List<PlayerCharacter> playerList;
+	protected List<Collideable> collideableList;	
 
 	public GameScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{

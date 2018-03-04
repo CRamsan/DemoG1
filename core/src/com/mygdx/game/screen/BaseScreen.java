@@ -20,6 +20,7 @@ import com.mygdx.game.gameelements.GameElement;
 import com.mygdx.game.ui.UISystem;
 
 import java.util.ArrayList;
+import com.mygdx.game.*;
 
 /**
  * Base class to handle all code shared across all scenes. This class will configure the camera, the background map
@@ -35,7 +36,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     protected FPSLogger logger;
     protected float timeBuffer;
     protected boolean useFixedStep;
-
+	protected CallbackManager callbackManager;
+	
     protected TiledGameMap map;
     protected ArrayList<GameElement> lightSources;
 	protected float illumination = 0f;
@@ -53,6 +55,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         shapeRenderer = new ShapeRenderer();
         lightSources = new ArrayList<GameElement>();
         illumination = 0f;
+		callbackManager = new CallbackManager();
     }
 
     // This method will be called to configure objects. This is used to decouple the object initialization
@@ -79,12 +82,12 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         if (useFixedStep) {
             timeBuffer += Gdx.graphics.getDeltaTime();
             while (timeBuffer > Globals.FRAME_TIME) {
-                performCustomUpdate();
+                performUpdate();
                 performRender();
                 timeBuffer-=Globals.FRAME_TIME;
             }
         } else {
-            performCustomUpdate(delta);
+            performUpdate(delta);
             performRender(delta);
         }
         logger.log();
@@ -119,6 +122,20 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         UISystem.draw(delta);
     }
 
+	/**
+	 * Implement logic here that is shared for all child classes of BaseScreen.
+	 * You can use this method to update the callback manager and other objects
+	 * that are tied to the life time of a screen.
+	 */
+    private final void performUpdate(float delta) {
+		callbackManager.update(delta);
+		performCustomUpdate(delta);
+	}
+	
+    private final void performUpdate() {
+		performUpdate(Globals.FRAME_TIME);
+	}
+	
 	/**
 	 * Implement logic here that specific to each implementation of
 	 * this class. This method will use the provided time delta for 

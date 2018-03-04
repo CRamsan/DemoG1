@@ -8,6 +8,11 @@ import com.mygdx.game.gameelements.GameParameterManager;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
 import com.mygdx.game.ui.UISystem;
 
+/**
+ * There are two teams, one with players and NPCs walking and running
+ * towards the finish line. The other team is of snipers that can shoot
+ * the characters. Players have the option to run, which NPCs will never do.
+ */
 public class DeathRaceScreen extends GameScreen {
 
 	private int statueCount;

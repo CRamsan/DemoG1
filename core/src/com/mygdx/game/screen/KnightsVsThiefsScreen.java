@@ -8,6 +8,13 @@ import com.mygdx.game.gameelements.GameParameterManager;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
 import com.mygdx.game.ui.UISystem;
 
+/**
+ * There is a time limit in this game. There are three NPCs that 
+ * are the king, queen and princess. Players will be either a 
+ * ninja or a knight. Knights have to protect the royal family 
+ * that the ninjas are trying to kill. Knights cannot be killed
+ * but they are slower than the ninjas.
+ */
 public class KnightsVsThiefsScreen extends GameScreen {
 
 	private int statueCount;

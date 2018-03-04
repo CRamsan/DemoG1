@@ -10,6 +10,12 @@ import com.mygdx.game.ui.UISystem;
 
 import java.util.ArrayList;
 
+/**
+ * There are two teams, snipers and thieves. Thieves will try 
+ * to touch all the coins and snipers will try to kill all thieves.
+ * A sniper can tag a character as innocent. Snipers only have a
+ * limited ammount of bullets.
+ */
 public class CatchAThiefScreen extends GameScreen {
 
 	private int countCount;
