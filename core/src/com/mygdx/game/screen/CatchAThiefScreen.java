@@ -42,7 +42,7 @@ public class CatchAThiefScreen extends GameScreen {
 	}
 	private void createCoin() {
 		Collideable newCollideable = new Collideable(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
-		newCollideable.setScale(0.2f);
+		newCollideable.setScale(0.5f);
 		addCollidable(newCollideable);
 	}
 

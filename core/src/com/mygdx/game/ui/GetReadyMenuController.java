@@ -58,6 +58,8 @@ public class GetReadyMenuController {
                     parameterManager.getTypeForPlayer(index) == GameElement.TYPE.CHAR_HUMAN ?
                             GameElement.TYPE.CHAR_RETICLE :
                             GameElement.TYPE.CHAR_HUMAN);
+            Label playerDescription = tableMap.get(index);
+            playerDescription.setText(parameterManager.getTypeForPlayer(index).name());
         }
     }
 

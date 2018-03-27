@@ -36,7 +36,7 @@ public class MyGdxGame extends Game {
                 screen = new CatchAThiefScreen(isFrameLimited(), MyGdxGame.parameterManager);
                 break;
             case KNIGHTS_VS_THIEFS:
-                screen = new KnightsVsThiefsScreen(isFrameLimited(), MyGdxGame.parameterManager);
+                screen = new KnightsVsNinjasScreen(isFrameLimited(), MyGdxGame.parameterManager);
                 break;
             default:
                 throw new RuntimeException("Invalid game type");

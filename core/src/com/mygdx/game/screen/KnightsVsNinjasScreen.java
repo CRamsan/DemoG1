@@ -15,12 +15,12 @@ import com.mygdx.game.ui.UISystem;
  * that the ninjas are trying to kill. Knights cannot be killed
  * but they are slower than the ninjas.
  */
-public class KnightsVsThiefsScreen extends GameScreen {
+public class KnightsVsNinjasScreen extends GameScreen {
 
 	private int statueCount;
 	private int aiCount;
 
-	public KnightsVsThiefsScreen(boolean isFrameLimited, GameParameterManager parameterManager)
+	public KnightsVsNinjasScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
 		super(isFrameLimited, parameterManager);
 		statueCount = 4;
