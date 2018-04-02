@@ -1,16 +1,17 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.AudioManager;
+import com.mygdx.game.CallbackManager;
 import com.mygdx.game.Globals;
 import com.mygdx.game.TiledGameMap;
 import com.mygdx.game.controller.ControllerConnectionListener;
@@ -20,7 +21,6 @@ import com.mygdx.game.gameelements.GameElement;
 import com.mygdx.game.ui.UISystem;
 
 import java.util.ArrayList;
-import com.mygdx.game.*;
 
 /**
  * Base class to handle all code shared across all scenes. This class will configure the camera, the background map
@@ -39,9 +39,15 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	protected CallbackManager callbackManager;
 	
     protected TiledGameMap map;
+
+
     protected ArrayList<GameElement> lightSources;
 	protected float illumination = 0f;
-	
+    protected Texture lightTexture;
+    private FrameBuffer lightBuffer;
+    /*
+    private TextureRegion lightBufferRegion;
+    */
     public BaseScreen(boolean useFixedStep)
     {
         batch = new SpriteBatch();
@@ -70,11 +76,18 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             portIndex++;
         }
 
-        cam.position.set(Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getWidth()/2f,
-                Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getHeight()/2f, 1);
+        cam.position.set(Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getWidth()/2f,Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getHeight()/2f, 1);
 
 	    AudioManager.LoadAssets(levelId());
         AudioManager.PlayMusic();
+
+        lightTexture = new Texture(Gdx.files.internal("light.png"));
+        lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, false);
+        /*
+        lightBuffer.getColorBufferTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        lightBufferRegion = new TextureRegion(lightBuffer.getColorBufferTexture(),0,0, lightBuffer.getWidth(), lightBuffer.getHeight());
+        lightBufferRegion.flip(false, true);
+        */
     }
 
     @Override
@@ -89,6 +102,28 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         } else {
             performUpdate(delta);
             performRender(delta);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            cam.translate(0f, 0.1f);
+            System.out.println(cam.position.x + " - " + cam.position.y);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            cam.translate(-0.1f, 0f);
+            System.out.println(cam.position.x + " - " + cam.position.y);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            cam.translate(0f, -0.1f);
+            System.out.println(cam.position.x + " - " + cam.position.y);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            cam.translate(0.1f, 0f);
+            System.out.println(cam.position.x + " - " + cam.position.y);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+            cam.zoom -= 0.01f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            cam.zoom += 0.01f;
         }
         logger.log();
     }
@@ -172,16 +207,44 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	 * happen last.
 	 */
 	protected void performLightingRender(){
-		// Configure the light in the scene
-
+        // start rendering to the lightBuffer
+        lightBuffer.begin();
+        // setup the right blending
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE);
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        // set the ambient color values, this is the "global" light of your scene
+        // imagine it being the sun.  Usually the alpha value is just 1, and you change the darkness/brightness with the Red, Green and Blue values for best effect
+        Gdx.gl.glClearColor(0.0f,0.0f,0.0f, illumination);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+        // start rendering the lights to our spriteBatch
+        batch.begin();
+        // set the color of your light (red,green,blue,alpha values)
+        batch.setColor(1f, 1f, 1f, 1f);
         for (GameElement lightSource : lightSources) {
             Vector2 center = lightSource.getCenterPosition();
-			// Light the scene using this light source
-        }
+            // and render the sprite
+            float spriteh = lightTexture.getHeight() / 2f;
+            float spritew = lightTexture.getWidth() / 2f;
+            float origX = (center.x * 32f) - (spriteh);
+            float origY = (center.y * 32f) - (spritew);
 
-		// If using a light buffer, make sure to write the lighting 
-		// back to the main buffer.
-    }
+            batch.draw(lightTexture, origX, origY, spritew * 2, spriteh * 2);
+        }
+        batch.end();
+
+        lightBuffer.end();
+        // now we render the lightBuffer to the default "frame buffer"
+        // with the right blending !
+        Gdx.gl.glBlendFunc(GL30.GL_DST_COLOR, GL30.GL_ZERO);
+        batch.begin();
+        batch.draw(lightBuffer.getColorBufferTexture(),
+                cam.position.x - ((viewport.getWorldWidth()/2f) * cam.zoom),
+                cam.position.y + ((viewport.getWorldHeight()/2f) * cam.zoom),
+                Globals.SCREEN_WIDTH * cam.zoom,
+                -Globals.SCREEN_HEIGHT* cam.zoom);
+
+        batch.end();
+	}
 	
 	/**
 	 * This method must be implemented as a way to identify differnt 

@@ -41,7 +41,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		UISystem.initPauseMenu(this);
 		UISystem.initConfirmationMenu();
 		UISystem.initEndGameMenu();
-		setIllumination(0.3f);
+		setIllumination(0.15f);
 	}
 
 	@Override
