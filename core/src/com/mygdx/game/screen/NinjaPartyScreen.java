@@ -38,6 +38,7 @@ public class NinjaPartyScreen extends GameScreen {
 	private void createStatue() {
 		Collideable newCollideable = new Collideable(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
 		addCollidable(newCollideable);
+		addLightSource(newCollideable);
 	}
 
 	protected void createAICharacter() {

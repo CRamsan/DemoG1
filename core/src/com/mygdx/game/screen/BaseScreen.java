@@ -40,10 +40,9 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	
     protected TiledGameMap map;
 
-
-    protected ArrayList<GameElement> lightSources;
-	protected float illumination = 0f;
-    protected Texture lightTexture;
+    private ArrayList<GameElement> lightSources;
+    private float illumination = 0f;
+    private Texture lightTexture;
     private FrameBuffer lightBuffer;
     /*
     private TextureRegion lightBufferRegion;
@@ -83,11 +82,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
         lightTexture = new Texture(Gdx.files.internal("light.png"));
         lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, false);
-        /*
-        lightBuffer.getColorBufferTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        lightBufferRegion = new TextureRegion(lightBuffer.getColorBufferTexture(),0,0, lightBuffer.getWidth(), lightBuffer.getHeight());
-        lightBufferRegion.flip(false, true);
-        */
     }
 
     @Override
@@ -152,7 +146,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         batch.end();
 
         performLightingRender();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
 
         UISystem.draw(delta);
     }
@@ -209,9 +202,11 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	protected void performLightingRender(){
         // start rendering to the lightBuffer
         lightBuffer.begin();
-        // setup the right blending
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE);
+
+        //Set the blending
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glEnable(GL30.GL_BLEND);
+
         // set the ambient color values, this is the "global" light of your scene
         // imagine it being the sun.  Usually the alpha value is just 1, and you change the darkness/brightness with the Red, Green and Blue values for best effect
         Gdx.gl.glClearColor(0.0f,0.0f,0.0f, illumination);
@@ -231,12 +226,17 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             batch.draw(lightTexture, origX, origY, spritew * 2, spriteh * 2);
         }
         batch.end();
-
         lightBuffer.end();
+
         // now we render the lightBuffer to the default "frame buffer"
         // with the right blending !
-        Gdx.gl.glBlendFunc(GL30.GL_DST_COLOR, GL30.GL_ZERO);
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_ZERO, GL30.GL_SRC_COLOR);
+        batch.enableBlending();
+        batch.setBlendFunction(GL30.GL_ZERO, GL30.GL_SRC_COLOR);
         batch.begin();
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_ZERO, GL30.GL_SRC_COLOR);
         batch.draw(lightBuffer.getColorBufferTexture(),
                 cam.position.x - ((viewport.getWorldWidth()/2f) * cam.zoom),
                 cam.position.y + ((viewport.getWorldHeight()/2f) * cam.zoom),
@@ -244,6 +244,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
                 -Globals.SCREEN_HEIGHT* cam.zoom);
 
         batch.end();
+        batch.setBlendFunction(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 	}
 	
 	/**
@@ -251,6 +252,11 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	 * child classes. It's use is still not well defined.
 	 */
     protected abstract int levelId();
+
+    protected void addLightSource(GameElement newSourceElement){
+        if (!this.lightSources.contains(newSourceElement))
+            this.lightSources.add(newSourceElement);
+    }
 
     @Override
     public void dispose() {

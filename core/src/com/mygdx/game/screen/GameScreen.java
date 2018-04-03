@@ -41,7 +41,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		UISystem.initPauseMenu(this);
 		UISystem.initConfirmationMenu();
 		UISystem.initEndGameMenu();
-		setIllumination(0.15f);
+		setIllumination(0.01f);
 	}
 
 	@Override
@@ -105,7 +105,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		playerList.add(newChar);
 		playerCharacterMap.put(index, newChar);
 		if (!playerFound) {
-			lightSources.add(newChar);
 			playerFound = true;
 		}
 	}
