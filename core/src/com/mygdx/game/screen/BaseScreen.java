@@ -41,12 +41,11 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     protected TiledGameMap map;
 
     private ArrayList<GameElement> lightSources;
-    private float illumination = 0f;
+    private float illumination;
+    private Texture mainLightTexture;
     private Texture lightTexture;
     private FrameBuffer lightBuffer;
-    /*
-    private TextureRegion lightBufferRegion;
-    */
+
     public BaseScreen(boolean useFixedStep)
     {
         batch = new SpriteBatch();
@@ -81,6 +80,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         AudioManager.PlayMusic();
 
         lightTexture = new Texture(Gdx.files.internal("light.png"));
+        mainLightTexture = new Texture(Gdx.files.internal("main_light.png"));
         lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, false);
     }
 
@@ -215,11 +215,12 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         batch.begin();
         // set the color of your light (red,green,blue,alpha values)
         batch.setColor(1f, 1f, 1f, 1f);
+        batch.draw(mainLightTexture, 0, 0, map.getWidth() * 32, map.getHeight() * 32);
         for (GameElement lightSource : lightSources) {
             Vector2 center = lightSource.getCenterPosition();
             // and render the sprite
-            float spriteh = lightTexture.getHeight() / 2f;
-            float spritew = lightTexture.getWidth() / 2f;
+            float spriteh = lightTexture.getHeight() * 0.7f;
+            float spritew = lightTexture.getWidth() * 0.7f;
             float origX = (center.x * 32f) - (spriteh);
             float origY = (center.y * 32f) - (spritew);
 
