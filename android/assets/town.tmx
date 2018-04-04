@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.0" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#509632" nextobjectid="1">
+<map version="1.0" tiledversion="1.1.4" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#509632" nextobjectid="1">
  <tileset firstgid="1" source="town_padded.tsx"/>
- <layer name="Bottom" width="16" height="9">
+ <layer name="Spawns" width="16" height="9">
   <data encoding="base64" compression="zlib">
-   eJzjZmBg4B7FODEvkepEgVgMiMWBWBaI5Ug0gw2KmZHY1HAXrTEAOA0GYQ==
+   eJxjYCAO8BCpjlxAa/OpBUhx51DxEwiQ61YAShAAPQ==
+  </data>
+ </layer>
+ <layer name="Floor" width="16" height="9">
+  <data encoding="base64" compression="zlib">
+   eJzjZmBg4CaAuYhQM5j1c+CR44TKo2NONDla2U+sfnS3UcNd1MAAzaIF+Q==
+  </data>
+ </layer>
+ <layer name="Props" width="16" height="9">
+  <data encoding="base64" compression="zlib">
+   eJxjYEAFgmiYWMCLxQxi1CIDPhLsIwSEoBgb4KfQbAEgFiHBHegAn15Swx0GsIU/LnNwhT859gIA428BjA==
   </data>
  </layer>
 </map>

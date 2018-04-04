@@ -1,5 +1,6 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Globals;
 import com.mygdx.game.gameelements.AICharacter;
 import com.mygdx.game.gameelements.Collideable;
@@ -21,7 +22,7 @@ public class NinjaPartyScreen extends GameScreen {
 	{
 		super(isFrameLimited, parameterManager);
 		statueCount = parameterManager.getGoal();
-		aiCount = 10;
+		aiCount = 0;
 	}
 
 	@Override
@@ -30,15 +31,16 @@ public class NinjaPartyScreen extends GameScreen {
 		for (int i = 0; i < aiCount; i++) {
 			createAICharacter();
 		}
-		for (int i = 0; i < statueCount; i++) {
-			createStatue();
-		}
+
+		createStatues();
 	}
 
-	private void createStatue() {
-		Collideable newCollideable = new Collideable(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
-		addCollidable(newCollideable);
-		addLightSource(newCollideable);
+	private void createStatues() {
+		for (Vector2 pos : map.getStatueSpawner()) {
+			Collideable newCollideable = new Collideable(pos.x, pos.y, this);
+			addCollidable(newCollideable);
+			addLightSource(newCollideable);
+		}
 	}
 
 	protected void createAICharacter() {

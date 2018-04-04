@@ -19,21 +19,46 @@ public class AudioManager {
     }
 
     public enum SOUND {
-        ATTACK
+        ATTACK, BELL
     }
 
     /**
      * Call this function when loading a scene and provide the level Id int
-     * This will load the required sounds as well as preperat the music playlist
+     * This will load the required sounds as well as prepare the music playlist
      */
     public static void LoadAssets(int level)
     {
         musicMap = new HashMap<MUSIC, Music>();
         soundMap = new HashMap<SOUND, Sound>();
-        Music music = Gdx.audio.newMusic(Gdx.files.internal("bg_music.wav"));
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("knife-slash.ogg"));
-        musicMap.put(MUSIC.BG_1, music);
-        soundMap.put(SOUND.ATTACK, sound);
+        for (SOUND enumSound : SOUND.values()) {
+            String filePath = null;
+            switch (enumSound) {
+                case ATTACK:
+                     filePath = "knife-slash.ogg";
+                    break;
+                case BELL:
+                    filePath = "bell.wav";
+                    break;
+            }
+            if (filePath == null) {
+                throw new RuntimeException("Sound file path was not initialized");
+            }
+            Sound sound = Gdx.audio.newSound(Gdx.files.internal(filePath));
+            soundMap.put(enumSound, sound);
+        }
+        for (MUSIC enumMusic : MUSIC.values()) {
+            String filePath = null;
+            switch (enumMusic) {
+                case BG_1:
+                    filePath = "bg_music.wav";
+                    break;
+            }
+            if (filePath == null) {
+                throw new RuntimeException("Music file path was not initialized");
+            }
+            Music music = Gdx.audio.newMusic(Gdx.files.internal(filePath));
+            musicMap.put(enumMusic, music);
+        }
     }
     
     /**
@@ -41,14 +66,18 @@ public class AudioManager {
      */
     public static void UnloadAssets()
     {
-        soundMap.get(SOUND.ATTACK).dispose();
-        musicMap.get(MUSIC.BG_1).dispose();
+        for (Sound sound : soundMap.values()) {
+            sound.dispose();
+        }
+        for (Music music : musicMap.values()) {
+            music.dispose();
+        }
         soundMap = null;
         musicMap = null;
     }
 
     public static void PlaySound(SOUND sound) {
-        ourInstance.PlaySoundInternal();
+        ourInstance.PlaySoundInternal(sound);
     }
 
     public static void PlayMusic() {
@@ -57,8 +86,8 @@ public class AudioManager {
 
     private static AudioManager ourInstance = new AudioManager();
 
-    private void PlaySoundInternal() {
-        soundMap.get(SOUND.ATTACK).play();
+    private void PlaySoundInternal(SOUND sound) {
+        soundMap.get(sound).play();
     }
 
     private void PlayMusicInternal() {

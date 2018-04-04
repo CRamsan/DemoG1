@@ -57,6 +57,8 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 			return;
 
 		this.handleMovement(dx, dy, delta);
+		dx = 0;
+		dy = 0;
 	}
 
 	public void handleControllerInput(int buttonCode, boolean value) {
@@ -91,6 +93,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		if (!collideableSet.contains(collideable)){
 			collideableSet.add(collideable);
 			listener.onCharacterCollideableTouched(collideable, collideableSet.size(), this);
+			AudioManager.PlaySound(AudioManager.SOUND.BELL);
 		}
 	}
 

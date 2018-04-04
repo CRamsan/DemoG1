@@ -51,7 +51,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         batch = new SpriteBatch();
         timeBuffer = 0;
         cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
-        //viewport = new ScreenViewport(cam);
         viewport = new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, cam);
         logger = new FPSLogger();
         this.useFixedStep = useFixedStep;
@@ -76,12 +75,23 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
         cam.position.set(Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getWidth()/2f,Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getHeight()/2f, 1);
 
+        if (map.getHeight() < map.getWidth())
+        {
+            viewport.setWorldWidth(map.getWidth() * 32f);
+            viewport.setWorldHeight((map.getWidth() * 32f) * ((float)Globals.SCREEN_HEIGHT / (float)Globals.SCREEN_WIDTH));
+        }
+        else
+        {
+            viewport.setWorldHeight(map.getHeight() * 32f);
+            viewport.setWorldWidth((map.getHeight() * 32f) * ((float)Globals.SCREEN_WIDTH / (float)Globals.SCREEN_HEIGHT));
+        }
+
 	    AudioManager.LoadAssets(levelId());
         AudioManager.PlayMusic();
 
         lightTexture = new Texture(Gdx.files.internal("light.png"));
         mainLightTexture = new Texture(Gdx.files.internal("main_light.png"));
-        lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, false);
+        lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int)viewport.getWorldWidth(), (int)viewport.getWorldHeight(), false);
     }
 
     @Override
@@ -241,8 +251,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         batch.draw(lightBuffer.getColorBufferTexture(),
                 cam.position.x - ((viewport.getWorldWidth()/2f) * cam.zoom),
                 cam.position.y + ((viewport.getWorldHeight()/2f) * cam.zoom),
-                Globals.SCREEN_WIDTH * cam.zoom,
-                -Globals.SCREEN_HEIGHT* cam.zoom);
+                viewport.getWorldWidth() * cam.zoom,
+                -viewport.getWorldHeight() * cam.zoom);
 
         batch.end();
         batch.setBlendFunction(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
