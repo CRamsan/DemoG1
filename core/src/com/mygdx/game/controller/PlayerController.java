@@ -4,7 +4,7 @@ import com.badlogic.gdx.controllers.Controller;
 
 /**
  * Interface that complements the Controller interface by adding two methods:
- *  supportsEvents and compareControllers.This interface will be the public interface
+ *  supportsEvents and getControllerIndex.This interface will be the public interface
  *  so the game logic does not have to interact directly with Controller objects
  */
 public interface PlayerController extends Controller {

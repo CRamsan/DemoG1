@@ -207,6 +207,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	private void disablePlayerCharacter(int port) {
 		PlayerCharacter character = playerCharacterMap.get(port);
+		character.disableCharacter();
 		character.removeController();
 	}
 

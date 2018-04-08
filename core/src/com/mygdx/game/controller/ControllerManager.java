@@ -57,7 +57,9 @@ public class ControllerManager extends ControllerAdapter {
         blockedMap = new HashMap<Integer, Float>();
         tupleList = new ArrayList<ControllerEventTuple>();
         addPlayerController(new KeyboardController());
-        addPlayerController(new DummyController(1));
+        DummyController dummy = new DummyController(1);
+        addPlayerController(dummy);
+        controllerMap.put(dummy, dummy);
         for (Controller controller : Controllers.getControllers()) {
             connected(controller);
         }

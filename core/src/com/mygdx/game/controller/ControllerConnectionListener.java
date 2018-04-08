@@ -1,8 +1,9 @@
 package com.mygdx.game.controller;
 
 /**
- * Implement this interface to recieve the ControllerManager connected/disconnected
- * events
+ * Implement this interface to receive the ControllerManager connected/disconnected
+ * events. This interface will be implemented by Scenes to receive the notification
+ * from the Controller Manager.
  */
 public interface ControllerConnectionListener {
     /**

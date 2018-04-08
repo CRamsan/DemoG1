@@ -21,17 +21,14 @@ public class NinjaPartyScreen extends GameScreen {
 	public NinjaPartyScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
 		super(isFrameLimited, parameterManager);
-		statueCount = parameterManager.getGoal();
-		aiCount = 0;
+		aiCount = 5;
+		statueCount = 0;
 	}
 
 	@Override
 	public void ScreenInit() {
 		super.ScreenInit();
-		for (int i = 0; i < aiCount; i++) {
-			createAICharacter();
-		}
-
+		createAICharacters();
 		createStatues();
 	}
 
@@ -40,14 +37,25 @@ public class NinjaPartyScreen extends GameScreen {
 			Collideable newCollideable = new Collideable(pos.x, pos.y, this);
 			addCollidable(newCollideable);
 			addLightSource(newCollideable);
+			statueCount++;
 		}
 	}
 
-	protected void createAICharacter() {
+	protected void createAICharacters() {
 		GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-		AICharacter newChar = new AICharacter(type, this, map);
-		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
-		addAICharacter(newChar);
+		int counter = 0;
+		while (true) {
+			AICharacter newChar = new AICharacter(type, this, map);
+			int posX = Globals.rand.nextInt(this.map.getWidth());
+			int posY = Globals.rand.nextInt(this.map.getHeight());
+			if (map.isTileSolid(posX, posY))
+				continue;
+			newChar.setPosition(posX, posY);
+			addAICharacter(newChar);
+			counter++;
+			if (counter >= aiCount)
+				break;
+		}
 	}
 
 	@Override

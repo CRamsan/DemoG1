@@ -57,14 +57,18 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 			return;
 
 		this.handleMovement(dx, dy, delta);
-		dx = 0;
-		dy = 0;
 	}
+
+	static int counter;
 
 	public void handleControllerInput(int buttonCode, boolean value) {
 		switch (buttonCode) {
 			case 0:
-				hasAttacked = value;
+				counter++;
+				if (counter % 2 == 0)
+					hasAttacked = value;
+				else
+					hasAttacked = value;
 				break;
 			case 7:
 				hasPaused = value;

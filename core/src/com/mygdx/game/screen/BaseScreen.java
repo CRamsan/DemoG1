@@ -1,9 +1,11 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -33,7 +35,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     protected Viewport viewport;
     protected ShapeRenderer shapeRenderer;
 
-    protected FPSLogger logger;
     protected float timeBuffer;
     protected boolean useFixedStep;
 	protected CallbackManager callbackManager;
@@ -52,7 +53,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         timeBuffer = 0;
         cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
         viewport = new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, cam);
-        logger = new FPSLogger();
         this.useFixedStep = useFixedStep;
         map = new TiledGameMap();
         shapeRenderer = new ShapeRenderer();
@@ -107,29 +107,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             performUpdate(delta);
             performRender(delta);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            cam.translate(0f, 0.1f);
-            System.out.println(cam.position.x + " - " + cam.position.y);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            cam.translate(-0.1f, 0f);
-            System.out.println(cam.position.x + " - " + cam.position.y);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            cam.translate(0f, -0.1f);
-            System.out.println(cam.position.x + " - " + cam.position.y);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            cam.translate(0.1f, 0f);
-            System.out.println(cam.position.x + " - " + cam.position.y);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
-            cam.zoom -= 0.01f;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            cam.zoom += 0.01f;
-        }
-        logger.log();
     }
 
     /**

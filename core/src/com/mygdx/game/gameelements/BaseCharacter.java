@@ -50,9 +50,7 @@ public abstract class BaseCharacter extends GameElement {
         if (isDead || !isRunning)
             return;
         Vector2 movement = new Vector2(dx, dy);
-        if (movement.len() > 1) {
-            //movement = movement.nor();
-        } else if (movement.len() == 0) {
+        if (movement.len() == 0) {
             return;
         }
 

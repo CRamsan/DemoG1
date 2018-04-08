@@ -85,13 +85,13 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 	@Override
 	public boolean buttonUp(PlayerController controller, int buttonCode) {
 		this.player.handleControllerInput(buttonCode, false);
-		return false;
+        return false;
 	}
 
 	@Override
 	public boolean axisMoved(PlayerController controller, int axisCode, float value) {
 		this.player.handleControllerInput(axisCode, value);
-		return false;
+        return false;
 	}
 
 	// This methods will receive the calls from the Controller and pass them to the

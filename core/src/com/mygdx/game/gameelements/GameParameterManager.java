@@ -30,7 +30,6 @@ public class GameParameterManager {
     public static GameParameterManager createNinjaPartyManager() {
         GameParameterManager manager = new GameParameterManager();
         manager.setType(GameType.NINJA_PARTY);
-        manager.setGoal(4);
         manager.setAllowTeamChange(false);
         return manager;
     }

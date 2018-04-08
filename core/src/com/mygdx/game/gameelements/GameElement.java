@@ -1,8 +1,10 @@
 package com.mygdx.game.gameelements;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Globals;
 import com.mygdx.game.SingleAssetManager;
@@ -209,6 +211,7 @@ public abstract class GameElement
 	protected void updateDirection(float dx, float dy) {
 		float absDx = Math.abs(dx);
 		float absDy = Math.abs(dy);
+
 		if (absDx == absDy)
 		    return;
 		if (absDx > absDy) {

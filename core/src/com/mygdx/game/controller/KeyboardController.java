@@ -2,15 +2,18 @@ package com.mygdx.game.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.math.Vector3;
 
 /**
- * Class that exposes the keyboard as a controller by implementing the PlayerController
+ * Class that exposes the keyboard as a controller by implementing the PlayerController and InputProcessor
  * interface.
  */
-public class KeyboardController implements PlayerController {
+public class KeyboardController implements PlayerController, InputProcessor {
+
+    private ControllerListener keyboardListener;
 
     @Override
     public boolean getButton(int buttonCode) {
@@ -88,21 +91,112 @@ public class KeyboardController implements PlayerController {
 
     @Override
     public void addListener(ControllerListener listener) {
-        throw new RuntimeException("This class does not support listeners");
+        if (supportsEvents()) {
+            keyboardListener = listener;
+            Gdx.input.setInputProcessor(this);
+        } else {
+            throw new RuntimeException("This class does not support listeners");
+        }
     }
 
     @Override
     public void removeListener(ControllerListener listener) {
-        throw new RuntimeException("Not Implemented");
+        if (supportsEvents()) {
+            Gdx.input.setInputProcessor(null);
+            keyboardListener = null;
+        } else {
+            throw new RuntimeException("This class does not support listeners");
+        }
     }
 
     @Override
     public boolean supportsEvents() {
-        return false;
+        return true;
     }
 
     @Override
     public int getControllerIndex() {
         return 0;
+    }
+
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (keyboardListener == null)
+            return false;
+
+        switch (keycode){
+            case Input.Keys.LEFT:
+                return keyboardListener.axisMoved(this,0, -1);
+            case Input.Keys.RIGHT:
+                return keyboardListener.axisMoved(this,0, 1);
+            case Input.Keys.UP:
+                return keyboardListener.axisMoved(this,1, -1);
+            case Input.Keys.DOWN:
+                return keyboardListener.axisMoved(this,1, 1);
+            case Input.Keys.ENTER:
+            case Input.Keys.SPACE:
+                return keyboardListener.buttonDown(this, 0);
+            case Input.Keys.BACKSPACE:
+                return keyboardListener.buttonDown(this, 5);
+            case Input.Keys.P:
+                return keyboardListener.buttonDown(this, 7);
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        if (keyboardListener == null)
+            return false;
+
+        switch (keycode){
+            case Input.Keys.LEFT:
+            case Input.Keys.RIGHT:
+                return keyboardListener.axisMoved(this,0, 0);
+            case Input.Keys.UP:
+            case Input.Keys.DOWN:
+                return keyboardListener.axisMoved(this,1, 0);
+            case Input.Keys.ENTER:
+            case Input.Keys.SPACE:
+                return keyboardListener.buttonUp(this, 0);
+            case Input.Keys.BACKSPACE:
+                return keyboardListener.buttonUp(this, 5);
+            case Input.Keys.P:
+                return keyboardListener.buttonUp(this, 7);
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }
