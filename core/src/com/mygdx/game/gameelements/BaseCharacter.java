@@ -46,7 +46,7 @@ public abstract class BaseCharacter extends GameElement {
      * @param dx
      * @param dy
      */
-    protected void handleMovement(float dx, float dy, float delta){
+    protected void handleMovement(float dx, float dy, float delta, boolean ignoreCollision){
         if (isDead || !isRunning)
             return;
         Vector2 movement = new Vector2(dx, dy);
@@ -61,17 +61,17 @@ public abstract class BaseCharacter extends GameElement {
         boolean processVectors = (absX == absY) ? Globals.rand.nextBoolean() : false;
 
         if (absX > absY || processVectors) {
-            movement.x = testVectorMovement(movement.x, AXIS.X);
+            movement.x = testVectorMovement(movement.x, AXIS.X, ignoreCollision);
             this.x += movement.x;
             if (absY != 0) {
-                movement.y = testVectorMovement(movement.y, AXIS.Y);
+                movement.y = testVectorMovement(movement.y, AXIS.Y, ignoreCollision);
                 this.y += movement.y;
             }
         } else {
-            movement.y = testVectorMovement(movement.y, AXIS.Y);
+            movement.y = testVectorMovement(movement.y, AXIS.Y, ignoreCollision);
             this.y += movement.y;
             if (absX != 0) {
-                movement.x = testVectorMovement(movement.x, AXIS.X);
+                movement.x = testVectorMovement(movement.x, AXIS.X, ignoreCollision);
                 this.x += movement.x;
             }
         }
@@ -88,7 +88,7 @@ public abstract class BaseCharacter extends GameElement {
      * @param axis The expected axis that wants to be tested
      * @return The resulting distance that this character can move
      */
-    private float testVectorMovement(float value, AXIS axis) {
+    private float testVectorMovement(float value, AXIS axis, boolean ignoreWalls) {
         if (value == 0)
             throw new RuntimeException("Vector has value of 0");
         int endXStart, endXEnd, endYStart, endYEnd;
@@ -100,7 +100,8 @@ public abstract class BaseCharacter extends GameElement {
                     endYEnd--;
                 }
                 endXEnd = (int)Math.floor(this.x + 1f + value);
-                if (map.isTileSolid(endXEnd, endYStart) || map.isTileSolid(endXEnd, endYEnd)) {
+                if ((map.isTileOutOfBounds(endXEnd, endYStart) || map.isTileOutOfBounds(endXEnd, endYEnd)) ||
+                    (!ignoreWalls && (map.isTileSolid(endXEnd, endYStart) || map.isTileSolid(endXEnd, endYEnd)))) {
                     return (float)Math.ceil(this.x + 1f) - (this.x + 1f);
                 } else {
                     return value;
@@ -109,10 +110,8 @@ public abstract class BaseCharacter extends GameElement {
                 endXStart = (int)Math.floor(this.x);
                 endXEnd = (int)Math.ceil(this.x);
                 endYEnd = (int)Math.floor(this.y + 1f + value);
-                if (endXEnd == Math.floor(this.x + 1f)) {
-                    //endXEnd--;
-                }
-                if (map.isTileSolid(endXStart, endYEnd) || map.isTileSolid(endXEnd, endYEnd)) {
+                if ((map.isTileOutOfBounds(endXStart, endYEnd) || map.isTileOutOfBounds(endXEnd, endYEnd)) ||
+                    (!ignoreWalls && (map.isTileSolid(endXStart, endYEnd) || map.isTileSolid(endXEnd, endYEnd)))) {
                     return (float)Math.ceil(this.y + 1f) - (this.y + 1f);
                 } else {
                     return value;
@@ -126,7 +125,8 @@ public abstract class BaseCharacter extends GameElement {
                 if (endYEnd == Math.ceil(this.y + 1f)) {
                     endYEnd--;
                 }
-                if (map.isTileSolid(endXStart, endYStart) || map.isTileSolid(endXStart, endYEnd)) {
+                if ((map.isTileOutOfBounds(endXStart, endYStart) || map.isTileOutOfBounds(endXStart, endYEnd)) ||
+                    (!ignoreWalls && (map.isTileSolid(endXStart, endYStart) || map.isTileSolid(endXStart, endYEnd)))) {
                     return - (this.x - (float)Math.floor(this.x));
                 } else {
                     return value;
@@ -135,10 +135,8 @@ public abstract class BaseCharacter extends GameElement {
                 endXStart = (int)Math.floor(this.x);
                 endXEnd = (int)Math.ceil(this.x);
                 endYEnd = (int)Math.floor(this.y + value);
-                if (endXEnd == Math.floor(this.x + 1f)) {
-                    //endXEnd--;
-                }
-                if (map.isTileSolid(endXStart, endYEnd) || map.isTileSolid(endXEnd, endYEnd)) {
+                if ((map.isTileOutOfBounds(endXStart, endYEnd) || map.isTileOutOfBounds(endXEnd, endYEnd)) ||
+                    (!ignoreWalls && (map.isTileSolid(endXStart, endYEnd) || map.isTileSolid(endXEnd, endYEnd)))) {
                     return -(this.y - (float)Math.floor(this.y));
                 } else {
                     return value;

@@ -60,6 +60,9 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 			character.update(delta);
 		}
 		for (PlayerCharacter player : playerList) {
+			// Ignore anything that is not CHAR_HUMAN, for example a type reticle will not trigger a collision
+			if (player.getType() != GameElement.TYPE.CHAR_HUMAN)
+				continue;
 			if (player.hasMoved()) {
 				for (Collideable collideable : collideableList) {
 					if (player.getCenterPosition().dst(collideable.getCenterPosition()) < (player.getRadious() + collideable.getRadious())) {

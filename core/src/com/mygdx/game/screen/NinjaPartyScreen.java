@@ -21,7 +21,7 @@ public class NinjaPartyScreen extends GameScreen {
 	public NinjaPartyScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
 		super(isFrameLimited, parameterManager);
-		aiCount = 5;
+		aiCount = 100;
 		statueCount = 0;
 	}
 

@@ -1,6 +1,7 @@
 package com.mygdx.game.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -105,7 +106,9 @@ public class UISystem {
 
     private boolean uiVisible;
     private Button selected;
-
+    private InputProcessor stashedProcessor;    // When the UI displays it will register itself as the InputProcessor.
+                                                // In case there is another IP already in place, such as a keyboard controller,
+                                                // then lets stash it until the UI is dismissed so we can restore it.
     private Stage stage;
     private Actor mainMenu;
     private Actor getReadyMenu;
@@ -373,6 +376,7 @@ public class UISystem {
 
     private void setActorAsVisible(Actor actor) {
         stage.addActor(actor);
+        stashedProcessor = Gdx.input.getInputProcessor();
         Gdx.input.setInputProcessor(stage);
         uiVisible = true;
         Button defaultSelection = defaultSelectionMap.get(actor);
@@ -389,6 +393,9 @@ public class UISystem {
 
     public void hideMenuInternal () {
         uiVisible = false;
+        if (stashedProcessor != null)
+            Gdx.input.setInputProcessor(stashedProcessor);
+        stashedProcessor = null;
         stage.clear();
     }
 

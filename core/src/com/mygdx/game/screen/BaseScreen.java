@@ -89,8 +89,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	    AudioManager.LoadAssets(levelId());
         AudioManager.PlayMusic();
 
-        lightTexture = new Texture(Gdx.files.internal("light.png"));
-        mainLightTexture = new Texture(Gdx.files.internal("main_light.png"));
+        lightTexture = new Texture(Gdx.files.internal(Globals.ASSET_LIGHT));
+        mainLightTexture = new Texture(Gdx.files.internal(Globals.ASSET_MAIN_LIGHT));
         lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int)viewport.getWorldWidth(), (int)viewport.getWorldHeight(), false);
     }
 

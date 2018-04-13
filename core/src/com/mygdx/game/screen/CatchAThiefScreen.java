@@ -39,6 +39,10 @@ public class CatchAThiefScreen extends GameScreen {
 		for (int i = 0; i < countCount; i++) {
 			createCoin();
 		}
+		for (PlayerCharacter character : playerList) {
+			if (character.getType() == GameElement.TYPE.CHAR_RETICLE)
+				addLightSource(character);
+		}
 	}
 	private void createCoin() {
 		Collideable newCollideable = new Collideable(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
@@ -48,9 +52,19 @@ public class CatchAThiefScreen extends GameScreen {
 
 	protected void createAICharacter() {
 		GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-		AICharacter newChar = new AICharacter(type, this, map);
-		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
-		addAICharacter(newChar);
+		int counter = 0;
+		while (true) {
+			AICharacter newChar = new AICharacter(type, this, map);
+			int posX = Globals.rand.nextInt(this.map.getWidth());
+			int posY = Globals.rand.nextInt(this.map.getHeight());
+			if (map.isTileSolid(posX, posY))
+				continue;
+			newChar.setPosition(posX, posY);
+			addAICharacter(newChar);
+			counter++;
+			if (counter >= aiCount)
+				break;
+		}
 	}
 
 	@Override

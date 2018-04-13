@@ -4,6 +4,8 @@ import java.util.Random;
 
 public class Globals {
     public static final String ASSET_SPRITE_SHEET = "animation_sheet.png";
+    public static final String ASSET_LIGHT = "light.png";
+    public static final String ASSET_MAIN_LIGHT = "main_light.png";
     public static final String ASSET_SKIN_FILE = "uiskin.json";
     public static final int ASSET_SPRITE_SHEET_ROWS = 2;
     public static final int ASSET_SPRITE_SHEET_COLUMNS = 6;

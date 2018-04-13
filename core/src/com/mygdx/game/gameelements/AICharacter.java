@@ -37,7 +37,7 @@ public class AICharacter extends BaseCharacter
 		super.update(delta);
 		if (isDead)
 			return;
-		this.handleMovement(lastMovementVector.x, lastMovementVector.y, delta);
+		this.handleMovement(lastMovementVector.x, lastMovementVector.y, delta, false);
 	}
 
 	@Override

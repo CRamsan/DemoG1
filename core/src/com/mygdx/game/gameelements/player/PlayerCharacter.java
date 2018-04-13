@@ -20,6 +20,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	private int Id;
 	private float dx, dy;
 	private boolean isEventBased;
+	private boolean ignoreCollision;
 
 	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener, TiledGameMap map) {
 		super(type, listener, map);
@@ -27,6 +28,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		this.collideableSet = new HashSet<Collideable>();
 		this.Id = Id;
 		this.isEventBased = false;
+		this.ignoreCollision = (type != TYPE.CHAR_HUMAN);
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		if (isDead)
 			return;
 
-		this.handleMovement(dx, dy, delta);
+		this.handleMovement(dx, dy, delta, ignoreCollision);
 	}
 
 	static int counter;
