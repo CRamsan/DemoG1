@@ -4,7 +4,7 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Globals;
+import com.mygdx.game.ui.UISystem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,15 +17,17 @@ import java.util.List;
  */
 public class ControllerManager extends ControllerAdapter {
 
+    public static final float UI_WAIT = 1f;
+
     /**
      * Small class that wraps around an UI_EVENT and the controller
      * that it came from.
      */
     public class ControllerEventTuple {
-        public Globals.UI_EVENTS event;
+        public UISystem.UI_EVENTS event;
         public int index;
 
-        public ControllerEventTuple(Globals.UI_EVENTS event, int index) {
+        public ControllerEventTuple(UISystem.UI_EVENTS event, int index) {
             this.event = event;
             this.index = index;
         }
@@ -79,7 +81,7 @@ public class ControllerManager extends ControllerAdapter {
     public void update(float delta) {
         tupleList.clear();
         for (PlayerController controller : controllerList) {
-            Globals.UI_EVENTS event = Globals.UI_EVENTS.NOOP;
+            UISystem.UI_EVENTS event = UISystem.UI_EVENTS.NOOP;
 
             if (controller == null) // An unplugged controller can leave a null controller
                 continue;
@@ -91,45 +93,45 @@ public class ControllerManager extends ControllerAdapter {
             {
                 if (absDx > absDy) {
                     if (dx > 0) {
-                        event = Globals.UI_EVENTS.RIGHT;
+                        event = UISystem.UI_EVENTS.RIGHT;
                     } else if (dx < 0) {
-                        event = Globals.UI_EVENTS.LEFT;
+                        event = UISystem.UI_EVENTS.LEFT;
                     }
                 } else {
                     if (dy > 0) {
-                        event = Globals.UI_EVENTS.UP;
+                        event = UISystem.UI_EVENTS.UP;
                     } else if (dy < 0) {
-                        event = Globals.UI_EVENTS.DOWN;
+                        event = UISystem.UI_EVENTS.DOWN;
                     }
                 }
             }
 
             boolean isSelected = controller.getButton(0);
             if (isSelected)
-                event = Globals.UI_EVENTS.SELECT;
+                event = UISystem.UI_EVENTS.SELECT;
 
             if (blockedMap.containsKey(controller.getControllerIndex())) {
                 // There was a UI event that is blocking other events
                 // If the new event is NOOP then the event was released.
                 // Otherwise wait for the timeout
                 float waitBuffer = blockedMap.get(controller.getControllerIndex());
-                if (event == Globals.UI_EVENTS.NOOP) {
+                if (event == UISystem.UI_EVENTS.NOOP) {
                     blockedMap.remove(controller.getControllerIndex());
                 } else {
                     // Wait until we reach the timeout.
                     waitBuffer += delta;
-                    if (waitBuffer >= Globals.UI_WAIT) {
+                    if (waitBuffer >= UI_WAIT) {
                         blockedMap.remove(controller.getControllerIndex());
                     } else {
                         blockedMap.put(controller.getControllerIndex(), waitBuffer);
-                        event = Globals.UI_EVENTS.NOOP;
+                        event = UISystem.UI_EVENTS.NOOP;
                     }
                 }
             }
 
-            if (event == Globals.UI_EVENTS.DOWN || event == Globals.UI_EVENTS.UP ||
-                    event == Globals.UI_EVENTS.LEFT || event == Globals.UI_EVENTS.RIGHT ||
-                    event == Globals.UI_EVENTS.SELECT) {
+            if (event == UISystem.UI_EVENTS.DOWN || event == UISystem.UI_EVENTS.UP ||
+                    event == UISystem.UI_EVENTS.LEFT || event == UISystem.UI_EVENTS.RIGHT ||
+                    event == UISystem.UI_EVENTS.SELECT) {
                 blockedMap.put(controller.getControllerIndex(), 0f);
             }
             ControllerEventTuple tuple = new ControllerEventTuple(event, controller.getControllerIndex());

@@ -11,14 +11,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
-import static com.mygdx.game.Globals.ASSET_TMX_MAP;
-
 /**
  * This class will handle the tiled map. Both rendering and interaction with the tiled
  * map will be done here.
  */
 public class TiledGameMap
 {
+	private static final String ASSET_TMX_MAP = "town.tmx";
+
 	private TiledMap map;
 	private TiledMapRenderer renderer;
 	private boolean[][] collisionMap;

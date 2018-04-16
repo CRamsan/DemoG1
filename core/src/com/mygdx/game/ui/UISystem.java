@@ -26,6 +26,18 @@ import java.util.List;
  */
 public class UISystem {
 
+    public enum UI_EVENTS { UP, DOWN, LEFT, RIGHT, SELECT, NOOP }
+
+    private static final String TEXT_LABEL_NINJA_PARTY = "Ninja Party";
+    private static final String TEXT_LABEL_CATCH_A_THIEF = "Catch A Thief";
+    private static final String TEXT_LABEL_KNIGHTS_VS_NINJAS = "Knights vs Ninjas";
+    private static final String TEXT_LABEL_DEATH_RACE = "Death Race";
+    private static final String TEXT_LABEL_ASSASSIN = "Assassin";
+    private static final String TEXT_LABEL_START = "Start";
+    private static final String TEXT_LABEL_BACK = "Back";
+
+    private static final String ASSET_SKIN_FILE = "uiskin.json";
+
     /**
      * Public API calls
      */
@@ -85,7 +97,7 @@ public class UISystem {
         ourInstance.resize(width, height);
     }
 
-    public static void injectUIEvent(Globals.UI_EVENTS event) {
+    public static void injectUIEvent(UISystem.UI_EVENTS event) {
         ourInstance.injectUIEventInternal(event);
     }
 
@@ -97,7 +109,7 @@ public class UISystem {
 
     private Skin skin;
     private ArrayList<Texture> loadedTextures;
-    private HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap;
+    private HashMap<Button, HashMap<UISystem.UI_EVENTS, Button>> sequenceMap;
     private HashMap<Actor, Button> defaultSelectionMap;
 
     private PauseMenuEventListener pauseMenuListener;
@@ -117,7 +129,7 @@ public class UISystem {
     private Actor pauseMenu;
 
     private UISystem() {
-        skin = new Skin(Gdx.files.internal(Globals.ASSET_SKIN_FILE));
+        skin = new Skin(Gdx.files.internal(ASSET_SKIN_FILE));
         loadedTextures = new ArrayList<Texture>();
         uiVisible = false;
     }
@@ -127,7 +139,7 @@ public class UISystem {
             return;
         stage = new Stage(new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT));
         //stage = new Stage(new ScreenViewport());
-        sequenceMap = new HashMap<Button, HashMap<Globals.UI_EVENTS, Button>>();
+        sequenceMap = new HashMap<Button, HashMap<UISystem.UI_EVENTS, Button>>();
         defaultSelectionMap = new HashMap<Actor, Button>();
         stage.setDebugAll(true);
     }
@@ -139,7 +151,7 @@ public class UISystem {
 
         Table mainPane = UIToolKit.GenerateParentChildContainer(skin);
         Label childLabel = UIToolKit.AddActorToChild(mainPane, "", skin);
-        Button firstButton = UIToolKit.AddButtonToParentWithAction(mainPane,Globals.TEXT_LABEL_NINJA_PARTY, skin, new ChangeListener() {
+        Button firstButton = UIToolKit.AddButtonToParentWithAction(mainPane,TEXT_LABEL_NINJA_PARTY, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 UISystem.hideMenu();
@@ -148,7 +160,7 @@ public class UISystem {
             }
         }, sequenceMap);
 
-        Button secondButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_CATCH_A_THIEF, skin, new ChangeListener() {
+        Button secondButton = UIToolKit.AddButtonToParentWithAction(mainPane, TEXT_LABEL_CATCH_A_THIEF, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 UISystem.hideMenu();
@@ -156,7 +168,7 @@ public class UISystem {
                 UISystem.displayGetReadyMenu();
             }
         }, sequenceMap);
-        Button thirdButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_KNIGHTS_VS_NINJAS, skin, new ChangeListener() {
+        Button thirdButton = UIToolKit.AddButtonToParentWithAction(mainPane, TEXT_LABEL_KNIGHTS_VS_NINJAS, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 UISystem.hideMenu();
@@ -164,7 +176,7 @@ public class UISystem {
                 UISystem.displayGetReadyMenu();
             }
         }, sequenceMap);
-        Button fourthButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_DEATH_RACE, skin, new ChangeListener() {
+        Button fourthButton = UIToolKit.AddButtonToParentWithAction(mainPane, TEXT_LABEL_DEATH_RACE, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 UISystem.hideMenu();
@@ -172,7 +184,7 @@ public class UISystem {
                 UISystem.displayGetReadyMenu();
             }
         }, sequenceMap);
-        Button fifthButton = UIToolKit.AddButtonToParentWithAction(mainPane, Globals.TEXT_LABEL_ASSASSIN, skin, new ChangeListener() {
+        Button fifthButton = UIToolKit.AddButtonToParentWithAction(mainPane, TEXT_LABEL_ASSASSIN, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 UISystem.hideMenu();
@@ -279,7 +291,7 @@ public class UISystem {
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
         Table containerPane = UIToolKit.GenerateHorizontalContainer(mainPane, skin);
         getReadyMenuController = new GetReadyMenuController(containerPane, skin);
-        Button  buttonStart = UIToolKit.AddButtonToParentWithAction(mainPane,Globals.TEXT_LABEL_START, skin, new ChangeListener() {
+        Button  buttonStart = UIToolKit.AddButtonToParentWithAction(mainPane,TEXT_LABEL_START, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (getReadyMenuController.enoughPlayers()) {
@@ -288,7 +300,7 @@ public class UISystem {
                 }
             }
         }, sequenceMap);
-        Button  buttonBack = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, Globals.TEXT_LABEL_BACK, skin, new ChangeListener() {
+        Button  buttonBack = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, TEXT_LABEL_BACK, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 UISystem.hideMenu();
@@ -337,21 +349,21 @@ public class UISystem {
     private void processInput() {
         List<ControllerManager.ControllerEventTuple> tupleList = ControllerManager.getInstance().getUIEvents();
         for (ControllerManager.ControllerEventTuple tuple : tupleList) {
-            Globals.UI_EVENTS event = tuple.event;
+            UISystem.UI_EVENTS event = tuple.event;
             handleEvent(event);
         }
     }
 
-    private void handleEvent(Globals.UI_EVENTS event) {
-        if (event == Globals.UI_EVENTS.NOOP)
+    private void handleEvent(UISystem.UI_EVENTS event) {
+        if (event == UISystem.UI_EVENTS.NOOP)
             return;
 
-        if (event == Globals.UI_EVENTS.DOWN || event == Globals.UI_EVENTS.UP ||
-                event == Globals.UI_EVENTS.LEFT || event == Globals.UI_EVENTS.RIGHT) {
+        if (event == UISystem.UI_EVENTS.DOWN || event == UISystem.UI_EVENTS.UP ||
+                event == UISystem.UI_EVENTS.LEFT || event == UISystem.UI_EVENTS.RIGHT) {
             Button newSelected = sequenceMap.get(selected).get(event);
             if (newSelected != null)
                 setSelected(newSelected);
-        } else if (event == Globals.UI_EVENTS.SELECT) {
+        } else if (event == UISystem.UI_EVENTS.SELECT) {
             selected.getClickListener().clicked(null, 0, 0);
         }
     }
@@ -360,7 +372,7 @@ public class UISystem {
      * This method should only be used for tests.
      * @param event
      */
-    private void injectUIEventInternal(Globals.UI_EVENTS event) {
+    private void injectUIEventInternal(UISystem.UI_EVENTS event) {
         handleEvent(event);
     }
 

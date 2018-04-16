@@ -58,7 +58,7 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 
 	@Override
 	protected void performCustomUpdate() {
-		performCustomUpdate(Globals.FRAME_TIME);
+		performCustomUpdate(FRAME_TIME);
 	}
 
 	@Override

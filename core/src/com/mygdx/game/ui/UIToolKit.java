@@ -2,7 +2,6 @@ package com.mygdx.game.ui;
 
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.mygdx.game.Globals;
 
 import java.util.HashMap;
 
@@ -53,7 +52,7 @@ public class UIToolKit {
         return containerTable;
     }
 
-    public static Button AddButtonToParentWithAction(Table root, String label, Skin skin, EventListener listener, HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
+    public static Button AddButtonToParentWithAction(Table root, String label, Skin skin, EventListener listener, HashMap<Button, HashMap<UISystem.UI_EVENTS, Button>> sequenceMap) {
         TextButton startGameButton = new TextButton(label, skin);
         if (listener != null) {
             startGameButton.addListener(listener);
@@ -62,7 +61,7 @@ public class UIToolKit {
         }
         Table parentTable = (Table) root.getChildren().get(0);
         parentTable.add(startGameButton).pad(DIALOG_TABLE_PAD).row();
-        sequenceMap.put(startGameButton, new HashMap<Globals.UI_EVENTS, Button>());
+        sequenceMap.put(startGameButton, new HashMap<UISystem.UI_EVENTS, Button>());
         return startGameButton;
     }
 
@@ -76,23 +75,23 @@ public class UIToolKit {
 
     public static Button AddButtonToSinglePaneWithAction(Table root, String label, Skin skin,
                                                          EventListener listener,
-                                                         HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
+                                                         HashMap<Button, HashMap<UISystem.UI_EVENTS, Button>> sequenceMap) {
         TextButton startGameButton = new TextButton(label, skin);
         if (listener != null)
             startGameButton.addListener(listener);
         Table contentTable = (Table) root.getChildren().get(0);
         contentTable.add(startGameButton).pad(DIALOG_TABLE_PAD).row();
-        sequenceMap.put(startGameButton, new HashMap<Globals.UI_EVENTS, Button>());
+        sequenceMap.put(startGameButton, new HashMap<UISystem.UI_EVENTS, Button>());
         return startGameButton;
     }
 
-    public static void LinkUpAndDown(Button up, Button down, HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
-        sequenceMap.get(up).put(Globals.UI_EVENTS.DOWN, down);
-        sequenceMap.get(down).put(Globals.UI_EVENTS.UP, up);
+    public static void LinkUpAndDown(Button up, Button down, HashMap<Button, HashMap<UISystem.UI_EVENTS, Button>> sequenceMap) {
+        sequenceMap.get(up).put(UISystem.UI_EVENTS.DOWN, down);
+        sequenceMap.get(down).put(UISystem.UI_EVENTS.UP, up);
     }
 
-    public static void LinkLeftAndRight(Button left, Button right, HashMap<Button, HashMap<Globals.UI_EVENTS, Button>> sequenceMap) {
-        sequenceMap.get(left).put(Globals.UI_EVENTS.RIGHT, right);
-        sequenceMap.get(right).put(Globals.UI_EVENTS.LEFT, left);
+    public static void LinkLeftAndRight(Button left, Button right, HashMap<Button, HashMap<UISystem.UI_EVENTS, Button>> sequenceMap) {
+        sequenceMap.get(left).put(UISystem.UI_EVENTS.RIGHT, right);
+        sequenceMap.get(right).put(UISystem.UI_EVENTS.LEFT, left);
     }
 }

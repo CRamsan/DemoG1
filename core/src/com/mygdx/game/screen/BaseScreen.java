@@ -12,10 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.AudioManager;
-import com.mygdx.game.CallbackManager;
-import com.mygdx.game.Globals;
-import com.mygdx.game.TiledGameMap;
+import com.mygdx.game.*;
 import com.mygdx.game.controller.ControllerConnectionListener;
 import com.mygdx.game.controller.ControllerManager;
 import com.mygdx.game.controller.PlayerController;
@@ -29,6 +26,8 @@ import java.util.ArrayList;
  * as well as calling the update method.
  */
 public abstract class BaseScreen implements Screen, ControllerConnectionListener {
+
+    public static final float FRAME_TIME = 1f/60f;
 
     protected OrthographicCamera cam;
     protected SpriteBatch batch;
@@ -73,7 +72,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             portIndex++;
         }
 
-        cam.position.set(Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getWidth()/2f,Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH * map.getHeight()/2f, 1);
+        cam.position.set(32f * map.getWidth()/2f,32f * map.getHeight()/2f, 1);
 
         if (map.getHeight() < map.getWidth())
         {
@@ -89,8 +88,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	    AudioManager.LoadAssets(levelId());
         AudioManager.PlayMusic();
 
-        lightTexture = new Texture(Gdx.files.internal(Globals.ASSET_LIGHT));
-        mainLightTexture = new Texture(Gdx.files.internal(Globals.ASSET_MAIN_LIGHT));
+        lightTexture = SingleAssetManager.getLightTexture();
+        mainLightTexture = SingleAssetManager.getSceneLightTexture();
         lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int)viewport.getWorldWidth(), (int)viewport.getWorldHeight(), false);
     }
 
@@ -98,10 +97,10 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     public final void render(float delta) {
         if (useFixedStep) {
             timeBuffer += Gdx.graphics.getDeltaTime();
-            while (timeBuffer > Globals.FRAME_TIME) {
+            while (timeBuffer > FRAME_TIME) {
                 performUpdate();
                 performRender();
-                timeBuffer-=Globals.FRAME_TIME;
+                timeBuffer-=FRAME_TIME;
             }
         } else {
             performUpdate(delta);
@@ -113,7 +112,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
      * This method will render the scene always after a fixed time step
      */
     private final void performRender() {
-        performRender(Globals.FRAME_TIME);
+        performRender(FRAME_TIME);
     }
 
     /**
@@ -148,7 +147,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	}
 	
     private final void performUpdate() {
-		performUpdate(Globals.FRAME_TIME);
+		performUpdate(FRAME_TIME);
 	}
 	
 	/**

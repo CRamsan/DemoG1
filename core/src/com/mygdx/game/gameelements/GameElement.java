@@ -1,7 +1,5 @@
 package com.mygdx.game.gameelements;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,8 +12,8 @@ import com.mygdx.game.SingleAssetManager;
  * This class will handle rendering, assets and position.
  * Any subclass should handle input and use the translate method to move this character.
  */
-public abstract class GameElement
-{
+public abstract class GameElement implements SingleAssetManager.TextureAnimationReciever {
+
 	protected enum DIRECTION {
 		LEFT, RIGHT, UP, DOWN
 	}
@@ -45,14 +43,10 @@ public abstract class GameElement
 	protected com.mygdx.game.gameelements.CharacterEventListener listener;
 	protected boolean shouldRender;
 
-	private AssetManager manager;
 	private Animation<TextureRegion> walkUpAnimation;
 	private Animation<TextureRegion> walkDownAnimation;
 	private Animation<TextureRegion> walkLeftAnimation;
 	private Animation<TextureRegion> walkRightAnimation;
-
-	private static Texture texture;
-    private static int instanceCount = 0;
 
     /***
      * Regular constructor. It will initialize the regular variables as well as call the init method to load textures
@@ -62,7 +56,6 @@ public abstract class GameElement
      * @param y value in world coordinates
      */
     public GameElement(TYPE type, float x, float y, com.mygdx.game.gameelements.CharacterEventListener listener) {
-        this.manager = SingleAssetManager.getAssetManager();
         this.type = type;
         this.x = x;
         this.y = y;
@@ -77,8 +70,8 @@ public abstract class GameElement
      * Simple constructor that only takes a type as argument
      * @param type
      */
-    public GameElement(TYPE type, com.mygdx.game.gameelements.CharacterEventListener listerner) {
-        this(type, 0f, 0f, listerner);
+    public GameElement(TYPE type, com.mygdx.game.gameelements.CharacterEventListener listener) {
+        this(type, 0f, 0f, listener);
     }
 
     /***
@@ -86,89 +79,30 @@ public abstract class GameElement
      * assets. This should only be called by the constructor.
      */
     private void init() {
-		if (GameElement.instanceCount == 0) {
-			manager.load(Globals.ASSET_SPRITE_SHEET, Texture.class);
-			manager.finishLoading();
-		}
 		if (type == null) {
 			throw new RuntimeException("Type cannot be null");
 		}
 
-		GameElement.instanceCount++;
-		texture = manager.get(Globals.ASSET_SPRITE_SHEET);
+		// Signal to the AssetManager that we are going to need to load textures
+		SingleAssetManager.loadSprite();
 
-		TextureRegion[][] spriteRegion = TextureRegion.split(texture,
-				texture.getWidth() / Globals.ASSET_SPRITE_SHEET_COLUMNS,
-				texture.getHeight() / Globals.ASSET_SPRITE_SHEET_ROWS);
-		TextureRegion textureRegion = null;
-		switch (this.type) {
-			case CHAR_STATUE:
-				textureRegion = spriteRegion[0][5];
-				break;
-			case CHAR_HUMAN:
-				textureRegion = spriteRegion[0][3];
-				break;
-			case FIRE:
-				textureRegion = spriteRegion[0][0];
-				break;
-			case CHAR_BASEAI:
-				textureRegion = spriteRegion[0][4];
-				break;
-			case PLANT:
-				textureRegion = spriteRegion[0][2];
-				break;
-			case WATER:
-				textureRegion = spriteRegion[0][1];
-				break;
-			case KNIGHT:
-				textureRegion = spriteRegion[1][4];
-				break;
-			case CHAR_RETICLE:
-				textureRegion = spriteRegion[1][5];
-				break;
-			case TRADER:
-				textureRegion = spriteRegion[1][2];
-				break;
-			case WIZARD:
-				textureRegion = spriteRegion[1][3];
-				break;
-			case MALE_VILLAGER:
-				textureRegion = spriteRegion[1][0];
-				break;
-			case FEMALE_VILLAGER:
-				textureRegion = spriteRegion[1][1];
-				break;
-		}
-		TextureRegion[][] tmp = textureRegion.split(Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH,
-				Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT);
+		SingleAssetManager.getPlayerTextures(type, this);
 
-		for (int i = 0; i < Globals.ANIMATION_ROWS; i++) {
-            TextureRegion[] walkFrames = new TextureRegion[Globals.ANIMATION_COLUMNS];
-            for (int j = 0; j < Globals.ANIMATION_COLUMNS; j++) {
-				walkFrames[j] = tmp[i][j];
-			}
-			switch (i) {
-				case 0:
-					walkUpAnimation = new Animation<TextureRegion>(Globals.ANIMATION_DURATION, walkFrames);
-					break;
-				case 1:
-					walkRightAnimation = new Animation<TextureRegion>(Globals.ANIMATION_DURATION, walkFrames);
-					break;
-				case 2:
-					walkDownAnimation = new Animation<TextureRegion>(Globals.ANIMATION_DURATION, walkFrames);
-					break;
-				case 3:
-					walkLeftAnimation = new Animation<TextureRegion>(Globals.ANIMATION_DURATION, walkFrames);
-					break;
-			}
-		}
 		state = 0;
-		width = Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH;
-		height = Globals.ASSET_SPRITE_SHEET_SPRITE_HEIGHT;
+		width = 32f;
+		height = 32f;
 		shouldRender = true;
 	}
 
-    /***
+	@Override
+	public void setAnimations(Animation<TextureRegion> walkUp, Animation<TextureRegion> walkRight, Animation<TextureRegion> walkDown, Animation<TextureRegion> walkLeft) {
+    	this.walkDownAnimation = walkDown;
+    	this.walkUpAnimation = walkUp;
+    	this.walkLeftAnimation = walkLeft;
+    	this.walkRightAnimation = walkRight;
+	}
+
+	/***
      * Call this method to update the state of the object. This method will handle inputs and updating sny state.
      */
     public void update(float delta) {
@@ -197,8 +131,8 @@ public abstract class GameElement
                 currentAnimation = walkRightAnimation;
                 break;
         }
-        float xPos = x * Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH;
-        float yPos = y * Globals.ASSET_SPRITE_SHEET_SPRITE_WIDTH;
+        float xPos = x * 32f;
+        float yPos = y * 32f;
         TextureRegion currentFrame = currentAnimation.getKeyFrame(state, true);
         batch.draw(currentFrame, xPos, yPos, width, height);
     }
@@ -243,10 +177,7 @@ public abstract class GameElement
      * are unloaded, then the loaded assets will be disposed as well.
      */
 	public void unload() {
-		GameElement.instanceCount--;
-		if (GameElement.instanceCount == 0) {
-            manager.unload(Globals.ASSET_SPRITE_SHEET);
-		}
+		SingleAssetManager.unloadSprite();
 	}
 
 	final public Vector2 getCenterPosition() {

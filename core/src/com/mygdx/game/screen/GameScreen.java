@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class GameScreen extends BaseScreen implements CharacterEventListener, PauseMenuEventListener {
-	
+
+	public static final float POISON_TIME = 5f;
+
 	private Map<Integer, PlayerCharacter> playerCharacterMap;
 	private PlayerCharacter pauseCaller;
 	private GameParameterManager parameterManager;
@@ -75,7 +77,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	@Override
 	protected void performCustomUpdate() {
-		performCustomUpdate(Globals.FRAME_TIME);
+		performCustomUpdate(FRAME_TIME);
 	}
 
 	@Override

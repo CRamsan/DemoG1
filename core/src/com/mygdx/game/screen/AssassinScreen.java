@@ -56,7 +56,7 @@ public class AssassinScreen extends GameScreen {
 			// TODO: If the attacker is coming from an assasin, then ignore hits to other assasins
 
 	        if (character.getCenterPosition().dst(otherCharacter.getCenterPosition()) < 0.5) {
-				callbackManager.registerEventFromNow(Globals.POISON_TIME, new CallbackManager.ExecutioBlockInterface() {
+				callbackManager.registerEventFromNow(POISON_TIME, new CallbackManager.ExecutioBlockInterface() {
 						@Override
 						public void execute()
 						{
