@@ -62,6 +62,14 @@ public class TiledGameMap
 		return map.getProperties().get("height", Integer.class);
 	}
 
+	public int getTileWidth() {
+		return map.getProperties().get("tilewidth", Integer.class);
+	}
+
+	public int getTileHeight() {
+		return map.getProperties().get("tileheight", Integer.class);
+	}
+
 	public boolean isTileOutOfBounds(int x, int y) {
 		return (x < 0 || y < 0 || x >= collisionMap.length || y >= collisionMap[0].length);
 	}

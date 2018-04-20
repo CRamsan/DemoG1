@@ -12,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.mygdx.game.Globals;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.controller.ControllerManager;
 import com.mygdx.game.gameelements.GameParameterManager;
@@ -41,6 +40,10 @@ public class UISystem {
     /**
      * Public API calls
      */
+    public static void UISytemInit(float worldWidth, float worldHeight) {
+        ourInstance.UISytemInitInternal(worldWidth, worldHeight);
+    }
+
     public static void initMainMenu() {
         ourInstance.initMainMenuInternal();
     }
@@ -127,17 +130,32 @@ public class UISystem {
     private Actor endGameMenu;
     private Actor confirmationMenu;
     private Actor pauseMenu;
+    private float worldWidth;
+    private float worldHeight;
+    private boolean isInit;
 
     private UISystem() {
-        skin = new Skin(Gdx.files.internal(ASSET_SKIN_FILE));
         loadedTextures = new ArrayList<Texture>();
         uiVisible = false;
+        isInit = false;
+    }
+
+    private void UISytemInitInternal(float worldWidth, float worldHeight) {
+        if (!isInit) {
+            skin = new Skin(Gdx.files.internal(ASSET_SKIN_FILE));
+            this.worldWidth = worldWidth;
+            this.worldHeight = worldHeight;
+        }
+        isInit = true;
     }
 
     private void initSingleStage() {
         if (stage != null)
             return;
-        stage = new Stage(new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT));
+        if (!isInit)
+            throw new RuntimeException("Initialize the UISystem before initializing the stage");
+
+        stage = new Stage(new StretchViewport(worldWidth, worldHeight));
         //stage = new Stage(new ScreenViewport());
         sequenceMap = new HashMap<Button, HashMap<UISystem.UI_EVENTS, Button>>();
         defaultSelectionMap = new HashMap<Actor, Button>();

@@ -89,8 +89,6 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 		SingleAssetManager.getPlayerTextures(type, this);
 
 		state = 0;
-		width = 32f;
-		height = 32f;
 		shouldRender = true;
 	}
 
@@ -100,6 +98,12 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
     	this.walkUpAnimation = walkUp;
     	this.walkLeftAnimation = walkLeft;
     	this.walkRightAnimation = walkRight;
+	}
+
+	@Override
+	public void setTextureSize(float width, float height) {
+    	this.width = width;
+    	this.height = height;
 	}
 
 	/***
@@ -131,8 +135,8 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
                 currentAnimation = walkRightAnimation;
                 break;
         }
-        float xPos = x * 32f;
-        float yPos = y * 32f;
+        float xPos = x * width;
+        float yPos = y * height;
         TextureRegion currentFrame = currentAnimation.getKeyFrame(state, true);
         batch.draw(currentFrame, xPos, yPos, width, height);
     }

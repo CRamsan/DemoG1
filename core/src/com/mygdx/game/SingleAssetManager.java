@@ -163,6 +163,7 @@ public class SingleAssetManager {
             }
         }
         reciever.setAnimations(walkUpAnimation, walkRightAnimation, walkDownAnimation, walkLeftAnimation);
+        reciever.setTextureSize(ASSET_SPRITE_SHEET_SPRITE_WIDTH, ASSET_SPRITE_SHEET_SPRITE_HEIGHT);
     }
 
     private void unloadTextureInternal() {
@@ -173,6 +174,7 @@ public class SingleAssetManager {
     }
 
     public interface TextureAnimationReciever {
-        public void setAnimations(Animation<TextureRegion> walkUp, Animation<TextureRegion> walkRight, Animation<TextureRegion> walkDown, Animation<TextureRegion> walkLeft);
+        void setAnimations(Animation<TextureRegion> walkUp, Animation<TextureRegion> walkRight, Animation<TextureRegion> walkDown, Animation<TextureRegion> walkLeft);
+        void setTextureSize(float width, float height);
     }
 }

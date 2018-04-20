@@ -51,7 +51,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         batch = new SpriteBatch();
         timeBuffer = 0;
         cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
-        viewport = new StretchViewport(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, cam);
+        viewport = new StretchViewport(cam.viewportWidth, cam.viewportHeight, cam);
         this.useFixedStep = useFixedStep;
         map = new TiledGameMap();
         shapeRenderer = new ShapeRenderer();
@@ -63,6 +63,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     // This method will be called to configure objects. This is used to decouple the object initialization
     // From their configuration in the game world.
     public void ScreenInit() {
+        UISystem.UISytemInit(viewport.getWorldWidth(), viewport.getWorldHeight());
+
         cam.setToOrtho(false);
         cam.update();
         int portIndex = 0;
@@ -72,17 +74,17 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             portIndex++;
         }
 
-        cam.position.set(32f * map.getWidth()/2f,32f * map.getHeight()/2f, 1);
+        cam.position.set(map.getTileWidth() * map.getWidth()/2f,map.getTileHeight() * map.getHeight()/2f, 1);
 
         if (map.getHeight() < map.getWidth())
         {
-            viewport.setWorldWidth(map.getWidth() * 32f);
-            viewport.setWorldHeight((map.getWidth() * 32f) * ((float)Globals.SCREEN_HEIGHT / (float)Globals.SCREEN_WIDTH));
+            viewport.setWorldHeight((map.getWidth() * map.getTileWidth()) * (viewport.getWorldHeight() / viewport.getWorldWidth()));
+            viewport.setWorldWidth(map.getWidth() * map.getTileWidth());
         }
         else
         {
-            viewport.setWorldHeight(map.getHeight() * 32f);
-            viewport.setWorldWidth((map.getHeight() * 32f) * ((float)Globals.SCREEN_WIDTH / (float)Globals.SCREEN_HEIGHT));
+            viewport.setWorldWidth((map.getHeight() * map.getTileHeight()) * (viewport.getWorldWidth() / viewport.getWorldHeight()));
+            viewport.setWorldHeight(map.getHeight() * map.getTileHeight());
         }
 
 	    AudioManager.LoadAssets(levelId());
@@ -201,14 +203,14 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         batch.begin();
         // set the color of your light (red,green,blue,alpha values)
         batch.setColor(1f, 1f, 1f, 1f);
-        batch.draw(mainLightTexture, 0, 0, map.getWidth() * 32, map.getHeight() * 32);
+        batch.draw(mainLightTexture, 0, 0, map.getWidth() * map.getTileWidth(), map.getHeight() * map.getTileHeight());
         for (GameElement lightSource : lightSources) {
             Vector2 center = lightSource.getCenterPosition();
             // and render the sprite
             float spriteh = lightTexture.getHeight() * 0.7f;
             float spritew = lightTexture.getWidth() * 0.7f;
-            float origX = (center.x * 32f) - (spriteh);
-            float origY = (center.y * 32f) - (spritew);
+            float origX = (center.x * map.getTileWidth()) - (spriteh);
+            float origY = (center.y * map.getTileHeight()) - (spritew);
 
             batch.draw(lightTexture, origX, origY, spritew * 2, spriteh * 2);
         }
