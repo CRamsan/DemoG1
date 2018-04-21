@@ -1,9 +1,7 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.gameelements.AICharacter;
 import com.mygdx.game.gameelements.Collideable;
-import com.mygdx.game.gameelements.GameElement;
 import com.mygdx.game.gameelements.GameParameterManager;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
 import com.mygdx.game.ui.UISystem;
@@ -15,8 +13,7 @@ import com.mygdx.game.ui.UISystem;
 public class NinjaPartyScreen extends GameScreen {
 
 	private int statueCount;
-	private int aiCount;
-
+	
 	public NinjaPartyScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
 		super(isFrameLimited, parameterManager);
@@ -37,20 +34,6 @@ public class NinjaPartyScreen extends GameScreen {
 			addCollidable(newCollideable);
 			addLightSource(newCollideable);
 			statueCount++;
-		}
-	}
-
-	protected void createAICharacters() {
-		GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-		int counter = 0;
-		while (true) {
-			AICharacter newChar = new AICharacter(type, this, map);
-			Vector2 characterPos = this.map.getRandomNonSolidTile();
-			newChar.setPosition((int)characterPos.x, (int)characterPos.y);
-			addAICharacter(newChar);
-			counter++;
-			if (counter >= aiCount)
-				break;
 		}
 	}
 

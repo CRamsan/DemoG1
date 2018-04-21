@@ -25,6 +25,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	protected List<BaseCharacter> characterList;
 	protected List<PlayerCharacter> playerList;
 	protected List<Collideable> collideableList;	
+	protected int aiCount;
 
 	public GameScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
@@ -44,6 +45,16 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		UISystem.initConfirmationMenu();
 		UISystem.initEndGameMenu();
 		setIllumination(0.01f);
+	}
+
+	protected void createAICharacters() {
+		for (int i = 0; i < aiCount; i++) {
+			GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
+			AICharacter newChar = new AICharacter(type, this, map);
+			Vector2 charPos = this.map.getRandomNonSolidTile();
+			newChar.setPosition((int) charPos.x, (int) charPos.y);
+			addAICharacter(newChar);
+		}
 	}
 
 	@Override

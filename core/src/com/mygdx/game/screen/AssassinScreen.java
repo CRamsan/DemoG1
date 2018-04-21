@@ -1,10 +1,9 @@
 package com.mygdx.game.screen;
 
-import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.*;
+import com.mygdx.game.CallbackManager;
 import com.mygdx.game.gameelements.*;
-import com.mygdx.game.gameelements.player.*;
-import com.mygdx.game.ui.*;
+import com.mygdx.game.gameelements.player.PlayerCharacter;
+import com.mygdx.game.ui.UISystem;
 
 /**
  * There are two teams, assasins and snipers. The assasins are
@@ -13,7 +12,6 @@ import com.mygdx.game.ui.*;
  */
 public class AssassinScreen extends GameScreen {
 
-	private int aiCount;
 	private int aiKilled;
 
 	public AssassinScreen(boolean isFrameLimited, GameParameterManager parameterManager)
@@ -26,17 +24,7 @@ public class AssassinScreen extends GameScreen {
 	@Override
 	public void ScreenInit() {
 		super.ScreenInit();
-		for (int i = 0; i < aiCount; i++) {
-			createAICharacter();
-		}
-	}
-
-	protected void createAICharacter() {
-		GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-		AICharacter newChar = new AICharacter(type, this, map);
-		Vector2 charPos = this.map.getRandomNonSolidTile();
-		newChar.setPosition((int)charPos.x, (int)charPos.y);
-		addAICharacter(newChar);
+		createAICharacters();
 	}
 
 	@Override

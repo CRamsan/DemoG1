@@ -194,6 +194,7 @@ public class UISystem {
                 UISystem.displayGetReadyMenu();
             }
         }, sequenceMap);
+        /*
         Button fourthButton = UIToolKit.AddButtonToParentWithAction(mainPane, TEXT_LABEL_DEATH_RACE, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -202,6 +203,7 @@ public class UISystem {
                 UISystem.displayGetReadyMenu();
             }
         }, sequenceMap);
+        */
         Button fifthButton = UIToolKit.AddButtonToParentWithAction(mainPane, TEXT_LABEL_ASSASSIN, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -213,8 +215,8 @@ public class UISystem {
 
         UIToolKit.LinkUpAndDown(firstButton, secondButton, sequenceMap);
         UIToolKit.LinkUpAndDown(secondButton, thirdButton, sequenceMap);
-        UIToolKit.LinkUpAndDown(thirdButton, fourthButton, sequenceMap);
-        UIToolKit.LinkUpAndDown(fourthButton, fifthButton, sequenceMap);
+        // Death Race removed
+        UIToolKit.LinkUpAndDown(thirdButton, fifthButton, sequenceMap);
 
         mainMenu = mainPane;
         setDefaultSelection(mainPane, firstButton);

@@ -1,7 +1,6 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.gameelements.AICharacter;
 import com.mygdx.game.gameelements.Collideable;
 import com.mygdx.game.gameelements.GameElement;
 import com.mygdx.game.gameelements.GameParameterManager;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 public class CatchAThiefScreen extends GameScreen {
 
 	private int countCount;
-	private int aiCount;
 	private ArrayList<Collideable> removedQueue;
 
 	public CatchAThiefScreen(boolean isFrameLimited, GameParameterManager parameterManager)
@@ -33,9 +31,7 @@ public class CatchAThiefScreen extends GameScreen {
 	@Override
 	public void ScreenInit() {
 		super.ScreenInit();
-		for (int i = 0; i < aiCount; i++) {
-			createAICharacter();
-		}
+		createAICharacters();
 		for (int i = 0; i < countCount; i++) {
 			createCoin();
 		}
@@ -49,13 +45,6 @@ public class CatchAThiefScreen extends GameScreen {
 		Collideable newCollideable = new Collideable((int)position.x, (int)position.y, this);
 		newCollideable.setScale(0.5f);
 		addCollidable(newCollideable);
-	}
-
-	protected void createAICharacter() {
-		AICharacter newChar = new AICharacter(GameElement.TYPE.CHAR_BASEAI, this, map);
-		Vector2 position = this.map.getRandomNonSolidTile();
-		newChar.setPosition((int)position.x, (int)position.y);
-		addAICharacter(newChar);
 	}
 
 	@Override

@@ -1,9 +1,7 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.gameelements.AICharacter;
 import com.mygdx.game.gameelements.Collideable;
-import com.mygdx.game.gameelements.GameElement;
 import com.mygdx.game.gameelements.GameParameterManager;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
 import com.mygdx.game.ui.UISystem;
@@ -18,7 +16,6 @@ import com.mygdx.game.ui.UISystem;
 public class KnightsVsNinjasScreen extends GameScreen {
 
 	private int statueCount;
-	private int aiCount;
 
 	public KnightsVsNinjasScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
@@ -30,9 +27,7 @@ public class KnightsVsNinjasScreen extends GameScreen {
 	@Override
 	public void ScreenInit() {
 		super.ScreenInit();
-		for (int i = 0; i < aiCount; i++) {
-			createAICharacter();
-		}
+		createAICharacters();
 		for (int i = 0; i < statueCount; i++) {
 			createStatue();
 		}
@@ -41,14 +36,6 @@ public class KnightsVsNinjasScreen extends GameScreen {
 		Vector2 position = this.map.getRandomNonSolidTile();
 		Collideable newCollideable = new Collideable(position.x, position.y, this);
 		addCollidable(newCollideable);
-	}
-
-	protected void createAICharacter() {
-		GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-		AICharacter newChar = new AICharacter(type, this, map);
-		Vector2 position = this.map.getRandomNonSolidTile();
-		newChar.setPosition((int)position.x, (int)position.y);
-		addAICharacter(newChar);
 	}
 
 	@Override
