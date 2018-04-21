@@ -1,7 +1,6 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Globals;
 import com.mygdx.game.gameelements.AICharacter;
 import com.mygdx.game.gameelements.Collideable;
 import com.mygdx.game.gameelements.GameElement;
@@ -46,11 +45,8 @@ public class NinjaPartyScreen extends GameScreen {
 		int counter = 0;
 		while (true) {
 			AICharacter newChar = new AICharacter(type, this, map);
-			int posX = Globals.rand.nextInt(this.map.getWidth());
-			int posY = Globals.rand.nextInt(this.map.getHeight());
-			if (map.isTileSolid(posX, posY))
-				continue;
-			newChar.setPosition(posX, posY);
+			Vector2 characterPos = this.map.getRandomNonSolidTile();
+			newChar.setPosition((int)characterPos.x, (int)characterPos.y);
 			addAICharacter(newChar);
 			counter++;
 			if (counter >= aiCount)

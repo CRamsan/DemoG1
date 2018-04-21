@@ -1,6 +1,6 @@
 package com.mygdx.game.screen;
 
-import com.mygdx.game.Globals;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.gameelements.*;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
@@ -104,7 +104,8 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
         } else {
 		    throw new RuntimeException("Type not supported for PlayerCharacter" + type);
         }
-		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
+		Vector2 characterPos = this.map.getRandomNonSolidTile();
+		newChar.setPosition((int)characterPos.x, (int)characterPos.y);
 		newChar.setController(controller);
 		characterList.add(newChar);
 		playerList.add(newChar);

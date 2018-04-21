@@ -1,7 +1,7 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Screen;
-import com.mygdx.game.Globals;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.controller.ControllerConnectionListener;
 import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.gameelements.AICharacter;
@@ -38,7 +38,8 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 		for (int i = 0; i < 1; i++) {
 			GameElement.TYPE type = GameElement.TYPE.FEMALE_VILLAGER;
 			AICharacter newChar = new AICharacter(type, null, map);
-			newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
+			Vector2 position = this.map.getRandomNonSolidTile();
+			newChar.setPosition((int)position.x, (int)position.y);
 			characterList.add(newChar);
 		}
 		UISystem.initMainMenu();

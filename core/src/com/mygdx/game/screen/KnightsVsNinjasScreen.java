@@ -1,6 +1,6 @@
 package com.mygdx.game.screen;
 
-import com.mygdx.game.Globals;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.gameelements.AICharacter;
 import com.mygdx.game.gameelements.Collideable;
 import com.mygdx.game.gameelements.GameElement;
@@ -38,14 +38,16 @@ public class KnightsVsNinjasScreen extends GameScreen {
 		}
 	}
 	private void createStatue() {
-		Collideable newCollideable = new Collideable(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
+		Vector2 position = this.map.getRandomNonSolidTile();
+		Collideable newCollideable = new Collideable(position.x, position.y, this);
 		addCollidable(newCollideable);
 	}
 
 	protected void createAICharacter() {
 		GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
 		AICharacter newChar = new AICharacter(type, this, map);
-		newChar.setPosition(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()));
+		Vector2 position = this.map.getRandomNonSolidTile();
+		newChar.setPosition((int)position.x, (int)position.y);
 		addAICharacter(newChar);
 	}
 

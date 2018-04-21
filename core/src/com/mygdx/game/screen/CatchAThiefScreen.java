@@ -1,6 +1,6 @@
 package com.mygdx.game.screen;
 
-import com.mygdx.game.Globals;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.gameelements.AICharacter;
 import com.mygdx.game.gameelements.Collideable;
 import com.mygdx.game.gameelements.GameElement;
@@ -45,26 +45,17 @@ public class CatchAThiefScreen extends GameScreen {
 		}
 	}
 	private void createCoin() {
-		Collideable newCollideable = new Collideable(Globals.rand.nextInt(this.map.getWidth()), Globals.rand.nextInt(this.map.getHeight()), this);
+		Vector2 position = this.map.getRandomNonSolidTile();
+		Collideable newCollideable = new Collideable((int)position.x, (int)position.y, this);
 		newCollideable.setScale(0.5f);
 		addCollidable(newCollideable);
 	}
 
 	protected void createAICharacter() {
-		GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-		int counter = 0;
-		while (true) {
-			AICharacter newChar = new AICharacter(type, this, map);
-			int posX = Globals.rand.nextInt(this.map.getWidth());
-			int posY = Globals.rand.nextInt(this.map.getHeight());
-			if (map.isTileSolid(posX, posY))
-				continue;
-			newChar.setPosition(posX, posY);
-			addAICharacter(newChar);
-			counter++;
-			if (counter >= aiCount)
-				break;
-		}
+		AICharacter newChar = new AICharacter(GameElement.TYPE.CHAR_BASEAI, this, map);
+		Vector2 position = this.map.getRandomNonSolidTile();
+		newChar.setPosition((int)position.x, (int)position.y);
+		addAICharacter(newChar);
 	}
 
 	@Override

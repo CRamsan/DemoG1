@@ -93,4 +93,16 @@ public class TiledGameMap
 		}
 		return spawnList;
 	}
+
+	public Vector2 getRandomNonSolidTile() {
+		// Dangerous loop with risk of running forever
+		while (true) {
+			int posX = Globals.rand.nextInt(this.getWidth());
+			int posY = Globals.rand.nextInt(this.getHeight());
+			if (this.isTileSolid(posX, posY)) {
+				continue;
+			}
+			return new Vector2(posX, posY);
+		}
+	}
 }
