@@ -13,7 +13,7 @@ import com.mygdx.game.ui.UISystem;
 public class NinjaPartyScreen extends GameScreen {
 
 	private int statueCount;
-	
+
 	public NinjaPartyScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
 		super(isFrameLimited, parameterManager);
