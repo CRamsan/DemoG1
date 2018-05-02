@@ -20,8 +20,8 @@ public class UIToolKit {
         Table childTable = new Table(skin);
         Table parentTable = new Table(skin);
 
-        childTable.setBackground("dialog");
-        parentTable.setBackground("dialog");
+        childTable.setBackground("window");
+        parentTable.setBackground("window");
 
         Table mainPane = new Table();
         mainPane.setFillParent(true);
@@ -33,7 +33,7 @@ public class UIToolKit {
 
     public static Table GenerateSinglePaneContainer(Skin skin) {
         Table contentTable = new Table(skin);
-        contentTable.setBackground("dialog");
+        contentTable.setBackground("window");
 
         Table mainPane = new Table();
         mainPane.setFillParent(true);
@@ -44,7 +44,7 @@ public class UIToolKit {
 
     public static Table GenerateHorizontalContainer (Table root, Skin skin) {
         Table containerTable = new Table(skin);
-        containerTable.setBackground("dialog");
+        containerTable.setBackground("window");
 
         Table parentTable = (Table) root.getChildren().get(0);
         parentTable.add(containerTable).pad(DIALOG_TABLE_PAD).row();
