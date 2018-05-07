@@ -12,14 +12,12 @@ public abstract class BaseCharacter extends GameElement {
 
 	protected boolean isDead;
 	protected boolean isRunning;
-    private float walkSpeed;
     private TiledGameMap map;
 
     public BaseCharacter(TYPE type, CharacterEventListener listener, TiledGameMap map) {
         super(type, listener);
         if (type == TYPE.CHAR_STATUE)
             throw new RuntimeException("Characters cannot be of this type");
-        this.walkSpeed = 2f;
         this.isDead = false;
 		this.isRunning = true;
 		this.map = map;
@@ -54,7 +52,7 @@ public abstract class BaseCharacter extends GameElement {
             return;
         }
 
-        movement = movement.scl(delta * walkSpeed);
+        movement = movement.scl(delta * 50f);
         float absX = Math.abs(movement.x);
         float absY = Math.abs(movement.y);
 
@@ -89,60 +87,7 @@ public abstract class BaseCharacter extends GameElement {
      * @return The resulting distance that this character can move
      */
     private float testVectorMovement(float value, AXIS axis, boolean ignoreWalls) {
-        if (value == 0)
-            throw new RuntimeException("Vector has value of 0");
-        int endXStart, endXEnd, endYStart, endYEnd;
-        if (value > 0) {
-            if (axis == AXIS.X){
-                endYStart = (int)Math.floor(this.y);
-                endYEnd = (int)Math.floor(this.y + 1f);
-                if (Math.ceil(this.y + 1f) == endYEnd) {
-                    endYEnd--;
-                }
-                endXEnd = (int)Math.floor(this.x + 1f + value);
-                if ((map.isTileOutOfBounds(endXEnd, endYStart) || map.isTileOutOfBounds(endXEnd, endYEnd)) ||
-                    (!ignoreWalls && (map.isTileSolid(endXEnd, endYStart) || map.isTileSolid(endXEnd, endYEnd)))) {
-                    return (float)Math.ceil(this.x + 1f) - (this.x + 1f);
-                } else {
-                    return value;
-                }
-            } else {
-                endXStart = (int)Math.floor(this.x);
-                endXEnd = (int)Math.ceil(this.x);
-                endYEnd = (int)Math.floor(this.y + 1f + value);
-                if ((map.isTileOutOfBounds(endXStart, endYEnd) || map.isTileOutOfBounds(endXEnd, endYEnd)) ||
-                    (!ignoreWalls && (map.isTileSolid(endXStart, endYEnd) || map.isTileSolid(endXEnd, endYEnd)))) {
-                    return (float)Math.ceil(this.y + 1f) - (this.y + 1f);
-                } else {
-                    return value;
-                }
-            }
-        } else {
-            if (axis == AXIS.X){
-                endYStart = (int)Math.floor(this.y);
-                endYEnd = (int)Math.floor(this.y + 1f);
-                endXStart = (int)Math.floor(this.x + value);
-                if (endYEnd == Math.ceil(this.y + 1f)) {
-                    endYEnd--;
-                }
-                if ((map.isTileOutOfBounds(endXStart, endYStart) || map.isTileOutOfBounds(endXStart, endYEnd)) ||
-                    (!ignoreWalls && (map.isTileSolid(endXStart, endYStart) || map.isTileSolid(endXStart, endYEnd)))) {
-                    return - (this.x - (float)Math.floor(this.x));
-                } else {
-                    return value;
-                }
-            } else {
-                endXStart = (int)Math.floor(this.x);
-                endXEnd = (int)Math.ceil(this.x);
-                endYEnd = (int)Math.floor(this.y + value);
-                if ((map.isTileOutOfBounds(endXStart, endYEnd) || map.isTileOutOfBounds(endXEnd, endYEnd)) ||
-                    (!ignoreWalls && (map.isTileSolid(endXStart, endYEnd) || map.isTileSolid(endXEnd, endYEnd)))) {
-                    return -(this.y - (float)Math.floor(this.y));
-                } else {
-                    return value;
-                }
-            }
-        }
+        return 0f;
     }
 
 	public void disableCharacter() {

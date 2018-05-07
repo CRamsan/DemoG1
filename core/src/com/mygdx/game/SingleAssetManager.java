@@ -175,6 +175,6 @@ public class SingleAssetManager {
 
     public interface TextureAnimationReciever {
         void setAnimations(Animation<TextureRegion> walkUp, Animation<TextureRegion> walkRight, Animation<TextureRegion> walkDown, Animation<TextureRegion> walkLeft);
-        void setTextureSize(float width, float height);
+        void setTextureSize(int width, int height);
     }
 }

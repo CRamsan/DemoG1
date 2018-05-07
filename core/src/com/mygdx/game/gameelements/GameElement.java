@@ -38,7 +38,9 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 	protected boolean isDirty;
 	private DIRECTION direction;
 
-	protected float x, y, width, height, scale;
+	protected float x, y;
+	protected int width, height;
+	protected float scale;
     protected float state;
 	protected com.mygdx.game.gameelements.CharacterEventListener listener;
 	protected boolean shouldRender;
@@ -52,26 +54,16 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
      * Regular constructor. It will initialize the regular variables as well as call the init method to load textures
      * and generate animations.
      * @param type
-     * @param x value in world coordinates
-     * @param y value in world coordinates
      */
-    public GameElement(TYPE type, float x, float y, com.mygdx.game.gameelements.CharacterEventListener listener) {
+    public GameElement(TYPE type, com.mygdx.game.gameelements.CharacterEventListener listener) {
         this.type = type;
-        this.x = x;
-        this.y = y;
+        this.x = 0;
+        this.y = 0;
         this.scale = 1f;
         this.listener = listener;
 		this.direction = DIRECTION.values()[ Globals.rand.nextInt(4)];
 		this.isDirty = false;
 		init();
-    }
-
-    /***
-     * Simple constructor that only takes a type as argument
-     * @param type
-     */
-    public GameElement(TYPE type, com.mygdx.game.gameelements.CharacterEventListener listener) {
-        this(type, 0f, 0f, listener);
     }
 
     /***
@@ -101,7 +93,7 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 	}
 
 	@Override
-	public void setTextureSize(float width, float height) {
+	public void setTextureSize(int width, int height) {
     	this.width = width;
     	this.height = height;
 	}
@@ -135,10 +127,8 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
                 currentAnimation = walkRightAnimation;
                 break;
         }
-        float xPos = x * width;
-        float yPos = y * height;
         TextureRegion currentFrame = currentAnimation.getKeyFrame(state, true);
-        batch.draw(currentFrame, xPos, yPos, width, height);
+        batch.draw(currentFrame, x, y, width, height);
     }
 
     /***
@@ -193,8 +183,8 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 	}
 
 	final public void setScale(float scale) {
-		this.width = this.width * scale;
-		this.height = this.height * scale;
+		this.width = (int)(this.width * scale);
+		this.height = (int)(this.height * scale);
 		this.scale = scale;
 	}
 
@@ -206,11 +196,11 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 		return y;
 	}
 
-	final public float getHeight() {
+	final public int getHeight() {
 		return height;
 	}
 
-	final public float getWidth() {
+	final public int getWidth() {
 		return width;
 	}
 

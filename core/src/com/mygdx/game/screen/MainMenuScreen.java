@@ -39,7 +39,7 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 			GameElement.TYPE type = GameElement.TYPE.FEMALE_VILLAGER;
 			AICharacter newChar = new AICharacter(type, null, map);
 			Vector2 position = this.map.getRandomNonSolidTile();
-			newChar.setPosition((int)position.x, (int)position.y);
+			newChar.setPosition((int) (position.x * newChar.getWidth()), (int)(position.y * newChar.getHeight()));
 			characterList.add(newChar);
 		}
 		UISystem.initMainMenu();

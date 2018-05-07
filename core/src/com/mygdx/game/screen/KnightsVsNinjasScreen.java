@@ -34,7 +34,8 @@ public class KnightsVsNinjasScreen extends GameScreen {
 	}
 	private void createStatue() {
 		Vector2 position = this.map.getRandomNonSolidTile();
-		Collideable newCollideable = new Collideable(position.x, position.y, this);
+		Collideable newCollideable = new Collideable(this);
+		newCollideable.setPosition((int)(position.x * newCollideable.getWidth()), (int)(position.y * newCollideable.getHeight()));
 		addCollidable(newCollideable);
 	}
 

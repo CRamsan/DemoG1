@@ -52,7 +52,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 			GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
 			AICharacter newChar = new AICharacter(type, this, map);
 			Vector2 charPos = this.map.getRandomNonSolidTile();
-			newChar.setPosition((int) charPos.x, (int) charPos.y);
+			newChar.setPosition((int) (charPos.x * newChar.getWidth()), (int)(charPos.y * newChar.getHeight()));
 			addAICharacter(newChar);
 		}
 	}
@@ -116,7 +116,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		    throw new RuntimeException("Type not supported for PlayerCharacter" + type);
         }
 		Vector2 characterPos = this.map.getRandomNonSolidTile();
-		newChar.setPosition((int)characterPos.x, (int)characterPos.y);
+        newChar.setPosition((int) (characterPos.x * newChar.getWidth()), (int)(characterPos.y * newChar.getHeight()));
 		newChar.setController(controller);
 		characterList.add(newChar);
 		playerList.add(newChar);

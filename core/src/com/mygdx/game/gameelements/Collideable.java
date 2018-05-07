@@ -5,7 +5,8 @@ package com.mygdx.game.gameelements;
  * to move.
  */
 public class Collideable extends GameElement {
-    public Collideable(float x, float y, CharacterEventListener listerner) {
-        super(TYPE.CHAR_STATUE, x, y, listerner);
+
+    public Collideable(CharacterEventListener listener) {
+        super(TYPE.CHAR_STATUE, listener);
     }
 }

@@ -22,20 +22,21 @@ public class TiledGameMap
 	private TiledMap map;
 	private TiledMapRenderer renderer;
 	private boolean[][] collisionMap;
-	
+	private int width, height, tileWidth, tileHeight;
+
 	public TiledGameMap() {
 		map = new TmxMapLoader().load(ASSET_TMX_MAP);
-
-		// TODO Make this a global constant or a runtime value
 		renderer = new OrthogonalTiledMapRenderer(map);
-		int columns = this.getWidth();
-		int rows = this.getHeight();
-		collisionMap = new boolean[columns][rows];
+		width = map.getProperties().get("width", Integer.class);
+		height = map.getProperties().get("height", Integer.class);
+		tileWidth = map.getProperties().get("tilewidth", Integer.class);
+		tileHeight = map.getProperties().get("tileheight", Integer.class);
+		collisionMap = new boolean[width][height];
 		//The collision layer should be located on the first layer
 		TiledMapTileLayer layer = (TiledMapTileLayer)map.getLayers().get(2);
 
-		for (int y = 0; y < rows; y++) {
-			for (int x = 0; x < columns; x++) {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
 			    TiledMapTileLayer.Cell cell = layer.getCell(x, y);
 			    if (cell == null)
 			        continue;
@@ -55,23 +56,23 @@ public class TiledGameMap
 	}
 	
 	public int getWidth() {
-		return map.getProperties().get("width", Integer.class);
+		return width;
 	}
 	
 	public int getHeight() {
-		return map.getProperties().get("height", Integer.class);
+		return height;
 	}
 
 	public int getTileWidth() {
-		return map.getProperties().get("tilewidth", Integer.class);
+		return tileWidth;
 	}
 
 	public int getTileHeight() {
-		return map.getProperties().get("tileheight", Integer.class);
+		return tileHeight;
 	}
 
 	public boolean isTileOutOfBounds(int x, int y) {
-		return (x < 0 || y < 0 || x >= collisionMap.length || y >= collisionMap[0].length);
+		return (x < 0 || y < 0 || y >= height || x >= width);
 	}
 
 	public boolean isTileSolid(int x, int y) {
