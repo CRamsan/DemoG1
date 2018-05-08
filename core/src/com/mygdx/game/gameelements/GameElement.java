@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.Globals;
 import com.mygdx.game.SingleAssetManager;
 
@@ -44,6 +45,8 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
     protected float state;
 	protected com.mygdx.game.gameelements.CharacterEventListener listener;
 	protected boolean shouldRender;
+	protected Body body;
+	protected World gameWorld;
 
 	private Animation<TextureRegion> walkUpAnimation;
 	private Animation<TextureRegion> walkDownAnimation;
@@ -55,7 +58,7 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
      * and generate animations.
      * @param type
      */
-    public GameElement(TYPE type, com.mygdx.game.gameelements.CharacterEventListener listener) {
+    public GameElement(TYPE type, com.mygdx.game.gameelements.CharacterEventListener listener, World gameWorld) {
         this.type = type;
         this.x = 0;
         this.y = 0;
@@ -63,6 +66,8 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
         this.listener = listener;
 		this.direction = DIRECTION.values()[ Globals.rand.nextInt(4)];
 		this.isDirty = false;
+		this.gameWorld = gameWorld;
+
 		init();
     }
 
@@ -96,6 +101,20 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 	public void setTextureSize(int width, int height) {
     	this.width = width;
     	this.height = height;
+		BodyDef bodyDef = new BodyDef();
+		bodyDef.type = BodyDef.BodyType.DynamicBody;
+		bodyDef.position.set(new Vector2(x + (width/2), y + (height/2)));
+		body = gameWorld.createBody(bodyDef);
+		body.setUserData(this);
+		CircleShape circle = new CircleShape();
+		circle.setRadius(width/2);
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = circle;
+		fixtureDef.density = 0.0f;
+		fixtureDef.friction = 0.0f;
+		fixtureDef.restitution = 0.0f;
+		body.createFixture(fixtureDef);
+		circle.dispose();
 	}
 
 	/***
@@ -161,9 +180,16 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
      * @param x
      * @param y
      */
-	public void setPosition(int x, int y) {
+	public void setCenterPosition(int x, int y) {
+		this.x = x - (width/2);
+		this.y = y - (height/2);
+		this.body.setTransform(x, y, 0);
+	}
+
+	public void setTilePosition(int x, int y) {
 		this.x = x;
 		this.y = y;
+		this.body.setTransform(x + (width/2), y + (height/2), 0);
 	}
 
     /***

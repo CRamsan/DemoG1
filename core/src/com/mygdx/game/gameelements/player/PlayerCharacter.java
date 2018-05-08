@@ -1,4 +1,6 @@
 package com.mygdx.game.gameelements.player;
+
+import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.AudioManager;
 import com.mygdx.game.TiledGameMap;
 import com.mygdx.game.controller.PlayerController;
@@ -22,8 +24,9 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	private boolean isEventBased;
 	private boolean ignoreCollision;
 
-	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener, TiledGameMap map) {
-		super(type, listener, map);
+	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener, TiledGameMap map,
+						   World gameWorld) {
+		super(type, listener, map, gameWorld);
 		this.controller = new PlayerControllerAdapter(this);
 		this.collideableSet = new HashSet<Collideable>();
 		this.Id = Id;

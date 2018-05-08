@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.physics.box2d.Box2D;
 import com.mygdx.game.gameelements.GameParameterManager;
 import com.mygdx.game.screen.*;
 
@@ -65,6 +66,7 @@ public class MyGdxGame extends Game {
     @Override
     public void create() {
         ourInstance = this;
+        Box2D.init();
         startMainMenuScreen();
     }
 }

@@ -1,6 +1,9 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.gameelements.*;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
@@ -50,9 +53,9 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	protected void createAICharacters() {
 		for (int i = 0; i < aiCount; i++) {
 			GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-			AICharacter newChar = new AICharacter(type, this, map);
+			AICharacter newChar = new AICharacter(type, this, map, gameWorld);
 			Vector2 charPos = this.map.getRandomNonSolidTile();
-			newChar.setPosition((int) (charPos.x * newChar.getWidth()), (int)(charPos.y * newChar.getHeight()));
+			newChar.setTilePosition((int) (charPos.x * newChar.getWidth()), (int)(charPos.y * newChar.getHeight()));
 			addAICharacter(newChar);
 		}
 	}
@@ -72,6 +75,21 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		for (BaseCharacter character : characterList) {
 			character.update(delta);
 		}
+
+		Array<Body> bodies = new Array<Body>();
+		gameWorld.getBodies(bodies);
+
+		for (Body b : bodies) {
+			// Get the body's user data - in this example, our user
+			// data is an instance of the Entity class
+			if (b.getType() == BodyDef.BodyType.StaticBody)
+				continue;
+			GameElement e = (GameElement) b.getUserData();
+			if (e != null) {
+				e.setCenterPosition((int)b.getPosition().x, (int)b.getPosition().y);
+			}
+		}
+	/*
 		for (PlayerCharacter player : playerList) {
 			// Ignore anything that is not CHAR_HUMAN, for example a type reticle will not trigger a collision
 			if (player.getType() != GameElement.TYPE.CHAR_HUMAN)
@@ -84,6 +102,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 				}
 			}
 		}
+	*/
 	}
 
 	@Override
@@ -102,12 +121,12 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	@Override
-	protected void performRenderMap() {
-		map.render(cam);
+	protected void performRenderMap(float delta) {
+		map.render(cam, delta);
 	}
 
 	protected void createPlayerCharacter(int index, PlayerController controller, GameElement.TYPE type) {
-		PlayerCharacter newChar = new PlayerCharacter(index, type, this, map);
+		PlayerCharacter newChar = new PlayerCharacter(index, type, this, map, gameWorld);
 		if (type == GameElement.TYPE.CHAR_HUMAN) {
 
         } else if(type == GameElement.TYPE.CHAR_RETICLE){
@@ -116,7 +135,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		    throw new RuntimeException("Type not supported for PlayerCharacter" + type);
         }
 		Vector2 characterPos = this.map.getRandomNonSolidTile();
-        newChar.setPosition((int) (characterPos.x * newChar.getWidth()), (int)(characterPos.y * newChar.getHeight()));
+        newChar.setTilePosition((int) (characterPos.x * newChar.getWidth()), (int)(characterPos.y * newChar.getHeight()));
 		newChar.setController(controller);
 		characterList.add(newChar);
 		playerList.add(newChar);

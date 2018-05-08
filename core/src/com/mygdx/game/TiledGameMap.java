@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ public class TiledGameMap
 	private boolean[][] collisionMap;
 	private int width, height, tileWidth, tileHeight;
 
-	public TiledGameMap() {
+	public TiledGameMap(World gameWorld) {
 		map = new TmxMapLoader().load(ASSET_TMX_MAP);
 		renderer = new OrthogonalTiledMapRenderer(map);
 		width = map.getProperties().get("width", Integer.class);
@@ -35,22 +36,65 @@ public class TiledGameMap
 		//The collision layer should be located on the first layer
 		TiledMapTileLayer layer = (TiledMapTileLayer)map.getLayers().get(2);
 
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+		for (int y = 0; y < width; y++) {
+			for (int x = 0; x < height; x++) {
 			    TiledMapTileLayer.Cell cell = layer.getCell(x, y);
 			    if (cell == null)
 			        continue;
 				MapProperties props = cell.getTile().getProperties();
 				if (props != null) {
 					if (props.containsKey("Solid") && props.get("Solid", Boolean.class)) {
-						collisionMap[x][y] = true;
+						BodyDef groundBodyDef = new BodyDef();
+						groundBodyDef.type = BodyDef.BodyType.StaticBody;
+						groundBodyDef.position.set(new Vector2((x * tileWidth) + (tileWidth/2), (y * tileHeight) + (tileHeight/2)));
+						Body groundBody = gameWorld.createBody(groundBodyDef);
+						PolygonShape groundBox = new PolygonShape();
+						groundBox.setAsBox(tileWidth/2, tileHeight/2);
+						groundBody.createFixture(groundBox, 0.0f);
+						groundBox.dispose();
 					}
 				}
 			}
 		}
+		// Build the external walls
+		float vRad = (height / 2f) * tileHeight;
+		float hRad = (width / 2f) * tileWidth;
+		PolygonShape groundBox = new PolygonShape();
+		BodyDef groundBodyDef = new BodyDef();
+		groundBodyDef.type = BodyDef.BodyType.StaticBody;
+
+		// Bottom wall
+		groundBodyDef.position.set(new Vector2(hRad, vRad * -1));
+		Body groundBody = gameWorld.createBody(groundBodyDef);
+		groundBox.setAsBox(hRad, vRad);
+		groundBody.createFixture(groundBox, 0.0f);
+
+		// Right wall
+		groundBodyDef.position.set(new Vector2(hRad * 3, vRad));
+		groundBody = gameWorld.createBody(groundBodyDef);
+		groundBox.setAsBox(hRad, vRad);
+		groundBody.createFixture(groundBox, 0.0f);
+
+		// LEft wall
+		groundBodyDef.position.set(new Vector2(hRad * -1, vRad));
+		groundBody = gameWorld.createBody(groundBodyDef);
+		groundBox.setAsBox(hRad, vRad);
+		groundBody.createFixture(groundBox, 0.0f);
+
+		// Top wall
+		groundBodyDef.position.set(new Vector2(hRad, vRad * 3));
+		groundBody = gameWorld.createBody(groundBodyDef);
+		groundBox.setAsBox(hRad, vRad);
+		groundBody.createFixture(groundBox, 0.0f);
+
+		groundBox.dispose();
 	}
-	
-	public void render (OrthographicCamera camera) {
+
+	public void performUpdate(float delta) {
+
+	}
+
+	public void render (OrthographicCamera camera, float delta) {
 		renderer.setView(camera);
 		renderer.render();
 	}

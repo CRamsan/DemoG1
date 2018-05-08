@@ -1,7 +1,7 @@
 package com.mygdx.game.gameelements;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Globals;
+import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.TiledGameMap;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
 
@@ -14,8 +14,9 @@ public abstract class BaseCharacter extends GameElement {
 	protected boolean isRunning;
     private TiledGameMap map;
 
-    public BaseCharacter(TYPE type, CharacterEventListener listener, TiledGameMap map) {
-        super(type, listener);
+    public BaseCharacter(TYPE type, CharacterEventListener listener, TiledGameMap map,
+                         World gameWorld) {
+        super(type, listener, gameWorld);
         if (type == TYPE.CHAR_STATUE)
             throw new RuntimeException("Characters cannot be of this type");
         this.isDead = false;
@@ -53,26 +54,8 @@ public abstract class BaseCharacter extends GameElement {
         }
 
         movement = movement.scl(delta * 50f);
-        float absX = Math.abs(movement.x);
-        float absY = Math.abs(movement.y);
 
-        boolean processVectors = (absX == absY) ? Globals.rand.nextBoolean() : false;
-
-        if (absX > absY || processVectors) {
-            movement.x = testVectorMovement(movement.x, AXIS.X, ignoreCollision);
-            this.x += movement.x;
-            if (absY != 0) {
-                movement.y = testVectorMovement(movement.y, AXIS.Y, ignoreCollision);
-                this.y += movement.y;
-            }
-        } else {
-            movement.y = testVectorMovement(movement.y, AXIS.Y, ignoreCollision);
-            this.y += movement.y;
-            if (absX != 0) {
-                movement.x = testVectorMovement(movement.x, AXIS.X, ignoreCollision);
-                this.x += movement.x;
-            }
-        }
+        this.body.applyLinearImpulse(movement, body.getPosition(), true);
 
         isDirty = true;
         state += (movement.len());

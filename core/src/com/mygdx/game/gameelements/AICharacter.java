@@ -1,6 +1,7 @@
 package com.mygdx.game.gameelements;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.Globals;
 import com.mygdx.game.TiledGameMap;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
@@ -13,8 +14,8 @@ public class AICharacter extends BaseCharacter
 	private Vector2 lastMovementVector;
 	private int aiState;
 	
-	public AICharacter(TYPE type, CharacterEventListener listerner, TiledGameMap map) {
-		super(type, listerner, map);
+	public AICharacter(TYPE type, CharacterEventListener listerner, TiledGameMap map, World gameWorld) {
+		super(type, listerner, map, gameWorld);
         lastMovementVector = new Vector2();
         aiState = 0;
 	}

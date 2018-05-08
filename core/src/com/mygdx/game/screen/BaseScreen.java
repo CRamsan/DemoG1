@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.*;
@@ -39,6 +41,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	protected CallbackManager callbackManager;
 	
     protected TiledGameMap map;
+    protected World gameWorld;
+    protected Box2DDebugRenderer debugRenderer;
 
     private ArrayList<GameElement> lightSources;
     private float illumination;
@@ -53,7 +57,9 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
         viewport = new StretchViewport(cam.viewportWidth, cam.viewportHeight, cam);
         this.useFixedStep = useFixedStep;
-        map = new TiledGameMap();
+        gameWorld = new World(Vector2.Zero, true);
+        debugRenderer = new Box2DDebugRenderer();
+        map = new TiledGameMap(gameWorld);
         shapeRenderer = new ShapeRenderer();
         lightSources = new ArrayList<GameElement>();
         illumination = 0f;
@@ -126,7 +132,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-        performRenderMap();
+        performRenderMap(delta);
 
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
@@ -134,7 +140,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         batch.end();
 
         performLightingRender();
-
+        debugRenderer.render(gameWorld, cam.combined);
         UISystem.draw(delta);
     }
 
@@ -145,7 +151,9 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	 */
     private final void performUpdate(float delta) {
 		callbackManager.update(delta);
+		map.performUpdate(delta);
 		performCustomUpdate(delta);
+        gameWorld.step(delta, 6, 2);
 	}
 	
     private final void performUpdate() {
@@ -172,7 +180,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	 * will be mostly used to dran the map. But it can be used to 
 	 * also render anything else behind the sprites.
 	 */	
-    protected abstract void performRenderMap();
+    protected abstract void performRenderMap(float delta);
 
 	/**
 	 * Second render call

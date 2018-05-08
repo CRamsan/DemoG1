@@ -37,9 +37,9 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 		super.ScreenInit();
 		for (int i = 0; i < 1; i++) {
 			GameElement.TYPE type = GameElement.TYPE.FEMALE_VILLAGER;
-			AICharacter newChar = new AICharacter(type, null, map);
+			AICharacter newChar = new AICharacter(type, null, map, gameWorld);
 			Vector2 position = this.map.getRandomNonSolidTile();
-			newChar.setPosition((int) (position.x * newChar.getWidth()), (int)(position.y * newChar.getHeight()));
+			newChar.setTilePosition((int) (position.x * newChar.getWidth()), (int)(position.y * newChar.getHeight()));
 			characterList.add(newChar);
 		}
 		UISystem.initMainMenu();
@@ -71,8 +71,8 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 	}
 
 	@Override
-	protected void performRenderMap() {
-		map.render(cam);
+	protected void performRenderMap(float delta) {
+		map.render(cam, delta);
 	}
 
 	@Override
