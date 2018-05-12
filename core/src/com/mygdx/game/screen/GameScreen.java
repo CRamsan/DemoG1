@@ -3,6 +3,8 @@ package com.mygdx.game.screen;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.gameelements.*;
@@ -27,7 +29,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	protected List<BaseCharacter> characterList;
 	protected List<PlayerCharacter> playerList;
-	protected List<Collideable> collideableList;	
+	protected List<GameElement> collideableList;
 	protected int aiCount;
 
 	public GameScreen(boolean isFrameLimited, GameParameterManager parameterManager)
@@ -35,7 +37,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		super(isFrameLimited);
 		characterList = new ArrayList<BaseCharacter>();
 		playerList = new ArrayList<PlayerCharacter>();
-		collideableList = new ArrayList<Collideable>();
+		collideableList = new ArrayList<GameElement>();
 		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
 		isPaused = false;
 		this.parameterManager = parameterManager;
@@ -62,7 +64,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	@Override
 	protected void performCustomUpdate(float delta) {
-		for (Collideable collideable : collideableList) {
+		for (GameElement collideable : collideableList) {
 			collideable.update(delta);
 		}
 		for (BaseCharacter character : characterList) {
@@ -86,7 +88,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 				continue;
 			GameElement e = (GameElement) b.getUserData();
 			if (e != null) {
-				e.setCenterPosition((int)b.getPosition().x, (int)b.getPosition().y);
+				e.setCenterPosition(b.getPosition().x, b.getPosition().y);
 			}
 		}
 	/*
@@ -112,7 +114,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	@Override
 	protected void performRenderSprites() {
-		for (Collideable collideable : collideableList) {
+		for (GameElement collideable : collideableList) {
 			collideable.draw(batch);
 		}
 		for (GameElement charac : characterList) {
@@ -151,11 +153,11 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		characterList.add(character);
 	}
 
-	protected void addCollidable(Collideable collideable) {
+	protected void addCollidable(GameElement collideable) {
 		collideableList.add(collideable);
 	}
 
-	protected void removeCollidable(Collideable collideable) {
+	protected void removeCollidable(GameElement collideable) {
 		collideableList.remove(collideable);
 	}
 
@@ -186,19 +188,25 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	@Override
-	public void onCharacterAttack(PlayerCharacter character) {
-	    for (BaseCharacter otherCharacter : characterList) {
-	        if (character.equals(otherCharacter))
-	            continue;
-	        if (otherCharacter.getType() == GameElement.TYPE.CHAR_RETICLE) {
-	        	// Ignore collisions with other Snipers
-	        	continue;
+	public void onCharacterAttack(final PlayerCharacter character) {
+		gameWorld.QueryAABB(new QueryCallback() {
+			@Override
+			public boolean reportFixture(Fixture fixture) {
+				if (fixture.getFilterData().categoryBits != GameCollision.Player)
+					return true;
+				BaseCharacter otherElem = (BaseCharacter)fixture.getBody().getUserData();
+				if (otherElem == null || character.equals(otherElem))
+					return true;
+				if (otherElem.getType() == GameElement.TYPE.CHAR_RETICLE) {
+					return true;
+				}
+				otherElem.onKilled(character);
+				return true;
 			}
-	        if (character.getCenterPosition().dst(otherCharacter.getCenterPosition()) < 0.5) {
-	            otherCharacter.onKilled(character);
-	            break;
-            }
-        }
+		}, character.getCenterPosition().x- character.attackRadius(),
+				character.getCenterPosition().y - character.attackRadius(),
+				character.getCenterPosition().x + character.attackRadius(),
+				character.getCenterPosition().y + character.attackRadius());
 	}
 
     @Override
@@ -254,7 +262,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	@Override
-	public abstract void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player);
+	public abstract void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player);
 
 	@Override
 	public void onPlayerCharacterDied(PlayerCharacter  victim, PlayerCharacter killer) {

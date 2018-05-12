@@ -10,8 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.*;
@@ -19,6 +18,7 @@ import com.mygdx.game.controller.ControllerConnectionListener;
 import com.mygdx.game.controller.ControllerManager;
 import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.gameelements.GameElement;
+import com.mygdx.game.map.TiledGameMap;
 import com.mygdx.game.ui.UISystem;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * Base class to handle all code shared across all scenes. This class will configure the camera, the background map
  * as well as calling the update method.
  */
-public abstract class BaseScreen implements Screen, ControllerConnectionListener {
+public abstract class BaseScreen implements Screen, ControllerConnectionListener, ContactListener {
 
     public static final float FRAME_TIME = 1f/60f;
 
@@ -58,6 +58,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         viewport = new StretchViewport(cam.viewportWidth, cam.viewportHeight, cam);
         this.useFixedStep = useFixedStep;
         gameWorld = new World(Vector2.Zero, true);
+        gameWorld.setContactListener(this);
         debugRenderer = new Box2DDebugRenderer();
         map = new TiledGameMap(gameWorld);
         shapeRenderer = new ShapeRenderer();
@@ -217,8 +218,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             // and render the sprite
             float spriteh = lightTexture.getHeight() * 0.7f;
             float spritew = lightTexture.getWidth() * 0.7f;
-            float origX = (center.x * map.getTileWidth()) - (spriteh);
-            float origY = (center.y * map.getTileHeight()) - (spritew);
+            float origX = (center.x) - (spriteh);
+            float origY = (center.y) - (spritew);
 
             batch.draw(lightTexture, origX, origY, spritew * 2, spriteh * 2);
         }
@@ -243,7 +244,32 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         batch.end();
         batch.setBlendFunction(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 	}
-	
+
+    @Override
+    public void endContact(Contact contact) {
+    }
+
+    @Override
+    public void beginContact(Contact contact) {
+        GameElement elem1 = (GameElement)contact.getFixtureA().getBody().getUserData();
+        GameElement elem2 = (GameElement)contact.getFixtureB().getBody().getUserData();
+
+        if (elem1 == null || elem2 == null)
+            return;
+
+        if (elem1.getType() == GameElement.TYPE.CHAR_STATUE && elem2.getType() == GameElement.TYPE.CHAR_HUMAN) {
+            elem2.onCollideableContact(elem1);
+        } else if (elem1.getType() == GameElement.TYPE.CHAR_HUMAN && elem2.getType() == GameElement.TYPE.CHAR_STATUE) {
+            elem1.onCollideableContact(elem2);
+        }
+    }
+
+    public void preSolve (Contact contact, Manifold oldManifold)
+    {}
+
+    public void postSolve (Contact contact, ContactImpulse impulse)
+    {}
+
 	/**
 	 * This method must be implemented as a way to identify differnt 
 	 * child classes. It's use is still not well defined.

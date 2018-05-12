@@ -1,7 +1,5 @@
 package com.mygdx.game.gameelements;
 
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 /**
@@ -12,5 +10,10 @@ public class Collideable extends GameElement {
 
     public Collideable(CharacterEventListener listerner, World world) {
         super(TYPE.CHAR_STATUE, listerner, world);
+    }
+
+    @Override
+    public void onCollideableContact(GameElement collideable) {
+
     }
 }

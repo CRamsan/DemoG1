@@ -10,7 +10,7 @@ import com.mygdx.game.gameelements.player.PlayerCharacter;
 public interface CharacterEventListener {
     void onCharacterAttack(PlayerCharacter character);
     void onCharacterPause(PlayerCharacter character);
-    void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player);
+    void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player);
     void onPlayerCharacterDied(PlayerCharacter victim, PlayerCharacter killer);
     void onAICharacterDied(AICharacter victim, PlayerCharacter killer);
 }

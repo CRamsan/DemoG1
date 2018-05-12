@@ -18,14 +18,14 @@ import java.util.ArrayList;
 public class CatchAThiefScreen extends GameScreen {
 
 	private int countCount;
-	private ArrayList<Collideable> removedQueue;
+	private ArrayList<GameElement> removedQueue;
 
 	public CatchAThiefScreen(boolean isFrameLimited, GameParameterManager parameterManager)
 	{
 		super(isFrameLimited, parameterManager);
 		countCount = parameterManager.getGoal();
 		aiCount = 10;
-		removedQueue = new ArrayList<Collideable>();
+		removedQueue = new ArrayList<GameElement>();
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class CatchAThiefScreen extends GameScreen {
 	@Override
 	protected void performCustomUpdate(float delta) {
 		super.performCustomUpdate(delta);
-		for (Collideable collideable : removedQueue)
+		for (GameElement collideable : removedQueue)
 		{
 			removeCollidable(collideable);
 		}
@@ -59,7 +59,7 @@ public class CatchAThiefScreen extends GameScreen {
 	}
 
 	@Override
-	public void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player) {
+	public void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player) {
 		removedQueue.add(collideable);
 		if (collideableIndex == this.countCount) {
 			disableAllPlayers();

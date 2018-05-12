@@ -2,11 +2,11 @@ package com.mygdx.game.gameelements.player;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.AudioManager;
-import com.mygdx.game.TiledGameMap;
+import com.mygdx.game.map.TiledGameMap;
 import com.mygdx.game.controller.PlayerController;
 import com.mygdx.game.gameelements.BaseCharacter;
 import com.mygdx.game.gameelements.CharacterEventListener;
-import com.mygdx.game.gameelements.Collideable;
+import com.mygdx.game.gameelements.GameElement;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,20 +18,18 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 
 	private PlayerControllerAdapter controller;
 	private boolean hasAttacked, hasPaused;
-	private Set<Collideable> collideableSet;
+	private Set<GameElement> collideableSet;
 	private int Id;
 	private float dx, dy;
 	private boolean isEventBased;
-	private boolean ignoreCollision;
 
 	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener, TiledGameMap map,
 						   World gameWorld) {
 		super(type, listener, map, gameWorld);
 		this.controller = new PlayerControllerAdapter(this);
-		this.collideableSet = new HashSet<Collideable>();
+		this.collideableSet = new HashSet<GameElement>();
 		this.Id = Id;
 		this.isEventBased = false;
-		this.ignoreCollision = (type != TYPE.CHAR_HUMAN);
 	}
 
 	@Override
@@ -61,19 +59,22 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		if (isDead)
 			return;
 
-		this.handleMovement(dx, dy, delta, ignoreCollision);
+		this.handleMovement(dx, dy, delta);
 	}
 
-	static int counter;
+	@Override
+	public void onCollideableContact(GameElement collideable) {
+		if (!collideableSet.contains(collideable)){
+			collideableSet.add(collideable);
+			listener.onCharacterCollideableTouched(collideable, collideableSet.size(), this);
+			AudioManager.PlaySound(AudioManager.SOUND.BELL);
+		}
+	}
 
 	public void handleControllerInput(int buttonCode, boolean value) {
 		switch (buttonCode) {
 			case 0:
-				counter++;
-				if (counter % 2 == 0)
-					hasAttacked = value;
-				else
-					hasAttacked = value;
+				hasAttacked = value;
 				break;
 			case 7:
 				hasPaused = value;
@@ -96,14 +97,6 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	public void onKilled(PlayerCharacter killer) {
 		super.onKilled(killer);
 		this.listener.onPlayerCharacterDied(this, killer);
-	}
-
-	public void onCollideableContact(Collideable collideable) {
-		if (!collideableSet.contains(collideable)){
-			collideableSet.add(collideable);
-			listener.onCharacterCollideableTouched(collideable, collideableSet.size(), this);
-			AudioManager.PlaySound(AudioManager.SOUND.BELL);
-		}
 	}
 
 	public int getId() {
@@ -130,5 +123,9 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 
 	public void removeController() {
 		this.controller.removeController();
+	}
+
+	public float attackRadius() {
+		return width / 2;
 	}
 }

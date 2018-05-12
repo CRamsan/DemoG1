@@ -28,7 +28,7 @@ public class AssassinScreen extends GameScreen {
 	}
 
 	@Override
-	public void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player) {
+	public void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player) {
 
 	}
 

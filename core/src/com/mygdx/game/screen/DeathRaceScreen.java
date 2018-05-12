@@ -2,6 +2,7 @@ package com.mygdx.game.screen;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.gameelements.Collideable;
+import com.mygdx.game.gameelements.GameElement;
 import com.mygdx.game.gameelements.GameParameterManager;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
 import com.mygdx.game.ui.UISystem;
@@ -39,7 +40,7 @@ public class DeathRaceScreen extends GameScreen {
 	}
 
 	@Override
-	public void onCharacterCollideableTouched(Collideable collideable, int collideableIndex, PlayerCharacter player) {
+	public void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player) {
 		if (collideableIndex == this.statueCount) {
 			disableAllPlayers();
 			UISystem.displayEndGameMenu();

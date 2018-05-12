@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.map;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapProperties;
@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.game.Globals;
+import com.mygdx.game.gameelements.GameCollision;
 
 import java.util.ArrayList;
 
@@ -50,7 +52,11 @@ public class TiledGameMap
 						Body groundBody = gameWorld.createBody(groundBodyDef);
 						PolygonShape groundBox = new PolygonShape();
 						groundBox.setAsBox(tileWidth/2, tileHeight/2);
-						groundBody.createFixture(groundBox, 0.0f);
+						FixtureDef fixtureDef = new FixtureDef();
+						fixtureDef.shape = groundBox;
+						fixtureDef.filter.categoryBits = GameCollision.Obstacle;
+						fixtureDef.filter.maskBits = GameCollision.Player;
+						groundBody.createFixture(fixtureDef);
 						groundBox.dispose();
 					}
 				}
@@ -61,31 +67,34 @@ public class TiledGameMap
 		float hRad = (width / 2f) * tileWidth;
 		PolygonShape groundBox = new PolygonShape();
 		BodyDef groundBodyDef = new BodyDef();
-		groundBodyDef.type = BodyDef.BodyType.StaticBody;
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = groundBox;
+		fixtureDef.filter.categoryBits = GameCollision.Obstacle;
+		fixtureDef.filter.maskBits = GameCollision.Player;
 
 		// Bottom wall
 		groundBodyDef.position.set(new Vector2(hRad, vRad * -1));
 		Body groundBody = gameWorld.createBody(groundBodyDef);
 		groundBox.setAsBox(hRad, vRad);
-		groundBody.createFixture(groundBox, 0.0f);
+		groundBody.createFixture(fixtureDef);
 
 		// Right wall
 		groundBodyDef.position.set(new Vector2(hRad * 3, vRad));
 		groundBody = gameWorld.createBody(groundBodyDef);
 		groundBox.setAsBox(hRad, vRad);
-		groundBody.createFixture(groundBox, 0.0f);
+		groundBody.createFixture(fixtureDef);
 
 		// LEft wall
 		groundBodyDef.position.set(new Vector2(hRad * -1, vRad));
 		groundBody = gameWorld.createBody(groundBodyDef);
 		groundBox.setAsBox(hRad, vRad);
-		groundBody.createFixture(groundBox, 0.0f);
+		groundBody.createFixture(fixtureDef);
 
 		// Top wall
 		groundBodyDef.position.set(new Vector2(hRad, vRad * 3));
 		groundBody = gameWorld.createBody(groundBodyDef);
 		groundBox.setAsBox(hRad, vRad);
-		groundBody.createFixture(groundBox, 0.0f);
+		groundBody.createFixture(fixtureDef);
 
 		groundBox.dispose();
 	}

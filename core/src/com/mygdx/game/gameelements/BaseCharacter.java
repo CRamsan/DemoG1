@@ -2,7 +2,7 @@ package com.mygdx.game.gameelements;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.mygdx.game.TiledGameMap;
+import com.mygdx.game.map.TiledGameMap;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
 
 /**
@@ -45,32 +45,19 @@ public abstract class BaseCharacter extends GameElement {
      * @param dx
      * @param dy
      */
-    protected void handleMovement(float dx, float dy, float delta, boolean ignoreCollision){
-        if (isDead || !isRunning)
-            return;
+    protected void handleMovement(float dx, float dy, float delta){
         Vector2 movement = new Vector2(dx, dy);
-        if (movement.len() == 0) {
+
+        if (isDead || !isRunning || movement.len() == 0)
+        {
+            this.body.setLinearVelocity(Vector2.Zero);
             return;
         }
-
-        movement = movement.scl(delta * 50f);
-
-        this.body.applyLinearImpulse(movement, body.getPosition(), true);
-
+        state += (delta * movement.len());
+        movement = movement.scl(delta * 2000f);
+        this.body.setLinearVelocity(movement);
         isDirty = true;
-        state += (movement.len());
         updateDirection(movement.x, movement.y);
-    }
-
-    /**
-     * Private method that will return the distance that this character can move on the provided axis.
-     * This method will take in consideration collisions.
-     * @param value The distance the character wants to move
-     * @param axis The expected axis that wants to be tested
-     * @return The resulting distance that this character can move
-     */
-    private float testVectorMovement(float value, AXIS axis, boolean ignoreWalls) {
-        return 0f;
     }
 
 	public void disableCharacter() {

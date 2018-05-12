@@ -110,7 +110,15 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 		circle.setRadius(width/2);
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = circle;
-		fixtureDef.density = 0.0f;
+		if (type == TYPE.CHAR_STATUE) {
+			fixtureDef.isSensor = true;
+			fixtureDef.filter.categoryBits = GameCollision.Statue;
+            fixtureDef.filter.maskBits = GameCollision.Player;
+		} else {
+            fixtureDef.filter.categoryBits = GameCollision.Player;
+            fixtureDef.filter.maskBits = GameCollision.Obstacle | GameCollision.Statue;
+		}
+		fixtureDef.density = 1f;
 		fixtureDef.friction = 0.0f;
 		fixtureDef.restitution = 0.0f;
 		body.createFixture(fixtureDef);
@@ -180,7 +188,7 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
      * @param x
      * @param y
      */
-	public void setCenterPosition(int x, int y) {
+	public void setCenterPosition(float x, float y) {
 		this.x = x - (width/2);
 		this.y = y - (height/2);
 		this.body.setTransform(x, y, 0);
@@ -191,6 +199,8 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 		this.y = y;
 		this.body.setTransform(x + (width/2), y + (height/2), 0);
 	}
+
+	public abstract void onCollideableContact(GameElement collideable);
 
     /***
      * This method should be called when this object will be not used anymore. If all instances of this object

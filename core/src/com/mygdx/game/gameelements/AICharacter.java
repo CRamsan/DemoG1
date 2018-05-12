@@ -3,7 +3,7 @@ package com.mygdx.game.gameelements;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.Globals;
-import com.mygdx.game.TiledGameMap;
+import com.mygdx.game.map.TiledGameMap;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
 
 /**
@@ -38,7 +38,12 @@ public class AICharacter extends BaseCharacter
 		super.update(delta);
 		if (isDead)
 			return;
-		this.handleMovement(lastMovementVector.x, lastMovementVector.y, delta, false);
+		this.handleMovement(lastMovementVector.x, lastMovementVector.y, delta);
+	}
+
+	@Override
+	public void onCollideableContact(GameElement collideable) {
+
 	}
 
 	@Override
