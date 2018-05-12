@@ -200,7 +200,7 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 		this.body.setTransform(x + (width/2), y + (height/2), 0);
 	}
 
-	public abstract void onCollideableContact(GameElement collideable);
+	public abstract void onContact(GameElement collideable);
 
     /***
      * This method should be called when this object will be not used anymore. If all instances of this object

@@ -257,11 +257,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         if (elem1 == null || elem2 == null)
             return;
 
-        if (elem1.getType() == GameElement.TYPE.CHAR_STATUE && elem2.getType() == GameElement.TYPE.CHAR_HUMAN) {
-            elem2.onCollideableContact(elem1);
-        } else if (elem1.getType() == GameElement.TYPE.CHAR_HUMAN && elem2.getType() == GameElement.TYPE.CHAR_STATUE) {
-            elem1.onCollideableContact(elem2);
-        }
+        elem2.onContact(elem1);
+        elem1.onContact(elem2);
     }
 
     public void preSolve (Contact contact, Manifold oldManifold)

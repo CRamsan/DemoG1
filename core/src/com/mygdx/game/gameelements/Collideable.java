@@ -13,7 +13,7 @@ public class Collideable extends GameElement {
     }
 
     @Override
-    public void onCollideableContact(GameElement collideable) {
+    public void onContact(GameElement collideable) {
 
     }
 }

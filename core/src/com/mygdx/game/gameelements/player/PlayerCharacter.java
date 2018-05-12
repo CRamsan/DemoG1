@@ -63,7 +63,10 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	}
 
 	@Override
-	public void onCollideableContact(GameElement collideable) {
+	public void onContact(GameElement collideable) {
+		if (collideable.getType() != TYPE.CHAR_STATUE)
+			return;
+
 		if (!collideableSet.contains(collideable)){
 			collideableSet.add(collideable);
 			listener.onCharacterCollideableTouched(collideable, collideableSet.size(), this);

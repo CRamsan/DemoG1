@@ -99,7 +99,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 			if (player.hasMoved()) {
 				for (Collideable collideable : collideableList) {
 					if (player.getCenterPosition().dst(collideable.getCenterPosition()) < (player.getRadious() + collideable.getRadious())) {
-						player.onCollideableContact(collideable);
+						player.onContact(collideable);
 					}
 				}
 			}

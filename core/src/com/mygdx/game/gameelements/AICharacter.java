@@ -42,7 +42,7 @@ public class AICharacter extends BaseCharacter
 	}
 
 	@Override
-	public void onCollideableContact(GameElement collideable) {
+	public void onContact(GameElement collideable) {
 
 	}
 
