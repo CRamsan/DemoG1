@@ -18,6 +18,13 @@ task debug(dependsOn: classes, type: JavaExec) {
     ignoreExitValue = true
     debug = true
 }
+
+test {
+    doFirst { 
+        workingDir = project.assetsDir
+    }
+}
+
 task dist(type: Jar) {
     from files(sourceSets.main.output.classesDir)
     from files(sourceSets.main.output.resourcesDir)

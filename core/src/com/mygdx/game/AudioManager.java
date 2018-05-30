@@ -76,8 +76,8 @@ public class AudioManager {
         musicMap = null;
     }
 
-    public static void PlaySound(SOUND sound) {
-        ourInstance.PlaySoundInternal(sound);
+    public static boolean PlaySound(SOUND sound) {
+        return ourInstance.PlaySoundInternal(sound);
     }
 
     public static void PlayMusic() {
@@ -86,8 +86,8 @@ public class AudioManager {
 
     private static AudioManager ourInstance = new AudioManager();
 
-    private void PlaySoundInternal(SOUND sound) {
-        soundMap.get(sound).play();
+    private boolean PlaySoundInternal(SOUND sound) {
+        return soundMap.get(sound).play() != -1;
     }
 
     private void PlayMusicInternal() {

@@ -1,6 +1,7 @@
 package com.mygdx.game.map;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -27,9 +28,9 @@ public class TiledGameMap
 	private boolean[][] collisionMap;
 	private int width, height, tileWidth, tileHeight;
 
-	public TiledGameMap(World gameWorld) {
+	public TiledGameMap(World gameWorld, SpriteBatch batch) {
 		map = new TmxMapLoader().load(ASSET_TMX_MAP);
-		renderer = new OrthogonalTiledMapRenderer(map);
+		renderer = new OrthogonalTiledMapRenderer(map, batch);
 		width = map.getProperties().get("width", Integer.class);
 		height = map.getProperties().get("height", Integer.class);
 		tileWidth = map.getProperties().get("tilewidth", Integer.class);

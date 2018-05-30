@@ -61,7 +61,6 @@ public class SingleAssetManager {
 
     private SingleAssetManager() {
         manager = new AssetManager();
-        typeToTextureMapping = new HashMap<GameElement.TYPE, TextureRegion>();
     }
 
     private AssetManager getManager() {
@@ -84,6 +83,7 @@ public class SingleAssetManager {
             spriteRegion = TextureRegion.split(texture,
                     texture.getWidth() / ASSET_SPRITE_SHEET_COLUMNS,
                     texture.getHeight() / ASSET_SPRITE_SHEET_ROWS);
+            typeToTextureMapping = new HashMap<GameElement.TYPE, TextureRegion>();
         }
         instanceCount++;
     }
@@ -170,6 +170,9 @@ public class SingleAssetManager {
         instanceCount--;
         if (instanceCount == 0) {
             manager.unload(ASSET_SPRITE_SHEET);
+            texture = null;
+            spriteRegion = null;
+            typeToTextureMapping = null;
         }
     }
 

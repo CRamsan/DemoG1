@@ -60,7 +60,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         gameWorld = new World(Vector2.Zero, true);
         gameWorld.setContactListener(this);
         debugRenderer = new Box2DDebugRenderer();
-        map = new TiledGameMap(gameWorld);
+        map = new TiledGameMap(gameWorld, batch);
         shapeRenderer = new ShapeRenderer();
         lightSources = new ArrayList<GameElement>();
         illumination = 0f;

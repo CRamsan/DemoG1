@@ -8,7 +8,7 @@ public class CallbackManager
 	
 	public CallbackManager() {
 		time = 0f;
-		queue = new PriorityQueue<ExecutionBlockEvent >();
+		queue = new PriorityQueue<ExecutionBlockEvent>();
 	}
 	
 	public void registerEventFromNow(float futureTime, ExecutioBlockInterface block) {
