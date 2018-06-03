@@ -50,9 +50,9 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     private Texture lightTexture;
     private FrameBuffer lightBuffer;
 
-    public BaseScreen(boolean useFixedStep)
+    public BaseScreen(boolean useFixedStep, SpriteBatch spriteBatch)
     {
-        batch = new SpriteBatch();
+        batch = spriteBatch;
         timeBuffer = 0;
         cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
         viewport = new StretchViewport(cam.viewportWidth, cam.viewportHeight, cam);

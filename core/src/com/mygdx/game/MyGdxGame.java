@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.mygdx.game.gameelements.GameParameterManager;
 import com.mygdx.game.screen.*;
@@ -12,6 +13,8 @@ public class MyGdxGame extends Game {
     private static MyGdxGame getInstance() { return ourInstance; }
 
     private static boolean isFrameLimited() { return ourInstance.useFixedStep; }
+
+    private static SpriteBatch getSpriteBatch() { return ourInstance.spriteBatch; }
 
     public static void startGameScreen(GameParameterManager parameterManager) {
         if (MyGdxGame.parameterManager == null) {
@@ -25,19 +28,19 @@ public class MyGdxGame extends Game {
         GameScreen screen;
         switch (MyGdxGame.parameterManager.getType()) {
             case ASSASSIN:
-                screen = new AssassinScreen(isFrameLimited(), MyGdxGame.parameterManager);
+                screen = new AssassinScreen(isFrameLimited(), getSpriteBatch(), MyGdxGame.parameterManager);
                 break;
             case DEATH_RACE:
-                screen = new DeathRaceScreen(isFrameLimited(), MyGdxGame.parameterManager);
+                screen = new DeathRaceScreen(isFrameLimited(), getSpriteBatch(), MyGdxGame.parameterManager);
                 break;
             case NINJA_PARTY:
-                screen = new NinjaPartyScreen(isFrameLimited(), MyGdxGame.parameterManager);
+                screen = new NinjaPartyScreen(isFrameLimited(), getSpriteBatch(), MyGdxGame.parameterManager);
                 break;
             case CATCH_A_THIEF:
-                screen = new CatchAThiefScreen(isFrameLimited(), MyGdxGame.parameterManager);
+                screen = new CatchAThiefScreen(isFrameLimited(), getSpriteBatch(), MyGdxGame.parameterManager);
                 break;
             case KNIGHTS_VS_THIEFS:
-                screen = new KnightsVsNinjasScreen(isFrameLimited(), MyGdxGame.parameterManager);
+                screen = new KnightsVsNinjasScreen(isFrameLimited(), getSpriteBatch(), MyGdxGame.parameterManager);
                 break;
             default:
                 throw new RuntimeException("Invalid game type");
@@ -47,7 +50,7 @@ public class MyGdxGame extends Game {
 
     public static void startMainMenuScreen() {
         MyGdxGame.parameterManager = null;
-        MainMenuScreen screen = new MainMenuScreen(isFrameLimited());
+        MainMenuScreen screen = new MainMenuScreen(isFrameLimited(), getSpriteBatch());
         screen.ScreenInit();
         getInstance().setScreen(screen);
     }
@@ -58,9 +61,16 @@ public class MyGdxGame extends Game {
     }
 
     private boolean useFixedStep;
+    private SpriteBatch spriteBatch;
 
     public MyGdxGame(boolean useFixedStep) {
         this.useFixedStep = useFixedStep;
+        this.spriteBatch = new SpriteBatch();
+    }
+
+    public MyGdxGame(boolean useFixedStep, SpriteBatch spriteBatch) {
+        this.useFixedStep = useFixedStep;
+        this.spriteBatch = spriteBatch;
     }
 
     @Override

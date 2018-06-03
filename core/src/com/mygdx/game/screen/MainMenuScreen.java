@@ -1,6 +1,7 @@
 package com.mygdx.game.screen;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.controller.ControllerConnectionListener;
 import com.mygdx.game.controller.PlayerController;
@@ -25,8 +26,8 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 	private GetReadyMenuController getReadyMenuController;
 	private boolean hasInitCompleted;
 
-	public MainMenuScreen(boolean isFrameLimited) {
-		super(isFrameLimited);
+	public MainMenuScreen(boolean isFrameLimited, SpriteBatch spriteBatch) {
+		super(isFrameLimited, spriteBatch);
 		hasInitCompleted = false;
 		characterList = new ArrayList<BaseCharacter>();
 		preInitControllerMap = new LinkedHashMap<Integer, PlayerController>();

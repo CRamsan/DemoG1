@@ -1,5 +1,6 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -32,9 +33,9 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	protected List<GameElement> collideableList;
 	protected int aiCount;
 
-	public GameScreen(boolean isFrameLimited, GameParameterManager parameterManager)
+	public GameScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
 	{
-		super(isFrameLimited);
+		super(isFrameLimited, spriteBatch);
 		characterList = new ArrayList<BaseCharacter>();
 		playerList = new ArrayList<PlayerCharacter>();
 		collideableList = new ArrayList<GameElement>();

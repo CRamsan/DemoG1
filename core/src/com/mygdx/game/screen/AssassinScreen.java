@@ -1,5 +1,6 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.CallbackManager;
 import com.mygdx.game.gameelements.*;
 import com.mygdx.game.gameelements.player.PlayerCharacter;
@@ -14,9 +15,9 @@ public class AssassinScreen extends GameScreen {
 
 	private int aiKilled;
 
-	public AssassinScreen(boolean isFrameLimited, GameParameterManager parameterManager)
+	public AssassinScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, parameterManager);
+		super(isFrameLimited, spriteBatch, parameterManager);
 		aiCount = 10;
 		aiKilled = 0;
 	}

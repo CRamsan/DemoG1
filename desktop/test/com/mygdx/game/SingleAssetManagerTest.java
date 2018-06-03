@@ -2,11 +2,11 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.mygdx.game.desktop.GameTest;
+import com.mygdx.game.desktop.MockedGameTest;
 import com.mygdx.game.gameelements.GameElement;
 import org.junit.Assert;
 
-public class SingleAssetManagerTest extends GameTest {
+public class SingleAssetManagerTest extends MockedGameTest {
 
     @org.junit.Test
     public void getAssetManager() {

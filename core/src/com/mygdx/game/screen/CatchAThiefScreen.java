@@ -1,5 +1,6 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.gameelements.Collideable;
 import com.mygdx.game.gameelements.GameElement;
@@ -20,9 +21,9 @@ public class CatchAThiefScreen extends GameScreen {
 	private int countCount;
 	private ArrayList<GameElement> removedQueue;
 
-	public CatchAThiefScreen(boolean isFrameLimited, GameParameterManager parameterManager)
+	public CatchAThiefScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, parameterManager);
+		super(isFrameLimited, spriteBatch, parameterManager);
 		countCount = parameterManager.getGoal();
 		aiCount = 10;
 		removedQueue = new ArrayList<GameElement>();

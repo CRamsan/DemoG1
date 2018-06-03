@@ -1,10 +1,10 @@
 package com.mygdx.game;
 
-import com.mygdx.game.desktop.GameTest;
+import com.mygdx.game.desktop.MockedGameTest;
 
 import static org.junit.Assert.assertTrue;
 
-public class AudioManagerTest extends GameTest {
+public class AudioManagerTest extends MockedGameTest {
 
     @org.junit.Test(expected = NullPointerException.class)
     public void playMusicAfterUnload() {

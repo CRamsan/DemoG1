@@ -1,5 +1,6 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.gameelements.Collideable;
 import com.mygdx.game.gameelements.GameElement;
@@ -18,9 +19,9 @@ public class KnightsVsNinjasScreen extends GameScreen {
 
 	private int statueCount;
 
-	public KnightsVsNinjasScreen(boolean isFrameLimited, GameParameterManager parameterManager)
+	public KnightsVsNinjasScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, parameterManager);
+		super(isFrameLimited, spriteBatch, parameterManager);
 		statueCount = 4;
 		aiCount = 10;
 	}

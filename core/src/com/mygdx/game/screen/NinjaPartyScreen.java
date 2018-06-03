@@ -1,5 +1,6 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.gameelements.Collideable;
 import com.mygdx.game.gameelements.GameElement;
@@ -15,9 +16,9 @@ public class NinjaPartyScreen extends GameScreen {
 
 	private int statueCount;
 
-	public NinjaPartyScreen(boolean isFrameLimited, GameParameterManager parameterManager)
+	public NinjaPartyScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, parameterManager);
+		super(isFrameLimited, spriteBatch, parameterManager);
 		aiCount = 0;
 		statueCount = 0;
 	}

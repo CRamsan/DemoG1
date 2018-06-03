@@ -1,5 +1,6 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.gameelements.Collideable;
 import com.mygdx.game.gameelements.GameElement;
@@ -16,9 +17,9 @@ public class DeathRaceScreen extends GameScreen {
 
 	private int statueCount;
 
-	public DeathRaceScreen(boolean isFrameLimited, GameParameterManager parameterManager)
+	public DeathRaceScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, parameterManager);
+		super(isFrameLimited, spriteBatch, parameterManager);
 		statueCount = 4;
 		aiCount = 10;
 	}
