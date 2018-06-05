@@ -78,7 +78,13 @@ public class MyGdxGame extends Game {
         if (this.spriteBatch == null) {
             spriteBatch = new SpriteBatch();
         }
+        SingleAssetManager.initSingleAssetManager();
         Box2D.init();
         startMainMenuScreen();
+    }
+
+    @Override
+    public void dispose () {
+        SingleAssetManager.unInitSingleAssetManager();
     }
 }

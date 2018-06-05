@@ -8,6 +8,17 @@ import org.junit.Assert;
 
 public class SingleAssetManagerTest extends MockedGameTest {
 
+    @org.junit.Before
+    public void setUp() throws Exception {
+        SingleAssetManager.unInitSingleAssetManager();
+        SingleAssetManager.initSingleAssetManager();
+    }
+
+    @org.junit.After
+    public void tearDown() throws Exception {
+        SingleAssetManager.unInitSingleAssetManager();
+    }
+
     @org.junit.Test
     public void getAssetManager() {
         Assert.assertNotNull(SingleAssetManager.getAssetManager());

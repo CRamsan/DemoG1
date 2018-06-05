@@ -26,7 +26,15 @@ public class SingleAssetManager {
     public static final int ANIMATION_ROWS = 4;
 
 
-    private static SingleAssetManager ourInstance = new SingleAssetManager();
+    private static SingleAssetManager ourInstance;
+
+    public static void initSingleAssetManager() {
+        ourInstance = new SingleAssetManager();
+    }
+
+    public static void unInitSingleAssetManager() {
+        ourInstance = null;
+    }
 
     public static AssetManager getAssetManager() {
         return ourInstance.getManager();
@@ -52,7 +60,7 @@ public class SingleAssetManager {
         ourInstance.unloadTextureInternal();
     }
 
-    private static int instanceCount = 0;
+    private int instanceCount = 0;
     private HashMap<GameElement.TYPE, TextureRegion> typeToTextureMapping;
     private TextureRegion[][] spriteRegion;
     private Texture texture;
@@ -173,6 +181,7 @@ public class SingleAssetManager {
             texture = null;
             spriteRegion = null;
             typeToTextureMapping = null;
+            instanceCount = 0;
         }
     }
 
