@@ -23,6 +23,9 @@ test {
     doFirst { 
         workingDir = project.assetsDir
     }
+    testLogging {
+        events "PASSED", "STARTED", "FAILED", "SKIPPED"
+    }
 }
 
 task dist(type: Jar) {

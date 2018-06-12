@@ -2,6 +2,7 @@ package com.cramsan.demog1.screen;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.cramsan.demog1.gameelements.Collideable;
 import com.cramsan.demog1.gameelements.GameElement;
 import com.cramsan.demog1.gameelements.GameParameterManager;
@@ -18,7 +19,7 @@ public class NinjaPartyScreen extends GameScreen {
 
 	public NinjaPartyScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, spriteBatch, parameterManager);
+		super(isFrameLimited, spriteBatch ,parameterManager);
 		aiCount = 0;
 		statueCount = 0;
 	}

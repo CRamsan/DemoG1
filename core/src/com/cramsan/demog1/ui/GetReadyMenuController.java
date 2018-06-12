@@ -47,13 +47,13 @@ public class GetReadyMenuController {
 
         List<ControllerManager.ControllerEventTuple> tupleList = ControllerManager.getInstance().getUIEvents();
         for (ControllerManager.ControllerEventTuple tuple : tupleList) {
-            UISystem.UI_EVENTS event = tuple.event;
+            IUISystem.UI_EVENTS event = tuple.event;
             handleGetReadyEvent(tuple.index, event);
         }
     }
 
-    private void handleGetReadyEvent(int index, UISystem.UI_EVENTS event) {
-        if (event == UISystem.UI_EVENTS.RIGHT || event == UISystem.UI_EVENTS.LEFT) {
+    private void handleGetReadyEvent(int index, IUISystem.UI_EVENTS event) {
+        if (event == IUISystem.UI_EVENTS.RIGHT || event == IUISystem.UI_EVENTS.LEFT) {
             this.parameterManager.setTypeForPlayer(index,
                     parameterManager.getTypeForPlayer(index) == GameElement.TYPE.CHAR_HUMAN ?
                             GameElement.TYPE.CHAR_RETICLE :

@@ -1,10 +1,15 @@
 package com.cramsan.demog1;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2D;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 import com.cramsan.demog1.screen.*;
+import com.cramsan.demog1.ui.GameUISystem;
+import com.cramsan.demog1.ui.IUISystem;
+import com.cramsan.demog1.ui.UISystem;
 
 public class MyGdxGame extends Game {
     private static MyGdxGame ourInstance;
@@ -13,6 +18,8 @@ public class MyGdxGame extends Game {
     private static MyGdxGame getInstance() { return ourInstance; }
 
     private static boolean isFrameLimited() { return ourInstance.useFixedStep; }
+
+    private static boolean isRenderEnabled() { return ourInstance.enableRender; }
 
     private static SpriteBatch getSpriteBatch() { return ourInstance.spriteBatch; }
 
@@ -51,25 +58,33 @@ public class MyGdxGame extends Game {
     public static void startMainMenuScreen() {
         MyGdxGame.parameterManager = null;
         MainMenuScreen screen = new MainMenuScreen(isFrameLimited(), getSpriteBatch());
+        screen.setRenderEnabled(isRenderEnabled());
         screen.ScreenInit();
         getInstance().setScreen(screen);
     }
 
     private static void startGameScreen(GameScreen screen) {
+        screen.setRenderEnabled(isRenderEnabled());
         screen.ScreenInit();
         getInstance().setScreen(screen);
     }
 
     private boolean useFixedStep;
+    private boolean enableRender;
+    private boolean enableGame;
     private SpriteBatch spriteBatch;
+    private IUISystem uiSystem;
 
     public MyGdxGame(boolean useFixedStep) {
-        this(useFixedStep, null);
+        this(useFixedStep, null, null, true, true);
     }
 
-    public MyGdxGame(boolean useFixedStep, SpriteBatch spriteBatch) {
+    public MyGdxGame(boolean useFixedStep, SpriteBatch spriteBatch, IUISystem uiSystem, boolean enableRender, boolean enableGame) {
         this.useFixedStep = useFixedStep;
         this.spriteBatch = spriteBatch;
+        this.uiSystem = uiSystem;
+        this.enableRender = enableRender;
+        this.enableGame = enableGame;
     }
 
     @Override
@@ -78,13 +93,21 @@ public class MyGdxGame extends Game {
         if (this.spriteBatch == null) {
             spriteBatch = new SpriteBatch();
         }
+        if (uiSystem == null) {
+            UISystem.setUISystem(new GameUISystem());
+        } else {
+            UISystem.setUISystem(uiSystem);
+        }
         SingleAssetManager.initSingleAssetManager();
         Box2D.init();
-        startMainMenuScreen();
+        if (enableGame)
+            startMainMenuScreen();
     }
 
     @Override
     public void dispose () {
+        super.dispose();
         SingleAssetManager.unInitSingleAssetManager();
     }
+
 }

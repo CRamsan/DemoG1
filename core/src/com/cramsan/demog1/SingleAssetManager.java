@@ -138,6 +138,8 @@ public class SingleAssetManager {
             case FEMALE_VILLAGER:
                 textureRegion = spriteRegion[1][1];
                 break;
+            default:
+                throw new RuntimeException("Trying to load undefined sprite region");
         }
         typeToTextureMapping.put(type, textureRegion);
         return  textureRegion;
@@ -182,6 +184,8 @@ public class SingleAssetManager {
             spriteRegion = null;
             typeToTextureMapping = null;
             instanceCount = 0;
+        } else if (instanceCount < 0) {
+            throw new RuntimeException("Over-releasing sprite data");
         }
     }
 

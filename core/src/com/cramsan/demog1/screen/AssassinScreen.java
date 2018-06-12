@@ -1,6 +1,7 @@
 package com.cramsan.demog1.screen;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.cramsan.demog1.CallbackManager;
 import com.cramsan.demog1.gameelements.*;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;

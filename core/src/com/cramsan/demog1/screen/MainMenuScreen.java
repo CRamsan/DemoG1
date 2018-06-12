@@ -3,6 +3,7 @@ package com.cramsan.demog1.screen;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.cramsan.demog1.controller.ControllerConnectionListener;
 import com.cramsan.demog1.controller.PlayerController;
 import com.cramsan.demog1.gameelements.AICharacter;
@@ -25,6 +26,7 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 	private HashMap<Integer, PlayerController> preInitControllerMap;
 	private GetReadyMenuController getReadyMenuController;
 	private boolean hasInitCompleted;
+	private boolean hasGetReadyMenuController;
 
 	public MainMenuScreen(boolean isFrameLimited, SpriteBatch spriteBatch) {
 		super(isFrameLimited, spriteBatch);
@@ -45,6 +47,9 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 		}
 		UISystem.initMainMenu();
 		getReadyMenuController = UISystem.initGetReadyMenu();
+		// The getReadyMenuController can be null if we are using a mocked UISystem.
+		// In that case lets set a flag to ignore it.
+		hasGetReadyMenuController = getReadyMenuController != null;
 		UISystem.displayMainMenu();
 
 		// Now  call onControllerConnected for all the controllers in the preInitMap.
@@ -65,7 +70,9 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 
 	@Override
 	protected void performCustomUpdate(float delta) {
-		getReadyMenuController.update(delta);
+		if (hasGetReadyMenuController)
+			getReadyMenuController.update(delta);
+
 		for (GameElement character : characterList) {
 			character.update(delta);
 		}
@@ -109,7 +116,8 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 	@Override
 	public void onControllerConnected(int port, PlayerController controller) {
 		if (hasInitCompleted) {
-			getReadyMenuController.addPlayer(controller);
+			if (hasGetReadyMenuController)
+				getReadyMenuController.addPlayer(controller);
 		} else {
 			preInitControllerMap.put(port, controller);
 		}
@@ -118,7 +126,8 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 
 	@Override
 	public void onControllerDisconnected(int port, PlayerController controller) {
-		getReadyMenuController.removePlayer(controller);
+		if (hasGetReadyMenuController)
+			getReadyMenuController.removePlayer(controller);
 	}
 
 	protected int levelId() {

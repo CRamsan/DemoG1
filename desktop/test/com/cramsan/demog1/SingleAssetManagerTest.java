@@ -10,13 +10,12 @@ public class SingleAssetManagerTest extends MockedGameTest {
 
     @org.junit.Before
     public void setUp() throws Exception {
-        SingleAssetManager.unInitSingleAssetManager();
-        SingleAssetManager.initSingleAssetManager();
+        //SingleAssetManager.initSingleAssetManager();
     }
 
     @org.junit.After
     public void tearDown() throws Exception {
-        SingleAssetManager.unInitSingleAssetManager();
+        //SingleAssetManager.unInitSingleAssetManager();
     }
 
     @org.junit.Test

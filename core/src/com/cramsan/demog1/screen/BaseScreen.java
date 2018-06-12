@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cramsan.demog1.*;
@@ -38,6 +39,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     protected float timeBuffer;
     protected boolean useFixedStep;
+    private boolean renderEnabled;
 	protected CallbackManager callbackManager;
 	
     protected TiledGameMap map;
@@ -99,7 +101,11 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
         lightTexture = SingleAssetManager.getLightTexture();
         mainLightTexture = SingleAssetManager.getSceneLightTexture();
-        lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int)viewport.getWorldWidth(), (int)viewport.getWorldHeight(), false);
+        try {
+            lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int) viewport.getWorldWidth(), (int) viewport.getWorldHeight(), false);
+        } catch (IllegalStateException e) {
+
+        }
     }
 
     @Override
@@ -128,6 +134,9 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
      * This method will render the scene always after a fixed time step
      */
     private final void performRender(float delta) {
+        if (!renderEnabled)
+            return;
+
         viewport.apply();
         cam.update();
 
@@ -310,5 +319,13 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     @Override
     public void hide() {
+    }
+
+    public boolean isRenderEnabled() {
+        return renderEnabled;
+    }
+
+    public void setRenderEnabled(boolean renderEnabled) {
+        this.renderEnabled = renderEnabled;
     }
 }

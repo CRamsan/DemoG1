@@ -4,6 +4,7 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.math.Vector2;
+import com.cramsan.demog1.ui.IUISystem;
 import com.cramsan.demog1.ui.UISystem;
 
 import java.util.ArrayList;
@@ -24,10 +25,10 @@ public class ControllerManager extends ControllerAdapter {
      * that it came from.
      */
     public class ControllerEventTuple {
-        public UISystem.UI_EVENTS event;
+        public IUISystem.UI_EVENTS event;
         public int index;
 
-        public ControllerEventTuple(UISystem.UI_EVENTS event, int index) {
+        public ControllerEventTuple(IUISystem.UI_EVENTS event, int index) {
             this.event = event;
             this.index = index;
         }
@@ -81,7 +82,7 @@ public class ControllerManager extends ControllerAdapter {
     public void update(float delta) {
         tupleList.clear();
         for (PlayerController controller : controllerList) {
-            UISystem.UI_EVENTS event = UISystem.UI_EVENTS.NOOP;
+            IUISystem.UI_EVENTS event = IUISystem.UI_EVENTS.NOOP;
 
             if (controller == null) // An unplugged controller can leave a null controller
                 continue;
@@ -93,29 +94,29 @@ public class ControllerManager extends ControllerAdapter {
             {
                 if (absDx > absDy) {
                     if (dx > 0) {
-                        event = UISystem.UI_EVENTS.RIGHT;
+                        event = IUISystem.UI_EVENTS.RIGHT;
                     } else if (dx < 0) {
-                        event = UISystem.UI_EVENTS.LEFT;
+                        event = IUISystem.UI_EVENTS.LEFT;
                     }
                 } else {
                     if (dy > 0) {
-                        event = UISystem.UI_EVENTS.UP;
+                        event = IUISystem.UI_EVENTS.UP;
                     } else if (dy < 0) {
-                        event = UISystem.UI_EVENTS.DOWN;
+                        event = IUISystem.UI_EVENTS.DOWN;
                     }
                 }
             }
 
             boolean isSelected = controller.getButton(0);
             if (isSelected)
-                event = UISystem.UI_EVENTS.SELECT;
+                event = IUISystem.UI_EVENTS.SELECT;
 
             if (blockedMap.containsKey(controller.getControllerIndex())) {
                 // There was a UI event that is blocking other events
                 // If the new event is NOOP then the event was released.
                 // Otherwise wait for the timeout
                 float waitBuffer = blockedMap.get(controller.getControllerIndex());
-                if (event == UISystem.UI_EVENTS.NOOP) {
+                if (event == IUISystem.UI_EVENTS.NOOP) {
                     blockedMap.remove(controller.getControllerIndex());
                 } else {
                     // Wait until we reach the timeout.
@@ -124,14 +125,14 @@ public class ControllerManager extends ControllerAdapter {
                         blockedMap.remove(controller.getControllerIndex());
                     } else {
                         blockedMap.put(controller.getControllerIndex(), waitBuffer);
-                        event = UISystem.UI_EVENTS.NOOP;
+                        event = IUISystem.UI_EVENTS.NOOP;
                     }
                 }
             }
 
-            if (event == UISystem.UI_EVENTS.DOWN || event == UISystem.UI_EVENTS.UP ||
-                    event == UISystem.UI_EVENTS.LEFT || event == UISystem.UI_EVENTS.RIGHT ||
-                    event == UISystem.UI_EVENTS.SELECT) {
+            if (event == IUISystem.UI_EVENTS.DOWN || event == IUISystem.UI_EVENTS.UP ||
+                    event == IUISystem.UI_EVENTS.LEFT || event == IUISystem.UI_EVENTS.RIGHT ||
+                    event == IUISystem.UI_EVENTS.SELECT) {
                 blockedMap.put(controller.getControllerIndex(), 0f);
             }
             ControllerEventTuple tuple = new ControllerEventTuple(event, controller.getControllerIndex());

@@ -1,11 +1,22 @@
 package com.cramsan.demog1.desktop;
 
+import com.cramsan.demog1.SingleAssetManager;
 import org.junit.After;
 import org.junit.Test;
 
 public class DesktopLauncherTest {
 
-    @Test(timeout=8000)
+    @org.junit.Before
+    public void setUp() throws Exception {
+        try {
+            Thread.sleep(4500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Exception thrown while waiting");
+        }
+    }
+
+    //@Test(timeout=8000)
     public void main() {
         Runnable r = () -> {
             try {
