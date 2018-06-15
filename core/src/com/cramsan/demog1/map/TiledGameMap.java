@@ -27,10 +27,10 @@ public class TiledGameMap
 	private TiledMapRenderer renderer;
 	private boolean[][] collisionMap;
 	private int width, height, tileWidth, tileHeight;
+	private SpriteBatch batch;
 
-	public TiledGameMap(World gameWorld, SpriteBatch batch) {
+	public TiledGameMap(World gameWorld) {
 		map = new TmxMapLoader().load(ASSET_TMX_MAP);
-		renderer = new OrthogonalTiledMapRenderer(map, batch);
 		width = map.getProperties().get("width", Integer.class);
 		height = map.getProperties().get("height", Integer.class);
 		tileWidth = map.getProperties().get("tilewidth", Integer.class);
@@ -100,6 +100,10 @@ public class TiledGameMap
 		groundBox.dispose();
 	}
 
+	public void TimedGameMapInit() {
+		renderer = new OrthogonalTiledMapRenderer(map, getBatch());
+	}
+
 	public void performUpdate(float delta) {
 
 	}
@@ -159,5 +163,13 @@ public class TiledGameMap
 			}
 			return new Vector2(posX, posY);
 		}
+	}
+
+	public SpriteBatch getBatch() {
+		return batch;
+	}
+
+	public void setBatch(SpriteBatch batch) {
+		this.batch = batch;
 	}
 }

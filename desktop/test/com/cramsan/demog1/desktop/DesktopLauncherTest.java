@@ -1,7 +1,6 @@
 package com.cramsan.demog1.desktop;
 
 import com.cramsan.demog1.IGameStateListener;
-import com.cramsan.demog1.SingleAssetManager;
 import org.junit.After;
 import org.junit.Test;
 
@@ -24,7 +23,7 @@ public class DesktopLauncherTest {
         }).start();
     }
 
-    @Test(timeout=5000)
+    //@Test(timeout=5000)
     public void main() {
         DesktopLauncher.startApplication(new TestLifeCycleListener());
         try {

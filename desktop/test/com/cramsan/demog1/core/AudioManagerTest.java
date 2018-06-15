@@ -1,6 +1,6 @@
-package com.cramsan.demog1;
+package com.cramsan.demog1.core;
 
-import com.cramsan.demog1.desktop.MockedGameTest;
+import com.cramsan.demog1.AudioManager;
 
 import static org.junit.Assert.assertTrue;
 

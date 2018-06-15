@@ -1,4 +1,4 @@
-package com.cramsan.demog1.desktop;
+package com.cramsan.demog1.core;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;

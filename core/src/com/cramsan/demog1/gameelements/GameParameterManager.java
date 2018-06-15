@@ -27,14 +27,31 @@ public class GameParameterManager {
         }
     }
 
-    public static GameParameterManager createNinjaPartyManager() {
+    public static GameParameterManager parameterManagerForGameType(GameType type) {
+        switch (type) {
+            case ASSASSIN:
+                return createAssassinsManager();
+            case DEATH_RACE:
+                return createDeathRaceManager();
+            case NINJA_PARTY:
+                return createNinjaPartyManager();
+            case CATCH_A_THIEF:
+                return createCatchAThiefManager();
+            case KNIGHTS_VS_THIEFS:
+                return createKnightsVsThiefsManager();
+            default:
+                return null;
+        }
+    }
+
+    private static GameParameterManager createNinjaPartyManager() {
         GameParameterManager manager = new GameParameterManager();
         manager.setType(GameType.NINJA_PARTY);
         manager.setAllowTeamChange(false);
         return manager;
     }
 
-    public static GameParameterManager createCatchAThiefManager() {
+    private static GameParameterManager createCatchAThiefManager() {
         GameParameterManager manager = new GameParameterManager();
         manager.setType(GameType.CATCH_A_THIEF);
         manager.setGoal(40);
@@ -42,7 +59,7 @@ public class GameParameterManager {
         return manager;
     }
 
-    public static GameParameterManager createKnightsVsThiefsManager() {
+    private static GameParameterManager createKnightsVsThiefsManager() {
         GameParameterManager manager = new GameParameterManager();
         manager.setType(GameType.KNIGHTS_VS_THIEFS);
         manager.setGoal(4);
@@ -50,7 +67,7 @@ public class GameParameterManager {
         return manager;
     }
 
-    public static GameParameterManager createDeathRaceManager() {
+    private static GameParameterManager createDeathRaceManager() {
         GameParameterManager manager = new GameParameterManager();
         manager.setType(GameType.DEATH_RACE);
         manager.setGoal(4);
@@ -58,7 +75,7 @@ public class GameParameterManager {
         return manager;
     }
 
-    public static GameParameterManager createAssassinsManager() {
+    private static GameParameterManager createAssassinsManager() {
         GameParameterManager manager = new GameParameterManager();
         manager.setType(GameType.ASSASSIN);
         manager.setGoal(4);

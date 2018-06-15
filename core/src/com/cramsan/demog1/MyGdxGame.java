@@ -17,9 +17,9 @@ public class MyGdxGame extends Game {
     private IGameStateListener listener;
 
     public MyGdxGame() {
-        useFixedStep = false;
-        enableGame = false;
-        enableRender = false;
+        useFixedStep = true;
+        enableGame = true;
+        enableRender = true;
         spriteBatch = null;
         uiSystem = null;
         listener = null;

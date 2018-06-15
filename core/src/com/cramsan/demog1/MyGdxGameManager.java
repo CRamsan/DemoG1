@@ -9,20 +9,25 @@ public class MyGdxGameManager {
     private static MyGdxGame ourInstance;
     private static GameParameterManager parameterManager;
 
-    private static MyGdxGame getInstance() { return ourInstance; }
+    public static MyGdxGame getInstance() { return ourInstance; }
 
-    public static void setInstance(MyGdxGame game) { ourInstance = game; }
+    public static void setInstance(MyGdxGame game) {
+        if (game == null)
+            throw new RuntimeException("Parameter game is null");
+        ourInstance = game;
+    }
+
+    public static void clearInstance() {
+        ourInstance = null;
+    }
 
     public static GameParameterManager getParameterManager() { return parameterManager; }
 
-    public static void setParameterManager(GameParameterManager parameterManager) { MyGdxGameManager.parameterManager = parameterManager; }
+    private static void setParameterManager(GameParameterManager parameterManager) { MyGdxGameManager.parameterManager = parameterManager; }
 
     public static void startGameScreen(GameParameterManager parameterManager) {
         if (getInstance() == null) {
             throw new RuntimeException("Game instance is not net");
-        }
-        if (getParameterManager() == null) {
-            throw new RuntimeException("GameParameterManager instance is not net");
         }
 
         if (MyGdxGameManager.getParameterManager() == null) {

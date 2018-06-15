@@ -1,22 +1,12 @@
-package com.cramsan.demog1;
+package com.cramsan.demog1.core;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.cramsan.demog1.desktop.MockedGameTest;
+import com.cramsan.demog1.SingleAssetManager;
 import com.cramsan.demog1.gameelements.GameElement;
 import org.junit.Assert;
 
 public class SingleAssetManagerTest extends MockedGameTest {
-
-    @org.junit.Before
-    public void setUp() throws Exception {
-        //SingleAssetManager.initSingleAssetManager();
-    }
-
-    @org.junit.After
-    public void tearDown() throws Exception {
-        //SingleAssetManager.unInitSingleAssetManager();
-    }
 
     @org.junit.Test
     public void getAssetManager() {

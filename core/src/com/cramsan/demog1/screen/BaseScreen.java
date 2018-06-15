@@ -53,15 +53,13 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     public BaseScreen()
     {
-        batch = null;
         timeBuffer = 0;
         cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
         viewport = new StretchViewport(cam.viewportWidth, cam.viewportHeight, cam);
-        useFixedStep = true;
         gameWorld = new World(Vector2.Zero, true);
         gameWorld.setContactListener(this);
+        map = new TiledGameMap(gameWorld);
         debugRenderer = new Box2DDebugRenderer();
-        map = new TiledGameMap(gameWorld, getBatch());
         shapeRenderer = new ShapeRenderer();
         lightSources = new ArrayList<GameElement>();
         illumination = 0f;
@@ -72,6 +70,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     // From their configuration in the game world.
     public void ScreenInit() {
         UISystem.UISytemInit(viewport.getWorldWidth(), viewport.getWorldHeight());
+        map.setBatch(getBatch());
+        map.TimedGameMapInit();
 
         cam.setToOrtho(false);
         cam.update();

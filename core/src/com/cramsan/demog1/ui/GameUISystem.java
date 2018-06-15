@@ -104,7 +104,7 @@ public class GameUISystem implements IUISystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 hideMenuInternal();
-                gameParams = GameParameterManager.createNinjaPartyManager();
+                gameParams = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.NINJA_PARTY);
                 displayGetReadyMenuInternal();
             }
         }, sequenceMap);
@@ -113,7 +113,7 @@ public class GameUISystem implements IUISystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 hideMenuInternal();
-                gameParams = GameParameterManager.createCatchAThiefManager();
+                gameParams = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.CATCH_A_THIEF);
                 displayGetReadyMenuInternal();
             }
         }, sequenceMap);
@@ -121,7 +121,7 @@ public class GameUISystem implements IUISystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 hideMenuInternal();
-                gameParams = GameParameterManager.createKnightsVsThiefsManager();
+                gameParams = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.KNIGHTS_VS_THIEFS);
                 displayGetReadyMenuInternal();
             }
         }, sequenceMap);
@@ -139,7 +139,7 @@ public class GameUISystem implements IUISystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 hideMenuInternal();
-                gameParams = GameParameterManager.createAssassinsManager();
+                gameParams = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.ASSASSIN);
                 displayGetReadyMenuInternal();
             }
         }, sequenceMap);
