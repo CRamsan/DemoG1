@@ -2,20 +2,22 @@ package com.cramsan.demog1.desktop;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.cramsan.demog1.IGameStateListener;
 import com.cramsan.demog1.MyGdxGame;
 import com.cramsan.demog1.ui.IUISystem;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;
 
+import java.util.concurrent.Semaphore;
+
 public class MockedGameTest {
 
     private static Application application;
+    private static Semaphore sem = new Semaphore(0);;
 
     @BeforeClass
     public static void oneTimeSetUp() {
@@ -26,64 +28,57 @@ public class MockedGameTest {
         SpriteBatch batch = Mockito.mock(SpriteBatch.class);
         IUISystem uiSystem = Mockito.mock(IUISystem.class);
 
-        MyGdxGame game = new MyGdxGame(true, batch, uiSystem, false, false);
+        // Start the semaphore with 0 so we can stall until the listener
+        // signals that we can move forward.
+
+        MyGdxGame game = new MyGdxGame();
+        game.setUseFixedStep(true);
+        game.setSpriteBatch(batch);
+        game.setUiSystem(uiSystem);
+        game.setEnableGame(false);
+        game.setEnableRender(false);
+        game.setListener(new TestLifeCycleListener());
+
         application = new HeadlessApplication(game);
-        application.addLifecycleListener(new TestLifeCycleListener());
         try {
-            Thread.sleep(1000);
+            waitThread();
         } catch (InterruptedException e) {
             e.printStackTrace();
-            throw new RuntimeException("Exception thrown waiting for background thread");
+            closeAndCleanUp();
         }
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
-        Runnable r = () -> {
-            try {
-                waitThread();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Exception thrown while waiting");
-            }
-        };
-        Thread backgroundTask = new Thread(r);
-        backgroundTask.start();
-
+        closeAndCleanUp();
         try {
-            Thread.sleep(500);
-            application.exit();
-            backgroundTask.join();
+            waitThread();
         } catch (InterruptedException e) {
             e.printStackTrace();
-            throw new RuntimeException("Exception thrown waiting for background thread");
         }
-
-        application = null;
     }
 
+    public static void closeAndCleanUp() {
+        application.exit();
+        application = null;
+    }
     public static void waitThread() throws InterruptedException {
-        synchronized (application) {
-            application.wait();
-        }
+        sem.acquire();
     }
 
     public static void signalThread() {
-        synchronized (application) {
-            application.notify();
-        }
+        sem.release();
     }
 
-    static class TestLifeCycleListener implements LifecycleListener {
+    static class TestLifeCycleListener implements IGameStateListener {
 
         @Override
-        public void pause() {}
+        public void onGameCreated() {
+            signalThread();
+        }
 
         @Override
-        public void resume() {}
-
-        @Override
-        public void dispose() {
+        public void onGameDestroyed() {
             signalThread();
         }
     }

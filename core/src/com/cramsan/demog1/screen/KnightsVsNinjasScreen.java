@@ -20,9 +20,9 @@ public class KnightsVsNinjasScreen extends GameScreen {
 
 	private int statueCount;
 
-	public KnightsVsNinjasScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
+	public KnightsVsNinjasScreen(GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, spriteBatch, parameterManager);
+		super(parameterManager);
 		statueCount = 4;
 		aiCount = 10;
 	}

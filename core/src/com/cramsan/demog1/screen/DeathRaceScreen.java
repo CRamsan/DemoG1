@@ -18,9 +18,9 @@ public class DeathRaceScreen extends GameScreen {
 
 	private int statueCount;
 
-	public DeathRaceScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
+	public DeathRaceScreen(GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, spriteBatch, parameterManager);
+		super(parameterManager);
 		statueCount = 4;
 		aiCount = 10;
 	}

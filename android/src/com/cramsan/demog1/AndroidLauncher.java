@@ -14,6 +14,8 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.resolutionStrategy = new FixedResolutionStrategy(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
-		initialize(new MyGdxGame(true), config);
+		MyGdxGame game = new MyGdxGame();
+		game.setUseFixedStep(true);
+		initialize(game, config);
 	}
 }

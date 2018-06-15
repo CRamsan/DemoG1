@@ -22,9 +22,9 @@ public class CatchAThiefScreen extends GameScreen {
 	private int countCount;
 	private ArrayList<GameElement> removedQueue;
 
-	public CatchAThiefScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
+	public CatchAThiefScreen(GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, spriteBatch, parameterManager);
+		super(parameterManager);
 		countCount = parameterManager.getGoal();
 		aiCount = 10;
 		removedQueue = new ArrayList<GameElement>();

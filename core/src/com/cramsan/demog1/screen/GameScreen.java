@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.cramsan.demog1.controller.PlayerController;
 import com.cramsan.demog1.gameelements.*;
@@ -34,9 +33,9 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	protected List<GameElement> collideableList;
 	protected int aiCount;
 
-	public GameScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
+	public GameScreen(GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, spriteBatch);
+		super();
 		characterList = new ArrayList<BaseCharacter>();
 		playerList = new ArrayList<PlayerCharacter>();
 		collideableList = new ArrayList<GameElement>();
@@ -117,10 +116,10 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	@Override
 	protected void performRenderSprites() {
 		for (GameElement collideable : collideableList) {
-			collideable.draw(batch);
+			collideable.draw(getBatch());
 		}
 		for (GameElement charac : characterList) {
-			charac.draw(batch);
+			charac.draw(getBatch());
 		}
 	}
 

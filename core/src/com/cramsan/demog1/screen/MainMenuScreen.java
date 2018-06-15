@@ -3,7 +3,6 @@ package com.cramsan.demog1.screen;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.cramsan.demog1.controller.ControllerConnectionListener;
 import com.cramsan.demog1.controller.PlayerController;
 import com.cramsan.demog1.gameelements.AICharacter;
@@ -28,8 +27,8 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 	private boolean hasInitCompleted;
 	private boolean hasGetReadyMenuController;
 
-	public MainMenuScreen(boolean isFrameLimited, SpriteBatch spriteBatch) {
-		super(isFrameLimited, spriteBatch);
+	public MainMenuScreen() {
+		super();
 		hasInitCompleted = false;
 		characterList = new ArrayList<BaseCharacter>();
 		preInitControllerMap = new LinkedHashMap<Integer, PlayerController>();
@@ -86,7 +85,7 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 	@Override
 	protected void performRenderSprites() {
 		for (GameElement charac : characterList) {
-			charac.draw(batch);
+			charac.draw(getBatch());
 		}
 	}
 

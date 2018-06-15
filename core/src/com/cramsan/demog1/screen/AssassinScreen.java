@@ -16,9 +16,9 @@ public class AssassinScreen extends GameScreen {
 
 	private int aiKilled;
 
-	public AssassinScreen(boolean isFrameLimited, SpriteBatch spriteBatch, GameParameterManager parameterManager)
+	public AssassinScreen(GameParameterManager parameterManager)
 	{
-		super(isFrameLimited, spriteBatch, parameterManager);
+		super(parameterManager);
 		aiCount = 10;
 		aiKilled = 0;
 	}

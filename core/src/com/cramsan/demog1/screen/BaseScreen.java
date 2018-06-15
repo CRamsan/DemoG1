@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cramsan.demog1.*;
@@ -33,12 +32,12 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     public static final float FRAME_TIME = 1f/60f;
 
     protected OrthographicCamera cam;
-    protected SpriteBatch batch;
+    private SpriteBatch batch;
     protected Viewport viewport;
     protected ShapeRenderer shapeRenderer;
 
     protected float timeBuffer;
-    protected boolean useFixedStep;
+    private boolean useFixedStep;
     private boolean renderEnabled;
 	protected CallbackManager callbackManager;
 	
@@ -52,17 +51,17 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     private Texture lightTexture;
     private FrameBuffer lightBuffer;
 
-    public BaseScreen(boolean useFixedStep, SpriteBatch spriteBatch)
+    public BaseScreen()
     {
-        batch = spriteBatch;
+        batch = null;
         timeBuffer = 0;
         cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
         viewport = new StretchViewport(cam.viewportWidth, cam.viewportHeight, cam);
-        this.useFixedStep = useFixedStep;
+        useFixedStep = true;
         gameWorld = new World(Vector2.Zero, true);
         gameWorld.setContactListener(this);
         debugRenderer = new Box2DDebugRenderer();
-        map = new TiledGameMap(gameWorld, batch);
+        map = new TiledGameMap(gameWorld, getBatch());
         shapeRenderer = new ShapeRenderer();
         lightSources = new ArrayList<GameElement>();
         illumination = 0f;
@@ -110,7 +109,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     @Override
     public final void render(float delta) {
-        if (useFixedStep) {
+        if (isUseFixedStep()) {
             timeBuffer += Gdx.graphics.getDeltaTime();
             while (timeBuffer > FRAME_TIME) {
                 performUpdate();
@@ -144,10 +143,10 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
         performRenderMap(delta);
 
-        batch.setProjectionMatrix(cam.combined);
-        batch.begin();
+        getBatch().setProjectionMatrix(cam.combined);
+        getBatch().begin();
         performRenderSprites();
-        batch.end();
+        getBatch().end();
 
         performLightingRender();
         debugRenderer.render(gameWorld, cam.combined);
@@ -218,10 +217,10 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         Gdx.gl.glClearColor(0.0f,0.0f,0.0f, illumination);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
         // start rendering the lights to our spriteBatch
-        batch.begin();
+        getBatch().begin();
         // set the color of your light (red,green,blue,alpha values)
-        batch.setColor(1f, 1f, 1f, 1f);
-        batch.draw(mainLightTexture, 0, 0, map.getWidth() * map.getTileWidth(), map.getHeight() * map.getTileHeight());
+        getBatch().setColor(1f, 1f, 1f, 1f);
+        getBatch().draw(mainLightTexture, 0, 0, map.getWidth() * map.getTileWidth(), map.getHeight() * map.getTileHeight());
         for (GameElement lightSource : lightSources) {
             Vector2 center = lightSource.getCenterPosition();
             // and render the sprite
@@ -230,28 +229,28 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             float origX = (center.x) - (spriteh);
             float origY = (center.y) - (spritew);
 
-            batch.draw(lightTexture, origX, origY, spritew * 2, spriteh * 2);
+            getBatch().draw(lightTexture, origX, origY, spritew * 2, spriteh * 2);
         }
-        batch.end();
+        getBatch().end();
         lightBuffer.end();
 
         // now we render the lightBuffer to the default "frame buffer"
         // with the right blending !
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_ZERO, GL30.GL_SRC_COLOR);
-        batch.enableBlending();
-        batch.setBlendFunction(GL30.GL_ZERO, GL30.GL_SRC_COLOR);
-        batch.begin();
+        getBatch().enableBlending();
+        getBatch().setBlendFunction(GL30.GL_ZERO, GL30.GL_SRC_COLOR);
+        getBatch().begin();
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_ZERO, GL30.GL_SRC_COLOR);
-        batch.draw(lightBuffer.getColorBufferTexture(),
+        getBatch().draw(lightBuffer.getColorBufferTexture(),
                 cam.position.x - ((viewport.getWorldWidth()/2f) * cam.zoom),
                 cam.position.y + ((viewport.getWorldHeight()/2f) * cam.zoom),
                 viewport.getWorldWidth() * cam.zoom,
                 -viewport.getWorldHeight() * cam.zoom);
 
-        batch.end();
-        batch.setBlendFunction(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+        getBatch().end();
+        getBatch().setBlendFunction(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
     @Override
@@ -327,5 +326,21 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     public void setRenderEnabled(boolean renderEnabled) {
         this.renderEnabled = renderEnabled;
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
+    public void setBatch(SpriteBatch batch) {
+        this.batch = batch;
+    }
+
+    public boolean isUseFixedStep() {
+        return useFixedStep;
+    }
+
+    public void setUseFixedStep(boolean useFixedStep) {
+        this.useFixedStep = useFixedStep;
     }
 }

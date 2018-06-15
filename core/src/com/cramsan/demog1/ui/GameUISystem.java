@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.cramsan.demog1.MyGdxGame;
+import com.cramsan.demog1.MyGdxGameManager;
 import com.cramsan.demog1.controller.ControllerManager;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 
@@ -197,7 +198,7 @@ public class GameUISystem implements IUISystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 hideMenuInternal();
-                MyGdxGame.startMainMenuScreen();
+                MyGdxGameManager.startMainMenuScreen();
             }
         }, sequenceMap);
         UIToolKit.LinkUpAndDown(button1, button2, sequenceMap);
@@ -219,14 +220,14 @@ public class GameUISystem implements IUISystem {
                 hideMenuInternal();
                 // Since we are restarting the game with the same parameters we can pass null as the
                 // GameParameterManager. This will cause the Game object to reuse the previously set instance
-                MyGdxGame.startGameScreen(null);
+                MyGdxGameManager.startGameScreen(null);
             }
         }, sequenceMap);
         Button  button2 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Back to Menu", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 hideMenuInternal();
-                MyGdxGame.startMainMenuScreen();
+                MyGdxGameManager.startMainMenuScreen();
             }
         }, sequenceMap);
 
@@ -250,7 +251,7 @@ public class GameUISystem implements IUISystem {
             public void changed(ChangeEvent event, Actor actor) {
                 if (getReadyMenuController.enoughPlayers()) {
                     hideMenuInternal();
-                    MyGdxGame.startGameScreen(gameParams);
+                    MyGdxGameManager.startGameScreen(gameParams);
                 }
             }
         }, sequenceMap);

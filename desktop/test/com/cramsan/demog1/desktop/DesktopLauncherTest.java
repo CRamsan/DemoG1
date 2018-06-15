@@ -1,45 +1,53 @@
 package com.cramsan.demog1.desktop;
 
+import com.cramsan.demog1.IGameStateListener;
 import com.cramsan.demog1.SingleAssetManager;
 import org.junit.After;
 import org.junit.Test;
 
+import java.util.concurrent.Semaphore;
+
 public class DesktopLauncherTest {
 
-    @org.junit.Before
-    public void setUp() throws Exception {
-        try {
-            Thread.sleep(4500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Exception thrown while waiting");
-        }
-    }
+    private static Semaphore sem = new Semaphore(0);
 
-    //@Test(timeout=8000)
-    public void main() {
-        Runnable r = () -> {
+    @org.junit.Before
+    public void setUp() {
+        new Thread(() -> {
             try {
-                Thread.sleep(4500);
+                sem.acquire();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                throw new RuntimeException("Exception thrown while waiting");
+                throw new RuntimeException("Exception thrown while acquiring semaphore");
             }
             DesktopLauncher.stopApplication();
-        };
-        Thread backgroundTask = new Thread(r);
-        backgroundTask.start();
-        DesktopLauncher.main(null);
+        }).start();
+    }
+
+    @Test(timeout=5000)
+    public void main() {
+        DesktopLauncher.startApplication(new TestLifeCycleListener());
         try {
-            backgroundTask.join();
+            sem.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
-            throw new RuntimeException("Exception thrown waiting for background thread");
+            throw new RuntimeException("Exception thrown while acquiring semaphore");
         }
     }
 
     @After
-    public void tearDown() throws Exception {
-        Thread.sleep(1000);
+    public void tearDown() { }
+
+    static class TestLifeCycleListener implements IGameStateListener {
+
+        @Override
+        public void onGameCreated() {
+            sem.release();
+        }
+
+        @Override
+        public void onGameDestroyed() {
+            sem.release();
+        }
     }
 }
