@@ -36,8 +36,6 @@ public class AICharacter extends BaseCharacter
 	@Override
 	public void update(float delta) {
 		super.update(delta);
-		if (isDead)
-			return;
 		this.handleMovement(lastMovementVector.x, lastMovementVector.y, delta);
 	}
 

@@ -121,7 +121,11 @@ public class ControllerManager extends ControllerAdapter {
                 } else {
                     // Wait until we reach the timeout.
                     waitBuffer += delta;
-                    if (waitBuffer >= UI_WAIT) {
+                    if (waitBuffer >= UI_WAIT && !isSelected) {
+                        // Is the UI_EVENT is of type SELECT then do not trigger a UI event.
+                        // For movement events we want to wait for the timeout so we can do things
+                        // like scrolling. But we do not want to do that for selection otherwise
+                        // we will send SELECT events that can cause the user to take action accidentally.
                         blockedMap.remove(controller.getControllerIndex());
                     } else {
                         blockedMap.put(controller.getControllerIndex(), waitBuffer);

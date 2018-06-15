@@ -20,8 +20,7 @@ public class NinjaPartyScreen extends GameScreen {
 	public NinjaPartyScreen(GameParameterManager parameterManager)
 	{
 		super(parameterManager);
-		aiCount = 0;
-		statueCount = 0;
+		aiCount = 10;
 	}
 
 	@Override
@@ -32,6 +31,7 @@ public class NinjaPartyScreen extends GameScreen {
 	}
 
 	private void createStatues() {
+		statueCount = 0;
 		for (Vector2 pos : map.getStatueSpawner()) {
 			GameElement newCollideable = new Collideable(this, gameWorld);
 			newCollideable.setTilePosition((int)(pos.x * newCollideable.getWidth()), (int)(pos.y * newCollideable.getHeight()));
