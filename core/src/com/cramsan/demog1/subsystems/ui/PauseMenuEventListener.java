@@ -1,4 +1,4 @@
-package com.cramsan.demog1.ui;
+package com.cramsan.demog1.subsystems.ui;
 
 public interface PauseMenuEventListener {
     void onPauseMenuAppeared();

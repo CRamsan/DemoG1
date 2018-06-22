@@ -1,11 +1,10 @@
-package com.cramsan.demog1.ui;
+package com.cramsan.demog1.subsystems.ui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.cramsan.demog1.Globals;
-import com.cramsan.demog1.controller.ControllerManager;
-import com.cramsan.demog1.controller.PlayerController;
+import com.cramsan.demog1.subsystems.controller.ControllerManager;
+import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.gameelements.GameElement;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 

@@ -1,13 +1,10 @@
 package com.cramsan.demog1.screen;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.cramsan.demog1.gameelements.Collideable;
 import com.cramsan.demog1.gameelements.GameElement;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
-import com.cramsan.demog1.ui.UISystem;
 
 import java.util.ArrayList;
 
@@ -26,7 +23,7 @@ public class CatchAThiefScreen extends GameScreen {
 	{
 		super(parameterManager);
 		countCount = parameterManager.getGoal();
-		aiCount = 10;
+		setAiCount(10);
 		removedQueue = new ArrayList<GameElement>();
 	}
 
@@ -37,14 +34,14 @@ public class CatchAThiefScreen extends GameScreen {
 		for (int i = 0; i < countCount; i++) {
 			createCoin();
 		}
-		for (PlayerCharacter character : playerList) {
+		for (PlayerCharacter character : getPlayerList()) {
 			if (character.getType() == GameElement.TYPE.CHAR_RETICLE)
 				addLightSource(character);
 		}
 	}
 	private void createCoin() {
-		Vector2 position = this.map.getRandomNonSolidTile();
-		Collideable newCollideable = new Collideable(this, gameWorld);
+		Vector2 position = getMap().getRandomNonSolidTile();
+		Collideable newCollideable = new Collideable(this, getGameWorld());
 		newCollideable.setTilePosition((int)(position.x * newCollideable.getWidth()), (int)(position.y * newCollideable.getHeight()));
 		newCollideable.setScale(0.5f);
 		addCollidable(newCollideable);
@@ -65,7 +62,7 @@ public class CatchAThiefScreen extends GameScreen {
 		removedQueue.add(collideable);
 		if (collideableIndex == this.countCount) {
 			disableAllPlayers();
-			UISystem.displayEndGameMenu();
+			getUiSystem().displayEndGameMenu();
 		}
 	}
 

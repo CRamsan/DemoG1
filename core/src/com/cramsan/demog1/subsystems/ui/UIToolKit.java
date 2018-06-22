@@ -1,4 +1,4 @@
-package com.cramsan.demog1.ui;
+package com.cramsan.demog1.subsystems.ui;
 
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;

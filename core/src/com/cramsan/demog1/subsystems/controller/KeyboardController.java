@@ -1,4 +1,4 @@
-package com.cramsan.demog1.controller;
+package com.cramsan.demog1.subsystems.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

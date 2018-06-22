@@ -1,11 +1,10 @@
-package com.cramsan.demog1.controller;
+package com.cramsan.demog1.subsystems.controller;
 
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.math.Vector2;
-import com.cramsan.demog1.ui.IUISystem;
-import com.cramsan.demog1.ui.UISystem;
+import com.cramsan.demog1.subsystems.ui.IUISystem;
 
 import java.util.ArrayList;
 import java.util.HashMap;

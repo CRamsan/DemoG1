@@ -1,11 +1,8 @@
 package com.cramsan.demog1.screen;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.cramsan.demog1.CallbackManager;
+import com.cramsan.demog1.subsystems.CallbackManager;
 import com.cramsan.demog1.gameelements.*;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
-import com.cramsan.demog1.ui.UISystem;
 
 /**
  * There are two teams, assasins and snipers. The assasins are
@@ -19,7 +16,7 @@ public class AssassinScreen extends GameScreen {
 	public AssassinScreen(GameParameterManager parameterManager)
 	{
 		super(parameterManager);
-		aiCount = 10;
+		setAiCount(10);
 		aiKilled = 0;
 	}
 
@@ -36,7 +33,7 @@ public class AssassinScreen extends GameScreen {
 
 	@Override
 	public void onCharacterAttack(final PlayerCharacter character) {
-	    for (final BaseCharacter otherCharacter : characterList) {
+	    for (final BaseCharacter otherCharacter : getCharacterList()) {
 	        if (character.equals(otherCharacter))
 	            continue;
 			
@@ -48,7 +45,7 @@ public class AssassinScreen extends GameScreen {
 			// TODO: If the attacker is coming from an assasin, then ignore hits to other assasins
 
 	        if (character.getCenterPosition().dst(otherCharacter.getCenterPosition()) < 0.5) {
-				callbackManager.registerEventFromNow(POISON_TIME, new CallbackManager.ExecutioBlockInterface() {
+				getCallbackManager().registerEventFromNow(POISON_TIME, new CallbackManager.ExecutioBlockInterface() {
 						@Override
 						public void execute()
 						{
@@ -63,9 +60,9 @@ public class AssassinScreen extends GameScreen {
 	@Override
 	public void onAICharacterDied(AICharacter victim, PlayerCharacter killer) {
 		aiKilled++;
-		if(aiKilled == aiCount) {
+		if(aiKilled == getAiCount()) {
 			disableAllPlayers();
-			UISystem.displayEndGameMenu();
+			getUiSystem().displayEndGameMenu();
 		}
 	}
 

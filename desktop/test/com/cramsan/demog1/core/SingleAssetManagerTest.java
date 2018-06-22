@@ -2,7 +2,7 @@ package com.cramsan.demog1.core;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.cramsan.demog1.SingleAssetManager;
+import com.cramsan.demog1.subsystems.SingleAssetManager;
 import com.cramsan.demog1.gameelements.GameElement;
 import org.junit.Assert;
 

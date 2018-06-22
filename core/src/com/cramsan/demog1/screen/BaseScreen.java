@@ -8,18 +8,20 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.cramsan.demog1.*;
-import com.cramsan.demog1.controller.ControllerConnectionListener;
-import com.cramsan.demog1.controller.ControllerManager;
-import com.cramsan.demog1.controller.PlayerController;
+import com.cramsan.demog1.Globals;
 import com.cramsan.demog1.gameelements.GameElement;
-import com.cramsan.demog1.map.TiledGameMap;
-import com.cramsan.demog1.ui.UISystem;
+import com.cramsan.demog1.subsystems.AudioManager;
+import com.cramsan.demog1.subsystems.CallbackManager;
+import com.cramsan.demog1.subsystems.SingleAssetManager;
+import com.cramsan.demog1.subsystems.controller.ControllerConnectionListener;
+import com.cramsan.demog1.subsystems.controller.ControllerManager;
+import com.cramsan.demog1.subsystems.controller.PlayerController;
+import com.cramsan.demog1.subsystems.map.TiledGameMap;
+import com.cramsan.demog1.subsystems.ui.IUISystem;
 
 import java.util.ArrayList;
 
@@ -29,21 +31,19 @@ import java.util.ArrayList;
  */
 public abstract class BaseScreen implements Screen, ControllerConnectionListener, ContactListener {
 
-    public static final float FRAME_TIME = 1f/60f;
-
-    protected OrthographicCamera cam;
+    private OrthographicCamera cam;
     private SpriteBatch batch;
-    protected Viewport viewport;
-    protected ShapeRenderer shapeRenderer;
+    private Viewport viewport;
 
-    protected float timeBuffer;
-    private boolean useFixedStep;
     private boolean renderEnabled;
-	protected CallbackManager callbackManager;
-	
-    protected TiledGameMap map;
-    protected World gameWorld;
-    protected Box2DDebugRenderer debugRenderer;
+    private CallbackManager callbackManager;
+    private AudioManager audioManager;
+    private SingleAssetManager assetManager;
+    private IUISystem uiSystem;
+
+    private TiledGameMap map;
+    private World gameWorld;
+    private Box2DDebugRenderer debugRenderer;
 
     private ArrayList<GameElement> lightSources;
     private float illumination;
@@ -53,14 +53,12 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     public BaseScreen()
     {
-        timeBuffer = 0;
         cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
         viewport = new StretchViewport(cam.viewportWidth, cam.viewportHeight, cam);
         gameWorld = new World(Vector2.Zero, true);
         gameWorld.setContactListener(this);
         map = new TiledGameMap(gameWorld);
         debugRenderer = new Box2DDebugRenderer();
-        shapeRenderer = new ShapeRenderer();
         lightSources = new ArrayList<GameElement>();
         illumination = 0f;
 		callbackManager = new CallbackManager();
@@ -69,7 +67,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     // This method will be called to configure objects. This is used to decouple the object initialization
     // From their configuration in the game world.
     public void ScreenInit() {
-        UISystem.UISytemInit(viewport.getWorldWidth(), viewport.getWorldHeight());
         map.setBatch(getBatch());
         map.TimedGameMapInit();
 
@@ -95,44 +92,26 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             viewport.setWorldHeight(map.getHeight() * map.getTileHeight());
         }
 
-	    AudioManager.LoadAssets(levelId());
-        AudioManager.PlayMusic();
+        getUiSystem().resize((int)viewport.getWorldWidth(), (int)viewport.getWorldHeight());
+        // TODO: Fix this ASAP!
+	    //AudioManager.LoadAssets(levelId());
+        //AudioManager.PlayMusic();
 
-        lightTexture = SingleAssetManager.getLightTexture();
-        mainLightTexture = SingleAssetManager.getSceneLightTexture();
-        try {
-            lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int) viewport.getWorldWidth(), (int) viewport.getWorldHeight(), false);
-        } catch (IllegalStateException e) {
-
-        }
+        lightTexture = getAssetManager().getLightTexture();
+        mainLightTexture = getAssetManager().getSceneLightTexture();
+        lightBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int) viewport.getWorldWidth(), (int) viewport.getWorldHeight(), false);
     }
 
     @Override
     public final void render(float delta) {
-        if (isUseFixedStep()) {
-            timeBuffer += Gdx.graphics.getDeltaTime();
-            while (timeBuffer > FRAME_TIME) {
-                performUpdate();
-                performRender();
-                timeBuffer-=FRAME_TIME;
-            }
-        } else {
-            performUpdate(delta);
-            performRender(delta);
-        }
+        performUpdate(delta);
+        performRender(delta);
     }
 
     /**
      * This method will render the scene always after a fixed time step
      */
-    private final void performRender() {
-        performRender(FRAME_TIME);
-    }
-
-    /**
-     * This method will render the scene always after a fixed time step
-     */
-    private final void performRender(float delta) {
+    private void performRender(float delta) {
         if (!renderEnabled)
             return;
 
@@ -150,7 +129,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
         performLightingRender();
         debugRenderer.render(gameWorld, cam.combined);
-        UISystem.draw(delta);
+        getUiSystem().render(delta);
     }
 
 	/**
@@ -158,17 +137,13 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	 * You can use this method to update the callback manager and other objects
 	 * that are tied to the life time of a screen.
 	 */
-    private final void performUpdate(float delta) {
+    private void performUpdate(float delta) {
 		callbackManager.update(delta);
 		map.performUpdate(delta);
 		performCustomUpdate(delta);
         gameWorld.step(delta, 6, 2);
 	}
-	
-    private final void performUpdate() {
-		performUpdate(FRAME_TIME);
-	}
-	
+
 	/**
 	 * Implement logic here that specific to each implementation of
 	 * this class. This method will use the provided time delta for 
@@ -177,25 +152,20 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     protected abstract void performCustomUpdate(float delta);
 
 	/**
-	 * Implement logic here that specific to each implementation of
-	 * this class. This method will use the default time step defined
-	 * in Globals.FRAME_TIME.
-	 */
-    protected abstract void performCustomUpdate();
-
-	/**
 	 * First render call
 	 * Implement logic here to draw into the background. This 
-	 * will be mostly used to dran the map. But it can be used to 
+	 * will be mostly used to draw the map. But it can be used to
 	 * also render anything else behind the sprites.
 	 */	
-    protected abstract void performRenderMap(float delta);
+    private void performRenderMap(float delta) {
+        map.render(cam, delta);
+    }
 
 	/**
 	 * Second render call
-	 * Implement logic here to draw sprites and most other game 
-	 * elements. 
-	 */	
+	 * Implement logic here to draw sprites and most other game
+	 * elements.
+	 */
     protected abstract void performRenderSprites();
 
 	/**
@@ -204,7 +174,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	 * Anything rendered here will not affect the UI since that will 
 	 * happen last.
 	 */
-	protected void performLightingRender(){
+	private void performLightingRender(){
         // start rendering to the lightBuffer
         lightBuffer.begin();
 
@@ -288,8 +258,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     @Override
     public void dispose() {
-        UISystem.disposeMenu();
-	    AudioManager.UnloadAssets();
+        //UISystem.disposeMenu();
+	    //AudioManager.UnloadAssets();
     }
 
     public void setIllumination(float illumination) {
@@ -305,7 +275,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-        UISystem.resizeUI(width, height);
+        //UISystem.resizeUI(width, height);
     }
 
     @Override
@@ -336,11 +306,59 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         this.batch = batch;
     }
 
-    public boolean isUseFixedStep() {
-        return useFixedStep;
+    public AudioManager getAudioManager() {
+        return audioManager;
     }
 
-    public void setUseFixedStep(boolean useFixedStep) {
-        this.useFixedStep = useFixedStep;
+    public void setAudioManager(AudioManager audioManager) {
+        this.audioManager = audioManager;
+    }
+
+    public CallbackManager getCallbackManager() {
+        return callbackManager;
+    }
+
+    public void setCallbackManager(CallbackManager callbackManager) {
+        this.callbackManager = callbackManager;
+    }
+
+    public SingleAssetManager getAssetManager() {
+        return assetManager;
+    }
+
+    public void setAssetManager(SingleAssetManager assetManager) {
+        this.assetManager = assetManager;
+    }
+
+    public IUISystem getUiSystem() {
+        return this.uiSystem;
+    }
+
+    public void setUiSystem(IUISystem uiSystem) {
+        this.uiSystem = uiSystem;
+    }
+
+    public TiledGameMap getMap() {
+        return map;
+    }
+
+    public void setMap(TiledGameMap map) {
+        this.map = map;
+    }
+
+    public World getGameWorld() {
+        return gameWorld;
+    }
+
+    public void setGameWorld(World gameWorld) {
+        this.gameWorld = gameWorld;
+    }
+
+    public Box2DDebugRenderer getDebugRenderer() {
+        return debugRenderer;
+    }
+
+    public void setDebugRenderer(Box2DDebugRenderer debugRenderer) {
+        this.debugRenderer = debugRenderer;
     }
 }

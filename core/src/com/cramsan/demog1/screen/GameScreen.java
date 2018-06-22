@@ -1,17 +1,15 @@
 package com.cramsan.demog1.screen;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.utils.Array;
-import com.cramsan.demog1.controller.PlayerController;
+import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.gameelements.*;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
-import com.cramsan.demog1.ui.PauseMenuEventListener;
-import com.cramsan.demog1.ui.UISystem;
+import com.cramsan.demog1.subsystems.ui.PauseMenuEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +26,10 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	private boolean isPaused;
 
-	protected List<BaseCharacter> characterList;
-	protected List<PlayerCharacter> playerList;
-	protected List<GameElement> collideableList;
-	protected int aiCount;
+	private List<BaseCharacter> characterList;
+	private List<PlayerCharacter> playerList;
+	private List<GameElement> collideableList;
+	private int aiCount;
 
 	public GameScreen(GameParameterManager parameterManager)
 	{
@@ -47,17 +45,17 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	@Override
 	public void ScreenInit() {
 		super.ScreenInit();
-		UISystem.initPauseMenu(this);
-		UISystem.initConfirmationMenu();
-		UISystem.initEndGameMenu();
+		getUiSystem().initPauseMenu(this);
+		getUiSystem().initConfirmationMenu();
+		getUiSystem().initEndGameMenu();
 		setIllumination(0.01f);
 	}
 
 	protected void createAICharacters() {
 		for (int i = 0; i < aiCount; i++) {
 			GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-			AICharacter newChar = new AICharacter(type, this, map, gameWorld);
-			Vector2 charPos = this.map.getRandomNonSolidTile();
+			AICharacter newChar = new AICharacter(type, this, getMap(), getGameWorld());
+			Vector2 charPos = getMap().getRandomNonSolidTile();
 			newChar.setTilePosition((int) (charPos.x * newChar.getWidth()), (int)(charPos.y * newChar.getHeight()));
 			addAICharacter(newChar);
 		}
@@ -80,7 +78,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		}
 
 		Array<Body> bodies = new Array<Body>();
-		gameWorld.getBodies(bodies);
+		getGameWorld().getBodies(bodies);
 
 		for (Body b : bodies) {
 			// Get the body's user data - in this example, our user
@@ -109,11 +107,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	@Override
-	protected void performCustomUpdate() {
-		performCustomUpdate(FRAME_TIME);
-	}
-
-	@Override
 	protected void performRenderSprites() {
 		for (GameElement collideable : collideableList) {
 			collideable.draw(getBatch());
@@ -123,13 +116,8 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		}
 	}
 
-	@Override
-	protected void performRenderMap(float delta) {
-		map.render(cam, delta);
-	}
-
 	protected void createPlayerCharacter(int index, PlayerController controller, GameElement.TYPE type) {
-		PlayerCharacter newChar = new PlayerCharacter(index, type, this, map, gameWorld);
+		PlayerCharacter newChar = new PlayerCharacter(index, type, this, getMap(), getGameWorld());
 		if (type == GameElement.TYPE.CHAR_HUMAN) {
 
         } else if(type == GameElement.TYPE.CHAR_RETICLE){
@@ -137,7 +125,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
         } else {
 		    throw new RuntimeException("Type not supported for PlayerCharacter" + type);
         }
-		Vector2 characterPos = this.map.getRandomNonSolidTile();
+		Vector2 characterPos = getMap().getRandomNonSolidTile();
         newChar.setTilePosition((int) (characterPos.x * newChar.getWidth()), (int)(characterPos.y * newChar.getHeight()));
 		newChar.setController(controller);
 		characterList.add(newChar);
@@ -190,7 +178,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	@Override
 	public void onCharacterAttack(final PlayerCharacter character) {
-		gameWorld.QueryAABB(new QueryCallback() {
+		getGameWorld().QueryAABB(new QueryCallback() {
 			@Override
 			public boolean reportFixture(Fixture fixture) {
 				if (fixture.getFilterData().categoryBits != GameCollision.Player)
@@ -215,12 +203,12 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	    if (isPaused)
         {
         	if (pauseCaller == character) {
-				UISystem.hideMenu();
+				getUiSystem().hideMenu();
 				isPaused = false;
 			}
         }
         else {
-            UISystem.displayPauseMenu();
+			getUiSystem().displayPauseMenu();
             isPaused = true;
             pauseCaller = character;
         }
@@ -272,13 +260,33 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		playerList.remove(victim);
 		if (playerList.size() == 1) {
 			disableAllPlayers();
-			UISystem.displayEndGameMenu();
+			getUiSystem().displayEndGameMenu();
 		}
 	}
 
 	@Override
 	public void onAICharacterDied(AICharacter victim, PlayerCharacter killer) {
 
+	}
+
+	public List<BaseCharacter> getCharacterList() {
+		return characterList;
+	}
+
+	public List<PlayerCharacter> getPlayerList() {
+		return playerList;
+	}
+
+	public List<GameElement> getCollideableList() {
+		return collideableList;
+	}
+
+	public int getAiCount() {
+		return aiCount;
+	}
+
+	public void setAiCount(int aiCount) {
+		this.aiCount = aiCount;
 	}
 
 	protected abstract int levelId();

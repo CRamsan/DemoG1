@@ -1,4 +1,4 @@
-package com.cramsan.demog1;
+package com.cramsan.demog1.subsystems;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 /**
  * Class that exposes the AssetManager as a singleton.
  */
-public class SingleAssetManager {
+public class SingleAssetManager implements IGameSubsystem{
 
     private static final String ASSET_SPRITE_SHEET = "animation_sheet.png";
     private static final String ASSET_LIGHT = "light.png";
@@ -25,75 +25,22 @@ public class SingleAssetManager {
     public static final int ANIMATION_COLUMNS = 3;
     public static final int ANIMATION_ROWS = 4;
 
-
-    private static SingleAssetManager ourInstance;
-
-    public static void initSingleAssetManager() {
-        ourInstance = new SingleAssetManager();
-    }
-
-    public static void unInitSingleAssetManager() {
-        ourInstance = null;
-    }
-
-    public static AssetManager getAssetManager() {
-        return ourInstance.getManager();
-    }
-
-    public static Texture getLightTexture() {
-        return ourInstance.getLightTextureInternal();
-    }
-
-    public static Texture getSceneLightTexture() {
-        return ourInstance.getSceneLightTextureInternal();
-    }
-
-    public static void getPlayerTextures(GameElement.TYPE type, TextureAnimationReciever reciever) {
-        ourInstance.getPlayerTexturesInternal(type, reciever);
-    }
-
-    public static void loadSprite() {
-        ourInstance.loadTextureInternal();
-    }
-
-    public static void unloadSprite() {
-        ourInstance.unloadTextureInternal();
-    }
-
-    private int instanceCount = 0;
     private HashMap<GameElement.TYPE, TextureRegion> typeToTextureMapping;
     private TextureRegion[][] spriteRegion;
     private Texture texture;
 
     private AssetManager manager;
 
-    private SingleAssetManager() {
+    public SingleAssetManager() {
         manager = new AssetManager();
     }
 
-    private AssetManager getManager() {
-        return manager;
-    }
-
-    private Texture getLightTextureInternal() {
+    public Texture getLightTexture() {
         return new Texture(Gdx.files.internal(ASSET_LIGHT));
     }
 
-    private Texture getSceneLightTextureInternal() {
+    public Texture getSceneLightTexture() {
         return new Texture(Gdx.files.internal(ASSET_MAIN_LIGHT));
-    }
-
-    private void loadTextureInternal() {
-        if (instanceCount == 0) {
-            manager.load(ASSET_SPRITE_SHEET, Texture.class);
-            manager.finishLoading();
-            texture = manager.get(ASSET_SPRITE_SHEET);
-            spriteRegion = TextureRegion.split(texture,
-                    texture.getWidth() / ASSET_SPRITE_SHEET_COLUMNS,
-                    texture.getHeight() / ASSET_SPRITE_SHEET_ROWS);
-            typeToTextureMapping = new HashMap<GameElement.TYPE, TextureRegion>();
-        }
-        instanceCount++;
     }
 
     private TextureRegion getTextureRegionForType(GameElement.TYPE type) {
@@ -145,7 +92,7 @@ public class SingleAssetManager {
         return  textureRegion;
     }
 
-    private void getPlayerTexturesInternal(GameElement.TYPE type, TextureAnimationReciever reciever) {
+    public void getPlayerTextures(GameElement.TYPE type, TextureAnimationReciever receiver) {
         TextureRegion textureRegion = getTextureRegionForType(type);
 
         TextureRegion[][] tmp = textureRegion.split(ASSET_SPRITE_SHEET_SPRITE_WIDTH,
@@ -172,21 +119,37 @@ public class SingleAssetManager {
                     break;
             }
         }
-        reciever.setAnimations(walkUpAnimation, walkRightAnimation, walkDownAnimation, walkLeftAnimation);
-        reciever.setTextureSize(ASSET_SPRITE_SHEET_SPRITE_WIDTH, ASSET_SPRITE_SHEET_SPRITE_HEIGHT);
+        receiver.setAnimations(walkUpAnimation, walkRightAnimation, walkDownAnimation, walkLeftAnimation);
+        receiver.setTextureSize(ASSET_SPRITE_SHEET_SPRITE_WIDTH, ASSET_SPRITE_SHEET_SPRITE_HEIGHT);
     }
 
-    private void unloadTextureInternal() {
-        instanceCount--;
-        if (instanceCount == 0) {
-            manager.unload(ASSET_SPRITE_SHEET);
-            texture = null;
-            spriteRegion = null;
-            typeToTextureMapping = null;
-            instanceCount = 0;
-        } else if (instanceCount < 0) {
-            throw new RuntimeException("Over-releasing sprite data");
-        }
+    @Override
+    public void InitSystem() {
+        manager.load(ASSET_SPRITE_SHEET, Texture.class);
+        manager.finishLoading();
+        texture = manager.get(ASSET_SPRITE_SHEET);
+        spriteRegion = TextureRegion.split(texture,
+                texture.getWidth() / ASSET_SPRITE_SHEET_COLUMNS,
+                texture.getHeight() / ASSET_SPRITE_SHEET_ROWS);
+        typeToTextureMapping = new HashMap<GameElement.TYPE, TextureRegion>();
+    }
+
+    @Override
+    public void InitScreen() {
+
+    }
+
+    @Override
+    public void UnInitScreen() {
+
+    }
+
+    @Override
+    public void UnInitSystem() {
+        manager.unload(ASSET_SPRITE_SHEET);
+        texture = null;
+        spriteRegion = null;
+        typeToTextureMapping = null;
     }
 
     public interface TextureAnimationReciever {

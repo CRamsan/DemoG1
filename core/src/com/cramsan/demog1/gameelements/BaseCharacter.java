@@ -2,7 +2,7 @@ package com.cramsan.demog1.gameelements;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.cramsan.demog1.map.TiledGameMap;
+import com.cramsan.demog1.subsystems.map.TiledGameMap;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 
 /**

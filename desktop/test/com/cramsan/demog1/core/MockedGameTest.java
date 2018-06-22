@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.cramsan.demog1.IGameStateListener;
 import com.cramsan.demog1.MyGdxGame;
-import com.cramsan.demog1.ui.IUISystem;
+import com.cramsan.demog1.subsystems.ui.IUISystem;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;

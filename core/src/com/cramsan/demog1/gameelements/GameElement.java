@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.cramsan.demog1.Globals;
-import com.cramsan.demog1.SingleAssetManager;
+import com.cramsan.demog1.subsystems.SingleAssetManager;
 
 /***
  * Base class to be used for all elements that need to be rendered on the screen.
@@ -67,23 +67,16 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 		this.direction = DIRECTION.values()[ Globals.rand.nextInt(4)];
 		this.isDirty = false;
 		this.gameWorld = gameWorld;
-
-		init();
     }
 
     /***
      * Private method that will handle lower level details of the object such as handling instance count and loading
      * assets. This should only be called by the constructor.
      */
-    private void init() {
+    public void init() {
 		if (type == null) {
 			throw new RuntimeException("Type cannot be null");
 		}
-
-		// Signal to the AssetManager that we are going to need to load textures
-		SingleAssetManager.loadSprite();
-
-		SingleAssetManager.getPlayerTextures(type, this);
 
 		state = 0;
 		shouldRender = true;
@@ -207,7 +200,7 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
      * are unloaded, then the loaded assets will be disposed as well.
      */
 	public void unload() {
-		SingleAssetManager.unloadSprite();
+
 	}
 
 	final public Vector2 getCenterPosition() {

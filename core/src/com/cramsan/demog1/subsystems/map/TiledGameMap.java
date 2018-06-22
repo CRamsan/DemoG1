@@ -1,4 +1,4 @@
-package com.cramsan.demog1.map;
+package com.cramsan.demog1.subsystems.map;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

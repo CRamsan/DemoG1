@@ -1,4 +1,4 @@
-package com.cramsan.demog1;
+package com.cramsan.demog1.subsystems;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -7,12 +7,9 @@ import com.badlogic.gdx.audio.Sound;
 import java.util.HashMap;
 
 /**
- * Singleton class that provides a simple API to handle sound and music
+ * Class that provides a simple API to handle sound and music
  */
-public class AudioManager {
-
-    private static HashMap<MUSIC, Music> musicMap;
-    private static HashMap<SOUND, Sound> soundMap;
+public class AudioManager implements IGameSubsystem {
 
     public enum MUSIC {
         BG_1
@@ -22,19 +19,29 @@ public class AudioManager {
         ATTACK, BELL
     }
 
+    private HashMap<MUSIC, Music> musicMap;
+    private HashMap<SOUND, Sound> soundMap;
+    private int level;
+
+    @Override
+    public void InitSystem() {
+        musicMap = new HashMap<MUSIC, Music>();
+        soundMap = new HashMap<SOUND, Sound>();
+    }
+
     /**
-     * Call this function when loading a scene and provide the level Id int
+     * Call this function when loading a scene.
      * This will load the required sounds as well as prepare the music playlist
      */
-    public static void LoadAssets(int level)
-    {
+    @Override
+    public void InitScreen() {
         musicMap = new HashMap<MUSIC, Music>();
         soundMap = new HashMap<SOUND, Sound>();
         for (SOUND enumSound : SOUND.values()) {
             String filePath = null;
             switch (enumSound) {
                 case ATTACK:
-                     filePath = "knife-slash.ogg";
+                    filePath = "knife-slash.ogg";
                     break;
                 case BELL:
                     filePath = "bell.wav";
@@ -60,37 +67,42 @@ public class AudioManager {
             musicMap.put(enumMusic, music);
         }
     }
-    
+
+
     /**
      * Call this function to unload any assets for the current scene
      */
-    public static void UnloadAssets()
-    {
+    @Override
+    public void UnInitScreen() {
         for (Sound sound : soundMap.values()) {
             sound.dispose();
         }
         for (Music music : musicMap.values()) {
             music.dispose();
         }
+        soundMap.clear();
+        musicMap.clear();
+    }
+
+    @Override
+    public void UnInitSystem() {
         soundMap = null;
         musicMap = null;
     }
 
-    public static boolean PlaySound(SOUND sound) {
-        return ourInstance.PlaySoundInternal(sound);
+    public int getLevel() {
+        return level;
     }
 
-    public static void PlayMusic() {
-        ourInstance.PlayMusicInternal();
+    public void setLevel(int level) {
+        this.level = level;
     }
 
-    private static AudioManager ourInstance = new AudioManager();
-
-    private boolean PlaySoundInternal(SOUND sound) {
+    private boolean PlaySound(SOUND sound) {
         return soundMap.get(sound).play() != -1;
     }
 
-    private void PlayMusicInternal() {
+    private void PlayMusic() {
         musicMap.get(MUSIC.BG_1).play();
     }
 }

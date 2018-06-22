@@ -1,6 +1,6 @@
 package com.cramsan.demog1.core;
 
-import com.cramsan.demog1.AudioManager;
+import com.cramsan.demog1.subsystems.AudioManager;
 
 import static org.junit.Assert.assertTrue;
 

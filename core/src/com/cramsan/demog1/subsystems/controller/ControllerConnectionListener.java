@@ -1,4 +1,4 @@
-package com.cramsan.demog1.controller;
+package com.cramsan.demog1.subsystems.controller;
 
 /**
  * Implement this interface to receive the ControllerManager connected/disconnected

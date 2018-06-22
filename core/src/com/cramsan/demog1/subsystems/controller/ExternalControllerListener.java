@@ -1,4 +1,4 @@
-package com.cramsan.demog1.controller;
+package com.cramsan.demog1.subsystems.controller;
 
 /**
  * This interface is used to expose the events from the PlayerController. This interface

@@ -1,9 +1,9 @@
 package com.cramsan.demog1.gameelements.player;
 
 import com.badlogic.gdx.physics.box2d.World;
-import com.cramsan.demog1.AudioManager;
-import com.cramsan.demog1.map.TiledGameMap;
-import com.cramsan.demog1.controller.PlayerController;
+import com.cramsan.demog1.subsystems.AudioManager;
+import com.cramsan.demog1.subsystems.map.TiledGameMap;
+import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.gameelements.BaseCharacter;
 import com.cramsan.demog1.gameelements.CharacterEventListener;
 import com.cramsan.demog1.gameelements.GameElement;
@@ -70,7 +70,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		if (!collideableSet.contains(collideable)){
 			collideableSet.add(collideable);
 			listener.onCharacterCollideableTouched(collideable, collideableSet.size(), this);
-			AudioManager.PlaySound(AudioManager.SOUND.BELL);
+			//AudioManager.PlaySound(AudioManager.SOUND.BELL);
 		}
 	}
 
@@ -110,7 +110,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	 * This function will send an event to the listener that this character has attacked.
 	 */
 	protected void attack() {
-		AudioManager.PlaySound(AudioManager.SOUND.ATTACK);
+		//AudioManager.PlaySound(AudioManager.SOUND.ATTACK);
 		this.listener.onCharacterAttack(this);
 	}
 

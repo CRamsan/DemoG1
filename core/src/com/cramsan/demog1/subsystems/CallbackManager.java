@@ -1,7 +1,7 @@
-package com.cramsan.demog1;
+package com.cramsan.demog1.subsystems;
 import java.util.*;
 
-public class CallbackManager
+public class CallbackManager implements IGameSubsystem
 {
 	private float time;
 	private PriorityQueue<ExecutionBlockEvent > queue;
@@ -33,6 +33,26 @@ public class CallbackManager
 			queue.poll();
 			nextBlock.executeBlock();
 		}
+	}
+
+	@Override
+	public void InitSystem() {
+
+	}
+
+	@Override
+	public void InitScreen() {
+
+	}
+
+	@Override
+	public void UnInitScreen() {
+
+	}
+
+	@Override
+	public void UnInitSystem() {
+
 	}
 
 	/** 

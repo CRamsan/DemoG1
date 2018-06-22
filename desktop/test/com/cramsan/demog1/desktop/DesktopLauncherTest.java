@@ -1,5 +1,6 @@
 package com.cramsan.demog1.desktop;
 
+import com.badlogic.gdx.Gdx;
 import com.cramsan.demog1.IGameStateListener;
 import org.junit.After;
 import org.junit.Test;
@@ -19,13 +20,14 @@ public class DesktopLauncherTest {
                 e.printStackTrace();
                 throw new RuntimeException("Exception thrown while acquiring semaphore");
             }
-            DesktopLauncher.stopApplication();
+            Gdx.app.exit();
         }).start();
     }
 
-    //@Test(timeout=5000)
+    @Test(timeout=5000)
     public void main() {
-        DesktopLauncher.startApplication(new TestLifeCycleListener());
+        DesktopLauncher launcher = new DesktopLauncher();
+        launcher.startApplication(new TestLifeCycleListener());
         try {
             sem.acquire();
         } catch (InterruptedException e) {

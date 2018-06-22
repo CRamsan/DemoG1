@@ -1,12 +1,11 @@
 package com.cramsan.demog1.core;
 
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.cramsan.demog1.MyGdxGame;
-import com.cramsan.demog1.MyGdxGameManager;
+import com.cramsan.demog1.SceneManager;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 import com.cramsan.demog1.screen.*;
-import com.cramsan.demog1.ui.IUISystem;
+import com.cramsan.demog1.subsystems.ui.IUISystem;
 import org.junit.Before;
 import org.mockito.Mockito;
 
@@ -16,29 +15,29 @@ public class MyGdxGameManagerTest {
 
     @Before
     public void setUp() {
-        MyGdxGameManager.clearInstance();
+        SceneManager.clearInstance();
     }
 
     @org.junit.Test
     public void setInstanceTest() {
-        assertNull(MyGdxGameManager.getInstance());
+        assertNull(SceneManager.getInstance());
         MyGdxGame game = Mockito.mock(MyGdxGame.class);
-        MyGdxGameManager.setInstance(game);
-        assertNotNull(MyGdxGameManager.getInstance());
-        assertEquals(game, MyGdxGameManager.getInstance());
+        SceneManager.setInstance(game);
+        assertNotNull(SceneManager.getInstance());
+        assertEquals(game, SceneManager.getInstance());
     }
 
     @org.junit.Test(expected = RuntimeException.class)
     public void setInstanceToNullTest() {
-        MyGdxGameManager.setInstance(null);
+        SceneManager.setInstance(null);
     }
 
     @org.junit.Test(expected = RuntimeException.class)
     public void overrideParameterManagerTest() {
         MyGdxGame game = Mockito.mock(MyGdxGame.class);
         GameParameterManager parameterManager = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.NINJA_PARTY);
-        MyGdxGameManager.startGameScreen(parameterManager);
-        MyGdxGameManager.startGameScreen(parameterManager);
+        SceneManager.startGameScreen(parameterManager);
+        SceneManager.startGameScreen(parameterManager);
     }
 
 
@@ -50,13 +49,13 @@ public class MyGdxGameManagerTest {
         game.setSpriteBatch(batch);
         IUISystem uiSystem = Mockito.mock(IUISystem.class);
         game.setUiSystem(uiSystem);
-        MyGdxGameManager.setInstance(game);
+        SceneManager.setInstance(game);
         game.create();
         GameParameterManager parameterManager = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.NINJA_PARTY);
-        MyGdxGameManager.startGameScreen(parameterManager);
-        assertEquals(parameterManager, MyGdxGameManager.getParameterManager());
-        MyGdxGameManager.startMainMenuScreen();
-        assertNull(MyGdxGameManager.getParameterManager());
+        SceneManager.startGameScreen(parameterManager);
+        assertEquals(parameterManager, SceneManager.getParameterManager());
+        SceneManager.startMainMenuScreen();
+        assertNull(SceneManager.getParameterManager());
         assertEquals(game.getScreen().getClass(), MainMenuScreen.class);
     }
 
@@ -67,15 +66,15 @@ public class MyGdxGameManagerTest {
         game.setSpriteBatch(batch);
         IUISystem uiSystem = Mockito.mock(IUISystem.class);
         game.setUiSystem(uiSystem);
-        MyGdxGameManager.setInstance(game);
+        SceneManager.setInstance(game);
         game.create();
 
         // Test starting every game type
         GameParameterManager parameterManager;
         for (GameParameterManager.GameType type : GameParameterManager.GameType.values()) {
             parameterManager = GameParameterManager.parameterManagerForGameType(type);
-            MyGdxGameManager.startGameScreen(parameterManager);
-            assertEquals(parameterManager, MyGdxGameManager.getParameterManager());
+            SceneManager.startGameScreen(parameterManager);
+            assertEquals(parameterManager, SceneManager.getParameterManager());
             Class screenClass = null;
             switch (type) {
                 case ASSASSIN:
@@ -95,7 +94,7 @@ public class MyGdxGameManagerTest {
                     break;
             }
             assertEquals(screenClass, game.getScreen().getClass());
-            MyGdxGameManager.startMainMenuScreen();
+            SceneManager.startMainMenuScreen();
         }
     }
 }

@@ -1,13 +1,10 @@
 package com.cramsan.demog1.screen;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.cramsan.demog1.gameelements.Collideable;
 import com.cramsan.demog1.gameelements.GameElement;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
-import com.cramsan.demog1.ui.UISystem;
 
 /**
  * There are two winning conditions. Either touch the five statues or
@@ -20,7 +17,7 @@ public class NinjaPartyScreen extends GameScreen {
 	public NinjaPartyScreen(GameParameterManager parameterManager)
 	{
 		super(parameterManager);
-		aiCount = 10;
+		setAiCount(10);
 	}
 
 	@Override
@@ -32,8 +29,8 @@ public class NinjaPartyScreen extends GameScreen {
 
 	private void createStatues() {
 		statueCount = 0;
-		for (Vector2 pos : map.getStatueSpawner()) {
-			GameElement newCollideable = new Collideable(this, gameWorld);
+		for (Vector2 pos : getMap().getStatueSpawner()) {
+			GameElement newCollideable = new Collideable(this, getGameWorld());
 			newCollideable.setTilePosition((int)(pos.x * newCollideable.getWidth()), (int)(pos.y * newCollideable.getHeight()));
 			addCollidable(newCollideable);
 			addLightSource(newCollideable);
@@ -45,7 +42,7 @@ public class NinjaPartyScreen extends GameScreen {
 	public void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player) {
 		if (collideableIndex == this.statueCount) {
 			disableAllPlayers();
-			UISystem.displayEndGameMenu();
+			getUiSystem().displayEndGameMenu();
 		}
 	}
 

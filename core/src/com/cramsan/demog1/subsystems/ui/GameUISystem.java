@@ -1,4 +1,4 @@
-package com.cramsan.demog1.ui;
+package com.cramsan.demog1.subsystems.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -12,9 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.cramsan.demog1.MyGdxGame;
-import com.cramsan.demog1.MyGdxGameManager;
-import com.cramsan.demog1.controller.ControllerManager;
+import com.cramsan.demog1.SceneManager;
+import com.cramsan.demog1.subsystems.controller.ControllerManager;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 
 import java.util.ArrayList;
@@ -66,20 +65,6 @@ public class GameUISystem implements IUISystem {
         isInit = false;
     }
 
-    @Override
-    public void initInternal(float worldWidth, float worldHeight) {
-        if (!isInit) {
-            skin = new Skin(Gdx.files.internal(ASSET_SKIN_FILE));
-            this.worldWidth = worldWidth;
-            this.worldHeight = worldHeight;
-            if (stage != null) {
-                this.stage = stage;
-            }
-        }
-        isInit = true;
-        isStageInit = false;
-    }
-
     private void initSingleStage() {
         if (isStageInit)
             return;
@@ -93,7 +78,7 @@ public class GameUISystem implements IUISystem {
     }
 
     @Override
-    public void initMainMenuInternal() {
+    public void initMainMenu() {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
         initSingleStage();
@@ -103,26 +88,26 @@ public class GameUISystem implements IUISystem {
         Button firstButton = UIToolKit.AddButtonToParentWithAction(mainPane,TEXT_LABEL_NINJA_PARTY, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                hideMenuInternal();
+                hideMenu();
                 gameParams = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.NINJA_PARTY);
-                displayGetReadyMenuInternal();
+                displayGetReadyMenu();
             }
         }, sequenceMap);
 
         Button secondButton = UIToolKit.AddButtonToParentWithAction(mainPane, TEXT_LABEL_CATCH_A_THIEF, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                hideMenuInternal();
+                hideMenu();
                 gameParams = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.CATCH_A_THIEF);
-                displayGetReadyMenuInternal();
+                displayGetReadyMenu();
             }
         }, sequenceMap);
         Button thirdButton = UIToolKit.AddButtonToParentWithAction(mainPane, TEXT_LABEL_KNIGHTS_VS_NINJAS, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                hideMenuInternal();
+                hideMenu();
                 gameParams = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.KNIGHTS_VS_THIEFS);
-                displayGetReadyMenuInternal();
+                displayGetReadyMenu();
             }
         }, sequenceMap);
         /*
@@ -138,9 +123,9 @@ public class GameUISystem implements IUISystem {
         Button fifthButton = UIToolKit.AddButtonToParentWithAction(mainPane, TEXT_LABEL_ASSASSIN, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                hideMenuInternal();
+                hideMenu();
                 gameParams = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.ASSASSIN);
-                displayGetReadyMenuInternal();
+                displayGetReadyMenu();
             }
         }, sequenceMap);
 
@@ -154,7 +139,7 @@ public class GameUISystem implements IUISystem {
     }
 
     @Override
-    public void initPauseMenuInternal(PauseMenuEventListener listener) {
+    public void initPauseMenu(PauseMenuEventListener listener) {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
         initSingleStage();
@@ -164,14 +149,14 @@ public class GameUISystem implements IUISystem {
         Button button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Resume", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                hideMenuInternal();
+                hideMenu();
                 pauseMenuListener.onPauseMenuDisappeared();
             }
         }, sequenceMap);
         Button button2 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Quit", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                displayConfirmationMenuInternal();
+                displayConfirmationMenu();
             }
         }, sequenceMap);
         UIToolKit.LinkUpAndDown(button1, button2, sequenceMap);
@@ -181,7 +166,7 @@ public class GameUISystem implements IUISystem {
     }
 
     @Override
-    public void initConfirmationMenuInternal() {
+    public void initConfirmationMenu() {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
         initSingleStage();
@@ -190,15 +175,15 @@ public class GameUISystem implements IUISystem {
         Button button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "No", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                hideMenuInternal();
-                displayPauseMenuInternal();
+                hideMenu();
+                displayPauseMenu();
             }
         }, sequenceMap);
         Button button2 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Yes", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                hideMenuInternal();
-                MyGdxGameManager.startMainMenuScreen();
+                hideMenu();
+                SceneManager.startMainMenuScreen();
             }
         }, sequenceMap);
         UIToolKit.LinkUpAndDown(button1, button2, sequenceMap);
@@ -208,7 +193,7 @@ public class GameUISystem implements IUISystem {
     }
 
     @Override
-    public void initEndGameMenuInternal() {
+    public void initEndGameMenu() {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
         initSingleStage();
@@ -217,17 +202,17 @@ public class GameUISystem implements IUISystem {
         Button  button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Restart", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                hideMenuInternal();
+                hideMenu();
                 // Since we are restarting the game with the same parameters we can pass null as the
                 // GameParameterManager. This will cause the Game object to reuse the previously set instance
-                MyGdxGameManager.startGameScreen(null);
+                SceneManager.startGameScreen(null);
             }
         }, sequenceMap);
         Button  button2 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Back to Menu", skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                hideMenuInternal();
-                MyGdxGameManager.startMainMenuScreen();
+                hideMenu();
+                SceneManager.startMainMenuScreen();
             }
         }, sequenceMap);
 
@@ -238,7 +223,7 @@ public class GameUISystem implements IUISystem {
     }
 
     @Override
-    public GetReadyMenuController initGetReadyMenuInternal() {
+    public GetReadyMenuController initGetReadyMenu() {
         if (loadedTextures.size() != 0)
             throw new RuntimeException("Unload textures before loading more");
         initSingleStage();
@@ -250,16 +235,16 @@ public class GameUISystem implements IUISystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (getReadyMenuController.enoughPlayers()) {
-                    hideMenuInternal();
-                    MyGdxGameManager.startGameScreen(gameParams);
+                    hideMenu();
+                    SceneManager.startGameScreen(gameParams);
                 }
             }
         }, sequenceMap);
         Button  buttonBack = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, TEXT_LABEL_BACK, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                hideMenuInternal();
-                displayMainMenuInternal();
+                hideMenu();
+                displayMainMenu();
             }
         }, sequenceMap);
         UIToolKit.LinkUpAndDown(buttonStart, buttonBack, sequenceMap);
@@ -270,28 +255,28 @@ public class GameUISystem implements IUISystem {
     }
 
     @Override
-    public void displayMainMenuInternal() {
+    public void displayMainMenu() {
         setActorAsVisible(mainMenu);
     }
 
     @Override
-    public void displayPauseMenuInternal() {
+    public void displayPauseMenu() {
         setActorAsVisible(pauseMenu);
         pauseMenuListener.onPauseMenuAppeared();
     }
 
     @Override
-    public void displayEndGameMenuInternal() {
+    public void displayEndGameMenu() {
         setActorAsVisible(endGameMenu);
     }
 
     @Override
-    public void displayGetReadyMenuInternal() {
+    public void displayGetReadyMenu() {
         getReadyMenuController.updateGameParams(gameParams);
         setActorAsVisible(getReadyMenu);
     }
 
-    public void displayConfirmationMenuInternal() {
+    public void displayConfirmationMenu() {
         setActorAsVisible(confirmationMenu);
     }
 
@@ -332,7 +317,7 @@ public class GameUISystem implements IUISystem {
      * This method should only be used for tests.
      * @param event
      */
-    public void injectUIEventInternal(UI_EVENTS event) {
+    public void injectUIEvent(UI_EVENTS event) {
         handleEvent(event);
     }
 
@@ -361,11 +346,13 @@ public class GameUISystem implements IUISystem {
 
     @Override
     public void resize(int width, int height){
+        this.worldWidth = width;
+        this.worldHeight = height;
         stage.getViewport().update(width, height, true);
     }
 
     @Override
-    public void hideMenuInternal() {
+    public void hideMenu() {
         uiVisible = false;
         if (stashedProcessor != null)
             Gdx.input.setInputProcessor(stashedProcessor);
@@ -381,5 +368,31 @@ public class GameUISystem implements IUISystem {
         }
         loadedTextures.clear();
         sequenceMap.clear();
+    }
+
+    @Override
+    public void InitSystem() {
+        if (!isInit) {
+            skin = new Skin(Gdx.files.internal(ASSET_SKIN_FILE));
+            if (stage != null) {
+                this.stage = stage;
+            }
+        }
+        isInit = true;
+        isStageInit = false;
+    }
+
+    @Override
+    public void InitScreen() {
+    }
+
+    @Override
+    public void UnInitScreen() {
+
+    }
+
+    @Override
+    public void UnInitSystem() {
+
     }
 }
