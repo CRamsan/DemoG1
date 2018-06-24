@@ -35,7 +35,6 @@ public class GameUISystem implements IUISystem {
     private static final String ASSET_SKIN_FILE = "uiskin.json";
 
     private Skin skin;
-    private ArrayList<Texture> loadedTextures;
     private HashMap<Button, HashMap<UI_EVENTS, Button>> sequenceMap;
     private HashMap<Actor, Button> defaultSelectionMap;
 
@@ -56,33 +55,13 @@ public class GameUISystem implements IUISystem {
     private Actor pauseMenu;
     private float worldWidth;
     private float worldHeight;
-    private boolean isInit;
-    private boolean isStageInit;
 
     public GameUISystem() {
-        loadedTextures = new ArrayList<Texture>();
         uiVisible = false;
-        isInit = false;
-    }
-
-    private void initSingleStage() {
-        if (isStageInit)
-            return;
-        if (stage == null) {
-            stage = new Stage(new StretchViewport(worldWidth, worldHeight));
-        }
-        sequenceMap = new HashMap<Button, HashMap<UI_EVENTS, Button>>();
-        defaultSelectionMap = new HashMap<Actor, Button>();
-        stage.setDebugAll(true);
-        isStageInit = true;
     }
 
     @Override
     public void initMainMenu() {
-        if (loadedTextures.size() != 0)
-            throw new RuntimeException("Unload textures before loading more");
-        initSingleStage();
-
         Table mainPane = UIToolKit.GenerateParentChildContainer(skin);
         Label childLabel = UIToolKit.AddActorToChild(mainPane, "", skin);
         Button firstButton = UIToolKit.AddButtonToParentWithAction(mainPane,TEXT_LABEL_NINJA_PARTY, skin, new ChangeListener() {
@@ -140,10 +119,6 @@ public class GameUISystem implements IUISystem {
 
     @Override
     public void initPauseMenu(PauseMenuEventListener listener) {
-        if (loadedTextures.size() != 0)
-            throw new RuntimeException("Unload textures before loading more");
-        initSingleStage();
-
         this.pauseMenuListener = listener;
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
         Button button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Resume", skin, new ChangeListener() {
@@ -167,10 +142,6 @@ public class GameUISystem implements IUISystem {
 
     @Override
     public void initConfirmationMenu() {
-        if (loadedTextures.size() != 0)
-            throw new RuntimeException("Unload textures before loading more");
-        initSingleStage();
-
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
         Button button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "No", skin, new ChangeListener() {
             @Override
@@ -194,9 +165,6 @@ public class GameUISystem implements IUISystem {
 
     @Override
     public void initEndGameMenu() {
-        if (loadedTextures.size() != 0)
-            throw new RuntimeException("Unload textures before loading more");
-        initSingleStage();
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
 
         Button  button1 = UIToolKit.AddButtonToSinglePaneWithAction(mainPane, "Restart", skin, new ChangeListener() {
@@ -224,10 +192,6 @@ public class GameUISystem implements IUISystem {
 
     @Override
     public GetReadyMenuController initGetReadyMenu() {
-        if (loadedTextures.size() != 0)
-            throw new RuntimeException("Unload textures before loading more");
-        initSingleStage();
-
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
         Table containerPane = UIToolKit.GenerateHorizontalContainer(mainPane, skin);
         getReadyMenuController = new GetReadyMenuController(containerPane, skin);
@@ -363,23 +327,16 @@ public class GameUISystem implements IUISystem {
     @Override
     public void dispose() {
         stage.dispose();
-        for (Texture texture : loadedTextures) {
-            texture.dispose();
-        }
-        loadedTextures.clear();
         sequenceMap.clear();
     }
 
     @Override
     public void InitSystem() {
-        if (!isInit) {
-            skin = new Skin(Gdx.files.internal(ASSET_SKIN_FILE));
-            if (stage != null) {
-                this.stage = stage;
-            }
-        }
-        isInit = true;
-        isStageInit = false;
+        skin = new Skin(Gdx.files.internal(ASSET_SKIN_FILE));
+        stage = new Stage(new StretchViewport(worldWidth, worldHeight));
+        sequenceMap = new HashMap<Button, HashMap<UI_EVENTS, Button>>();
+        defaultSelectionMap = new HashMap<Actor, Button>();
+        stage.setDebugAll(true);
     }
 
     @Override

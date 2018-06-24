@@ -120,14 +120,14 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-        performRenderMap(delta);
+        //performRenderMap(delta);
 
         getBatch().setProjectionMatrix(cam.combined);
         getBatch().begin();
-        performRenderSprites();
+        //performRenderSprites();
         getBatch().end();
 
-        performLightingRender();
+        //performLightingRender();
         debugRenderer.render(gameWorld, cam.combined);
         getUiSystem().render(delta);
     }
@@ -275,7 +275,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-        //UISystem.resizeUI(width, height);
+        getUiSystem().resize(width, height);
     }
 
     @Override
