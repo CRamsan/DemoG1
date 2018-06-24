@@ -26,17 +26,13 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	private boolean isPaused;
 
-	private List<BaseCharacter> characterList;
 	private List<PlayerCharacter> playerList;
-	private List<GameElement> collideableList;
 	private int aiCount;
 
 	public GameScreen(GameParameterManager parameterManager)
 	{
 		super();
-		characterList = new ArrayList<BaseCharacter>();
 		playerList = new ArrayList<PlayerCharacter>();
-		collideableList = new ArrayList<GameElement>();
 		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
 		isPaused = false;
 		this.parameterManager = parameterManager;
@@ -56,6 +52,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 			GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
 			AICharacter newChar = new AICharacter(type, this, getMap(), getGameWorld());
 			Vector2 charPos = getMap().getRandomNonSolidTile();
+			newChar.init(getAssetManager());
 			newChar.setTilePosition((int) (charPos.x * newChar.getWidth()), (int)(charPos.y * newChar.getHeight()));
 			addAICharacter(newChar);
 		}
@@ -63,17 +60,17 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	@Override
 	protected void performCustomUpdate(float delta) {
-		for (GameElement collideable : collideableList) {
+		for (GameElement collideable : getCollideableList()) {
 			collideable.update(delta);
 		}
-		for (BaseCharacter character : characterList) {
+		for (BaseCharacter character : getCharacterList()) {
 			character.updateInputs();
 		}
 
 		if (isPaused)
 			return;
 
-		for (BaseCharacter character : characterList) {
+		for (BaseCharacter character : getCharacterList()) {
 			character.update(delta);
 		}
 
@@ -106,16 +103,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	*/
 	}
 
-	@Override
-	protected void performRenderSprites() {
-		for (GameElement collideable : collideableList) {
-			collideable.draw(getBatch());
-		}
-		for (GameElement charac : characterList) {
-			charac.draw(getBatch());
-		}
-	}
-
 	protected void createPlayerCharacter(int index, PlayerController controller, GameElement.TYPE type) {
 		PlayerCharacter newChar = new PlayerCharacter(index, type, this, getMap(), getGameWorld());
 		if (type == GameElement.TYPE.CHAR_HUMAN) {
@@ -126,9 +113,10 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		    throw new RuntimeException("Type not supported for PlayerCharacter" + type);
         }
 		Vector2 characterPos = getMap().getRandomNonSolidTile();
+		newChar.init(getAssetManager());
         newChar.setTilePosition((int) (characterPos.x * newChar.getWidth()), (int)(characterPos.y * newChar.getHeight()));
 		newChar.setController(controller);
-		characterList.add(newChar);
+		getCharacterList().add(newChar);
 		playerList.add(newChar);
 		playerCharacterMap.put(index, newChar);
 		if (!playerFound) {
@@ -139,15 +127,15 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	private boolean playerFound;
 
 	protected void addAICharacter(AICharacter character) {
-		characterList.add(character);
+		getCharacterList().add(character);
 	}
 
 	protected void addCollidable(GameElement collideable) {
-		collideableList.add(collideable);
+		getCollideableList().add(collideable);
 	}
 
 	protected void removeCollidable(GameElement collideable) {
-		collideableList.remove(collideable);
+		getCollideableList().remove(collideable);
 	}
 
 	@Override
@@ -245,7 +233,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	protected void disableAllPlayers() {
-		for (BaseCharacter closingPlayer : characterList) {
+		for (BaseCharacter closingPlayer : getCharacterList()) {
 			closingPlayer.disableCharacter();
 		}
 	}
@@ -269,16 +257,8 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	}
 
-	public List<BaseCharacter> getCharacterList() {
-		return characterList;
-	}
-
 	public List<PlayerCharacter> getPlayerList() {
 		return playerList;
-	}
-
-	public List<GameElement> getCollideableList() {
-		return collideableList;
 	}
 
 	public int getAiCount() {

@@ -13,7 +13,9 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cramsan.demog1.Globals;
+import com.cramsan.demog1.gameelements.BaseCharacter;
 import com.cramsan.demog1.gameelements.GameElement;
+import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 import com.cramsan.demog1.subsystems.AudioManager;
 import com.cramsan.demog1.subsystems.CallbackManager;
 import com.cramsan.demog1.subsystems.SingleAssetManager;
@@ -24,6 +26,7 @@ import com.cramsan.demog1.subsystems.map.TiledGameMap;
 import com.cramsan.demog1.subsystems.ui.IUISystem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class to handle all code shared across all scenes. This class will configure the camera, the background map
@@ -45,7 +48,10 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     private World gameWorld;
     private Box2DDebugRenderer debugRenderer;
 
-    private ArrayList<GameElement> lightSources;
+    private List<GameElement> lightSources;
+
+    private List<BaseCharacter> characterList;
+    private List<GameElement> collideableList;
     private float illumination;
     private Texture mainLightTexture;
     private Texture lightTexture;
@@ -60,6 +66,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         map = new TiledGameMap(gameWorld);
         debugRenderer = new Box2DDebugRenderer();
         lightSources = new ArrayList<GameElement>();
+        characterList = new ArrayList<BaseCharacter>();
+        collideableList = new ArrayList<GameElement>();
         illumination = 0f;
 		callbackManager = new CallbackManager();
     }
@@ -120,14 +128,14 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-        //performRenderMap(delta);
+        performRenderMap(delta);
 
         getBatch().setProjectionMatrix(cam.combined);
         getBatch().begin();
-        //performRenderSprites();
+        performRenderSprites();
         getBatch().end();
 
-        //performLightingRender();
+        performLightingRender();
         debugRenderer.render(gameWorld, cam.combined);
         getUiSystem().render(delta);
     }
@@ -166,8 +174,14 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	 * Implement logic here to draw sprites and most other game
 	 * elements.
 	 */
-    protected abstract void performRenderSprites();
-
+    protected void performRenderSprites() {
+        for (GameElement collideable : collideableList) {
+            collideable.draw(getBatch());
+        }
+        for (GameElement charac : characterList) {
+            charac.draw(getBatch());
+        }
+    }
 	/**
 	 * Third render call
 	 * Implement logic here to draw the lighting and post processing.
@@ -288,6 +302,22 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     @Override
     public void hide() {
+    }
+
+    public List<BaseCharacter> getCharacterList() {
+        return characterList;
+    }
+
+    public void setCharacterList(List<BaseCharacter> characterList) {
+        this.characterList = characterList;
+    }
+
+    public List<GameElement> getCollideableList() {
+        return collideableList;
+    }
+
+    public void setCollideableList(List<GameElement> collideableList) {
+        this.collideableList = collideableList;
     }
 
     public boolean isRenderEnabled() {

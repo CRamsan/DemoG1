@@ -1,5 +1,6 @@
 package com.cramsan.demog1.gameelements;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -73,10 +74,8 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
      * Private method that will handle lower level details of the object such as handling instance count and loading
      * assets. This should only be called by the constructor.
      */
-    public void init() {
-		if (type == null) {
-			throw new RuntimeException("Type cannot be null");
-		}
+    public void init(SingleAssetManager assetManager) {
+		assetManager.getPlayerTextures(type, this);
 
 		state = 0;
 		shouldRender = true;

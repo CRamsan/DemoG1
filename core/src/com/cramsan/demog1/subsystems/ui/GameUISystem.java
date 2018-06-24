@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.cramsan.demog1.Globals.SCREEN_HEIGHT;
+import static com.cramsan.demog1.Globals.SCREEN_WIDTH;
+
 /**
  * This class provides static methods to configure UI components.
  */
@@ -333,7 +336,7 @@ public class GameUISystem implements IUISystem {
     @Override
     public void InitSystem() {
         skin = new Skin(Gdx.files.internal(ASSET_SKIN_FILE));
-        stage = new Stage(new StretchViewport(worldWidth, worldHeight));
+        stage = new Stage(new StretchViewport(SCREEN_WIDTH, SCREEN_HEIGHT)); // TODO: Remove this dependency, these values should be provided as a parameter
         sequenceMap = new HashMap<Button, HashMap<UI_EVENTS, Button>>();
         defaultSelectionMap = new HashMap<Actor, Button>();
         stage.setDebugAll(true);
