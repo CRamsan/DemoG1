@@ -59,7 +59,7 @@ public class SceneManager {
             case CATCH_A_THIEF:
                 screen = new CatchAThiefScreen(parameterManager);
                 break;
-            case KNIGHTS_VS_THIEFS:
+            case KNIGHTS_VS_THIEVES:
                 screen = new KnightsVsNinjasScreen(parameterManager);
                 break;
             default:

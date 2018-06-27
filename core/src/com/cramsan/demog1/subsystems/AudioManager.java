@@ -24,7 +24,7 @@ public class AudioManager implements IGameSubsystem {
     private int level;
 
     @Override
-    public void InitSystem() {
+    public void OnGameLoad() {
         musicMap = new HashMap<MUSIC, Music>();
         soundMap = new HashMap<SOUND, Sound>();
     }
@@ -34,7 +34,7 @@ public class AudioManager implements IGameSubsystem {
      * This will load the required sounds as well as prepare the music playlist
      */
     @Override
-    public void InitScreen() {
+    public void OnScreenLoad() {
         musicMap = new HashMap<MUSIC, Music>();
         soundMap = new HashMap<SOUND, Sound>();
         for (SOUND enumSound : SOUND.values()) {
@@ -68,12 +68,22 @@ public class AudioManager implements IGameSubsystem {
         }
     }
 
+    @Override
+    public void OnLoopStart() {
+
+    }
+
+    @Override
+    public void OnLoopEnd() {
+
+    }
+
 
     /**
      * Call this function to unload any assets for the current scene
      */
     @Override
-    public void UnInitScreen() {
+    public void OnScreenClose() {
         for (Sound sound : soundMap.values()) {
             sound.dispose();
         }
@@ -82,12 +92,13 @@ public class AudioManager implements IGameSubsystem {
         }
         soundMap.clear();
         musicMap.clear();
+        soundMap = null;
+        musicMap = null;
     }
 
     @Override
-    public void UnInitSystem() {
-        soundMap = null;
-        musicMap = null;
+    public void OnGameClose() {
+
     }
 
     public int getLevel() {

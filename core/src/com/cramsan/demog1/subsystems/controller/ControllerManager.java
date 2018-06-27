@@ -4,20 +4,47 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.math.Vector2;
+import com.cramsan.demog1.subsystems.IGameSubsystem;
 import com.cramsan.demog1.subsystems.ui.IUISystem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
-/**
- * Singleton class that handles global Controller events. The main functionality
- * of this class will be notify about controller connection or disconnection. This class
- * will handle Controller objects and expose them through the PlayerControllerAdapter interface.
- */
-public class ControllerManager extends ControllerAdapter {
+public class ControllerManager extends ControllerAdapter implements IGameSubsystem {
 
-    public static final float UI_WAIT = 1f;
+    private static final float UI_WAIT = 1f;
+
+    @Override
+    public void OnGameLoad() {
+
+    }
+
+    @Override
+    public void OnScreenLoad() {
+
+    }
+
+    @Override
+    public void OnLoopStart() {
+
+    }
+
+    @Override
+    public void OnLoopEnd() {
+
+    }
+
+    @Override
+    public void OnScreenClose() {
+
+    }
+
+    @Override
+    public void OnGameClose() {
+
+    }
 
     /**
      * Small class that wraps around an UI_EVENT and the controller
@@ -33,27 +60,13 @@ public class ControllerManager extends ControllerAdapter {
         }
     }
 
-    private static ControllerManager ourInstance = new ControllerManager();
-
-    public static ControllerManager getInstance() {
-        return ourInstance;
-    }
-
-    public static void setControllerConnectionListener(ControllerConnectionListener listener) {
-        ourInstance.setListener(listener);
-    }
-
-    public static List<PlayerController> getConnectedControllers() {
-        return ourInstance.getConnectedControllersInternal();
-    }
-
     private ControllerConnectionListener listener;
     private List<PlayerController> controllerList;
     private HashMap<Controller, PlayerController> controllerMap;
     private HashMap<Integer, Float> blockedMap;
     private ArrayList<ControllerEventTuple> tupleList;
 
-    private ControllerManager() {
+    public ControllerManager() {
         controllerList = new ArrayList<PlayerController>();
         controllerMap = new HashMap<Controller, PlayerController>();
         blockedMap = new HashMap<Integer, Float>();
@@ -68,14 +81,12 @@ public class ControllerManager extends ControllerAdapter {
         Controllers.addListener(this);
     }
 
-
-
-    public void setListener(ControllerConnectionListener listener) {
+    public void setControllerConnectionListener(ControllerConnectionListener listener) {
         this.listener = listener;
     }
 
-    public List<PlayerController> getConnectedControllersInternal() {
-        return controllerList;
+    public Iterator<PlayerController> getConnectedControllersIterator() {
+        return controllerList.iterator();
     }
 
     public void update(float delta) {

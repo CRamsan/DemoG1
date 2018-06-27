@@ -1,7 +1,7 @@
 package com.cramsan.demog1.screen;
 
 import com.badlogic.gdx.math.Vector2;
-import com.cramsan.demog1.gameelements.Collideable;
+import com.cramsan.demog1.gameelements.Collidable;
 import com.cramsan.demog1.gameelements.GameElement;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
@@ -30,18 +30,18 @@ public class NinjaPartyScreen extends GameScreen {
 	private void createStatues() {
 		statueCount = 0;
 		for (Vector2 pos : getMap().getStatueSpawner()) {
-			GameElement newCollideable = new Collideable(this, getGameWorld());
-			newCollideable.init(getAssetManager());
-			newCollideable.setTilePosition((int)(pos.x * newCollideable.getWidth()), (int)(pos.y * newCollideable.getHeight()));
-			addCollidable(newCollideable);
-			addLightSource(newCollideable);
+			GameElement newCollidable = new Collidable(this, getGameWorld());
+			newCollidable.init(getAssetManager());
+			newCollidable.setTilePosition((int)(pos.x * newCollidable.getWidth()), (int)(pos.y * newCollidable.getHeight()));
+			addCollidable(newCollidable);
+			addLightSource(newCollidable);
 			statueCount++;
 		}
 	}
 
 	@Override
-	public void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player) {
-		if (collideableIndex == this.statueCount) {
+	public void onCharacterCollidableTouched(GameElement collidable, int collidableIndex, PlayerCharacter player) {
+		if (collidableIndex == this.statueCount) {
 			disableAllPlayers();
 			getUiSystem().displayEndGameMenu();
 		}

@@ -14,7 +14,7 @@ import com.cramsan.demog1.subsystems.SingleAssetManager;
  * This class will handle rendering, assets and position.
  * Any subclass should handle input and use the translate method to move this character.
  */
-public abstract class GameElement implements SingleAssetManager.TextureAnimationReciever {
+public abstract class GameElement implements SingleAssetManager.TextureAnimationReceiver {
 
 	protected enum DIRECTION {
 		LEFT, RIGHT, UP, DOWN
@@ -42,12 +42,12 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 
 	protected float x, y;
 	protected int width, height;
-	protected float scale;
+	private float scale;
     protected float state;
 	protected com.cramsan.demog1.gameelements.CharacterEventListener listener;
-	protected boolean shouldRender;
+	private boolean shouldRender;
 	protected Body body;
-	protected World gameWorld;
+	private World gameWorld;
 
 	private Animation<TextureRegion> walkUpAnimation;
 	private Animation<TextureRegion> walkDownAnimation;
@@ -72,7 +72,7 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 
     /***
      * Private method that will handle lower level details of the object such as handling instance count and loading
-     * assets. This should only be called by the constructor.
+     * assets.
      */
     public void init(SingleAssetManager assetManager) {
 		assetManager.getPlayerTextures(type, this);
@@ -192,7 +192,7 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 		this.body.setTransform(x + (width/2), y + (height/2), 0);
 	}
 
-	public abstract void onContact(GameElement collideable);
+	public abstract void onContact(GameElement collidable);
 
     /***
      * This method should be called when this object will be not used anymore. If all instances of this object
@@ -206,7 +206,7 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 	    return new Vector2(x + (scale/2f), y + (scale/2));
     }
 
-    final public float getRadious() {
+    final public float getRadius() {
 		return scale / 2f;
 	}
 

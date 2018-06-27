@@ -4,10 +4,12 @@ import com.cramsan.demog1.subsystems.CallbackManager;
 import com.cramsan.demog1.gameelements.*;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 
+import java.util.Iterator;
+
 /**
- * There are two teams, assasins and snipers. The assasins are
+ * There are two teams, assassins and snipers. The assassins are
  * trying to kill all NPCs while snipers are trying to kill 
- * all assasins. 
+ * all assassins.
  */
 public class AssassinScreen extends GameScreen {
 
@@ -27,13 +29,15 @@ public class AssassinScreen extends GameScreen {
 	}
 
 	@Override
-	public void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player) {
+	public void onCharacterCollidableTouched(GameElement collidable, int collidableIndex, PlayerCharacter player) {
 
 	}
 
 	@Override
 	public void onCharacterAttack(final PlayerCharacter character) {
-	    for (final BaseCharacter otherCharacter : getCharacterList()) {
+		Iterator<BaseCharacter> baseCharacterIterator = getCharacterIterator();
+		while(baseCharacterIterator.hasNext()) {
+			final BaseCharacter otherCharacter = baseCharacterIterator.next();
 	        if (character.equals(otherCharacter))
 	            continue;
 			
@@ -42,10 +46,10 @@ public class AssassinScreen extends GameScreen {
 	        	continue;
 			}
 			
-			// TODO: If the attacker is coming from an assasin, then ignore hits to other assasins
+			// TODO: If the attacker is coming from an assassin, then ignore hits to other assassins
 
 	        if (character.getCenterPosition().dst(otherCharacter.getCenterPosition()) < 0.5) {
-				getCallbackManager().registerEventFromNow(POISON_TIME, new CallbackManager.ExecutioBlockInterface() {
+				getCallbackManager().registerEventFromNow(POISON_TIME, new CallbackManager.ExecutionBlockInterface() {
 						@Override
 						public void execute()
 						{

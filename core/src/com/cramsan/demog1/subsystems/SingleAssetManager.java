@@ -21,13 +21,15 @@ public class SingleAssetManager implements IGameSubsystem{
     private static final int ASSET_SPRITE_SHEET_COLUMNS = 6;
     private static final int ASSET_SPRITE_SHEET_SPRITE_WIDTH = 32;
     private static final int ASSET_SPRITE_SHEET_SPRITE_HEIGHT = 32;
-    public static final float ANIMATION_DURATION = 0.5f;
-    public static final int ANIMATION_COLUMNS = 3;
-    public static final int ANIMATION_ROWS = 4;
+    private static final float ANIMATION_DURATION = 0.5f;
+    private static final int ANIMATION_COLUMNS = 3;
+    private static final int ANIMATION_ROWS = 4;
 
     private HashMap<GameElement.TYPE, TextureRegion> typeToTextureMapping;
     private TextureRegion[][] spriteRegion;
     private Texture texture;
+    private Texture lightTexture;
+    private Texture sceneLightTexture;
 
     private AssetManager manager;
 
@@ -36,11 +38,11 @@ public class SingleAssetManager implements IGameSubsystem{
     }
 
     public Texture getLightTexture() {
-        return new Texture(Gdx.files.internal(ASSET_LIGHT));
+        return lightTexture;
     }
 
     public Texture getSceneLightTexture() {
-        return new Texture(Gdx.files.internal(ASSET_MAIN_LIGHT));
+        return sceneLightTexture;
     }
 
     private TextureRegion getTextureRegionForType(GameElement.TYPE type) {
@@ -92,7 +94,7 @@ public class SingleAssetManager implements IGameSubsystem{
         return  textureRegion;
     }
 
-    public void getPlayerTextures(GameElement.TYPE type, TextureAnimationReciever receiver) {
+    public void getPlayerTextures(GameElement.TYPE type, TextureAnimationReceiver receiver) {
         TextureRegion textureRegion = getTextureRegionForType(type);
 
         TextureRegion[][] tmp = textureRegion.split(ASSET_SPRITE_SHEET_SPRITE_WIDTH,
@@ -124,7 +126,7 @@ public class SingleAssetManager implements IGameSubsystem{
     }
 
     @Override
-    public void InitSystem() {
+    public void OnGameLoad() {
         manager.load(ASSET_SPRITE_SHEET, Texture.class);
         manager.finishLoading();
         texture = manager.get(ASSET_SPRITE_SHEET);
@@ -132,27 +134,41 @@ public class SingleAssetManager implements IGameSubsystem{
                 texture.getWidth() / ASSET_SPRITE_SHEET_COLUMNS,
                 texture.getHeight() / ASSET_SPRITE_SHEET_ROWS);
         typeToTextureMapping = new HashMap<GameElement.TYPE, TextureRegion>();
+        lightTexture = new Texture(Gdx.files.internal(ASSET_LIGHT));
+        sceneLightTexture = new Texture(Gdx.files.internal(ASSET_MAIN_LIGHT));
     }
 
     @Override
-    public void InitScreen() {
+    public void OnScreenLoad() {
 
     }
 
     @Override
-    public void UnInitScreen() {
+    public void OnLoopStart() {
 
     }
 
     @Override
-    public void UnInitSystem() {
+    public void OnLoopEnd() {
+
+    }
+
+    @Override
+    public void OnScreenClose() {
+
+    }
+
+    @Override
+    public void OnGameClose() {
         manager.unload(ASSET_SPRITE_SHEET);
         texture = null;
         spriteRegion = null;
+        lightTexture = null;
+        sceneLightTexture = null;
         typeToTextureMapping = null;
     }
 
-    public interface TextureAnimationReciever {
+    public interface TextureAnimationReceiver {
         void setAnimations(Animation<TextureRegion> walkUp, Animation<TextureRegion> walkRight, Animation<TextureRegion> walkDown, Animation<TextureRegion> walkLeft);
         void setTextureSize(int width, int height);
     }

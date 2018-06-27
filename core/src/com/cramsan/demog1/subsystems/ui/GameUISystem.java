@@ -44,6 +44,7 @@ public class GameUISystem implements IUISystem {
     private PauseMenuEventListener pauseMenuListener;
     private GameParameterManager gameParams;
     private GetReadyMenuController getReadyMenuController;
+    private ControllerManager controllerManager;
 
     private boolean uiVisible;
     private Button selected;
@@ -56,8 +57,6 @@ public class GameUISystem implements IUISystem {
     private Actor endGameMenu;
     private Actor confirmationMenu;
     private Actor pauseMenu;
-    private float worldWidth;
-    private float worldHeight;
 
     public GameUISystem() {
         uiVisible = false;
@@ -88,7 +87,7 @@ public class GameUISystem implements IUISystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 hideMenu();
-                gameParams = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.KNIGHTS_VS_THIEFS);
+                gameParams = GameParameterManager.parameterManagerForGameType(GameParameterManager.GameType.KNIGHTS_VS_THIEVES);
                 displayGetReadyMenu();
             }
         }, sequenceMap);
@@ -253,13 +252,13 @@ public class GameUISystem implements IUISystem {
         if (!uiVisible)
             return;
         stage.act(delta);
-        ControllerManager.getInstance().update(delta);
+        controllerManager.update(delta);
         processInput();
         stage.draw();
     }
 
     private void processInput() {
-        List<ControllerManager.ControllerEventTuple> tupleList = ControllerManager.getInstance().getUIEvents();
+        List<ControllerManager.ControllerEventTuple> tupleList = controllerManager.getUIEvents();
         for (ControllerManager.ControllerEventTuple tuple : tupleList) {
             UI_EVENTS event = tuple.event;
             handleEvent(event);
@@ -313,8 +312,6 @@ public class GameUISystem implements IUISystem {
 
     @Override
     public void resize(int width, int height){
-        this.worldWidth = width;
-        this.worldHeight = height;
         stage.getViewport().update(width, height, true);
     }
 
@@ -334,7 +331,7 @@ public class GameUISystem implements IUISystem {
     }
 
     @Override
-    public void InitSystem() {
+    public void OnGameLoad() {
         skin = new Skin(Gdx.files.internal(ASSET_SKIN_FILE));
         stage = new Stage(new StretchViewport(SCREEN_WIDTH, SCREEN_HEIGHT)); // TODO: Remove this dependency, these values should be provided as a parameter
         sequenceMap = new HashMap<Button, HashMap<UI_EVENTS, Button>>();
@@ -343,16 +340,31 @@ public class GameUISystem implements IUISystem {
     }
 
     @Override
-    public void InitScreen() {
+    public void OnScreenLoad() {
     }
 
     @Override
-    public void UnInitScreen() {
+    public void OnLoopStart() {
 
     }
 
     @Override
-    public void UnInitSystem() {
+    public void OnLoopEnd() {
 
+    }
+
+    @Override
+    public void OnScreenClose() {
+
+    }
+
+    @Override
+    public void OnGameClose() {
+
+    }
+
+    @Override
+    public void setControllerManager(ControllerManager controllerManager) {
+        this.controllerManager = controllerManager;
     }
 }

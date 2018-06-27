@@ -10,7 +10,7 @@ public class GameParameterManager {
     public enum GameType{
         NINJA_PARTY,
         CATCH_A_THIEF,
-        KNIGHTS_VS_THIEFS,
+        KNIGHTS_VS_THIEVES,
         DEATH_RACE,
         ASSASSIN
     }
@@ -37,8 +37,8 @@ public class GameParameterManager {
                 return createNinjaPartyManager();
             case CATCH_A_THIEF:
                 return createCatchAThiefManager();
-            case KNIGHTS_VS_THIEFS:
-                return createKnightsVsThiefsManager();
+            case KNIGHTS_VS_THIEVES:
+                return createKnightsVsThievesManager();
             default:
                 return null;
         }
@@ -59,9 +59,9 @@ public class GameParameterManager {
         return manager;
     }
 
-    private static GameParameterManager createKnightsVsThiefsManager() {
+    private static GameParameterManager createKnightsVsThievesManager() {
         GameParameterManager manager = new GameParameterManager();
-        manager.setType(GameType.KNIGHTS_VS_THIEFS);
+        manager.setType(GameType.KNIGHTS_VS_THIEVES);
         manager.setGoal(4);
         manager.setAllowTeamChange(true);
         return manager;

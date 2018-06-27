@@ -1,6 +1,7 @@
 package com.cramsan.demog1.subsystems.ui;
 
 import com.cramsan.demog1.subsystems.IGameSubsystem;
+import com.cramsan.demog1.subsystems.controller.ControllerManager;
 
 public interface IUISystem extends IGameSubsystem {
 
@@ -33,6 +34,8 @@ public interface IUISystem extends IGameSubsystem {
     void displayConfirmationMenu();
 
     void injectUIEvent(UI_EVENTS event);
+
+    void setControllerManager(ControllerManager controllerManager);
 
     enum UI_EVENTS { UP, DOWN, LEFT, RIGHT, SELECT, NOOP }
 }

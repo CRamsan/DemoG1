@@ -9,6 +9,8 @@ import com.cramsan.demog1.subsystems.AudioManager;
 import com.cramsan.demog1.subsystems.CallbackManager;
 import com.cramsan.demog1.subsystems.IGameSubsystem;
 import com.cramsan.demog1.subsystems.SingleAssetManager;
+import com.cramsan.demog1.subsystems.controller.ControllerManager;
+import com.cramsan.demog1.subsystems.map.TiledGameMap;
 import com.cramsan.demog1.subsystems.ui.GameUISystem;
 import com.cramsan.demog1.subsystems.ui.IUISystem;
 
@@ -16,13 +18,12 @@ import java.util.ArrayList;
 
 public class MyGdxGame extends Game {
 
-    public static final float FRAME_TIME = 1f/60f;
+    private static final float FRAME_TIME = 1f/60f;
 
     private boolean useFixedStep;
     private boolean enableRender;
     private boolean enableGame;
     private SpriteBatch spriteBatch;
-    private IUISystem uiSystem;
     private float timeBuffer;
 
     // Game subsystems. All this classes implement IGameSubsystem to make them easier to
@@ -30,6 +31,9 @@ public class MyGdxGame extends Game {
     private AudioManager audioManager;
     private CallbackManager callbackManager;
     private SingleAssetManager assetManager;
+    private IUISystem uiSystem;
+    private TiledGameMap gameMap;
+    private ControllerManager controllerManager;
 
     private ArrayList<IGameSubsystem> subsystemList;
 
@@ -51,6 +55,10 @@ public class MyGdxGame extends Game {
 
         SceneManager.setGame(this);
 
+        if (getSpriteBatch() == null) {
+            setSpriteBatch(new SpriteBatch());
+        }
+
         if (getUiSystem() == null) {
             setUiSystem(new GameUISystem());
         }
@@ -71,16 +79,24 @@ public class MyGdxGame extends Game {
         }
         subsystemList.add(getAssetManager());
 
+        if (getGameMap() == null) {
+            TiledGameMap map = new TiledGameMap();
+            map.setBatch(getSpriteBatch());
+            setGameMap(map);
+        }
+        subsystemList.add(getGameMap());
+
+        if (getControllerManager() == null) {
+            setControllerManager(new ControllerManager());
+        }
+        subsystemList.add(getControllerManager());
+
         for (IGameSubsystem subsystem : subsystemList) {
-            subsystem.InitSystem();
+            subsystem.OnGameLoad();
         }
 
         // We don't need to mock Box2D so it is safe to be left here.
         Box2D.init();
-
-        if (getSpriteBatch() == null) {
-            setSpriteBatch(new SpriteBatch());
-        }
 
         if (isEnableGame())
             SceneManager.startMainMenuScreen();
@@ -92,9 +108,12 @@ public class MyGdxGame extends Game {
     public void setScreen (BaseScreen newScreen) {
         // Check if there was an existing screen and if there was hide it.
         if (this.screen != null) {
+            for (IGameSubsystem subsystem : subsystemList) {
+                subsystem.OnLoopEnd();
+            }
             this.screen.hide();
             for (IGameSubsystem subsystem : subsystemList) {
-                subsystem.UnInitScreen();
+                subsystem.OnScreenClose();
             }
         }
 
@@ -103,19 +122,22 @@ public class MyGdxGame extends Game {
         newScreen.setAssetManager(getAssetManager());
         newScreen.setAudioManager(getAudioManager());
         newScreen.setCallbackManager(getCallbackManager());
+        getUiSystem().setControllerManager(getControllerManager());
         newScreen.setUiSystem(getUiSystem());
-        newScreen.setRenderEnabled(isEnableRender());
+        newScreen.setMap(getGameMap());
+        newScreen.setControllerManager(getControllerManager());
         for (IGameSubsystem subsystem : subsystemList) {
-            subsystem.InitScreen();
+            subsystem.OnScreenLoad();
         }
         newScreen.ScreenInit();
 
         // Set the screen and show it.
         this.screen = newScreen;
-        if (this.screen != null) {
-            this.screen.show();
-            this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        for (IGameSubsystem subsystem : subsystemList) {
+            subsystem.OnLoopStart();
         }
+        this.screen.show();
+        this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override
@@ -145,9 +167,12 @@ public class MyGdxGame extends Game {
 
     @Override
     public void dispose () {
+        for (IGameSubsystem subsystem : subsystemList) {
+            subsystem.OnLoopEnd();
+        }
         super.dispose();
         for (IGameSubsystem subsystem : subsystemList) {
-            subsystem.UnInitSystem();
+            subsystem.OnGameClose();
         }
 
         SceneManager.clearGame();
@@ -226,5 +251,21 @@ public class MyGdxGame extends Game {
 
     public void setAssetManager(SingleAssetManager assetManager) {
         this.assetManager = assetManager;
+    }
+
+    public TiledGameMap getGameMap() {
+        return gameMap;
+    }
+
+    public void setGameMap(TiledGameMap gameMap) {
+        this.gameMap = gameMap;
+    }
+
+    public ControllerManager getControllerManager() {
+        return controllerManager;
+    }
+
+    public void setControllerManager(ControllerManager controllerManager) {
+        this.controllerManager = controllerManager;
     }
 }

@@ -12,16 +12,14 @@ public abstract class BaseCharacter extends GameElement {
 
 	protected boolean isDead;
 	protected boolean isRunning;
-    private TiledGameMap map;
 
-    public BaseCharacter(TYPE type, CharacterEventListener listener, TiledGameMap map,
+    public BaseCharacter(TYPE type, CharacterEventListener listener,
                          World gameWorld) {
         super(type, listener, gameWorld);
         if (type == TYPE.CHAR_STATUE)
             throw new RuntimeException("Characters cannot be of this type");
         this.isDead = false;
 		this.isRunning = true;
-		this.map = map;
     }
 
     /***

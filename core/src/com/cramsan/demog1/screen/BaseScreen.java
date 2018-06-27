@@ -10,12 +10,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cramsan.demog1.Globals;
 import com.cramsan.demog1.gameelements.BaseCharacter;
 import com.cramsan.demog1.gameelements.GameElement;
-import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 import com.cramsan.demog1.subsystems.AudioManager;
 import com.cramsan.demog1.subsystems.CallbackManager;
 import com.cramsan.demog1.subsystems.SingleAssetManager;
@@ -26,6 +26,7 @@ import com.cramsan.demog1.subsystems.map.TiledGameMap;
 import com.cramsan.demog1.subsystems.ui.IUISystem;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -38,20 +39,20 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     private SpriteBatch batch;
     private Viewport viewport;
 
-    private boolean renderEnabled;
     private CallbackManager callbackManager;
     private AudioManager audioManager;
     private SingleAssetManager assetManager;
     private IUISystem uiSystem;
-
     private TiledGameMap map;
+    private ControllerManager controllerManager;
+
     private World gameWorld;
     private Box2DDebugRenderer debugRenderer;
 
     private List<GameElement> lightSources;
 
     private List<BaseCharacter> characterList;
-    private List<GameElement> collideableList;
+    private List<GameElement> collidableList;
     private float illumination;
     private Texture mainLightTexture;
     private Texture lightTexture;
@@ -63,11 +64,10 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         viewport = new StretchViewport(cam.viewportWidth, cam.viewportHeight, cam);
         gameWorld = new World(Vector2.Zero, true);
         gameWorld.setContactListener(this);
-        map = new TiledGameMap(gameWorld);
         debugRenderer = new Box2DDebugRenderer();
         lightSources = new ArrayList<GameElement>();
         characterList = new ArrayList<BaseCharacter>();
-        collideableList = new ArrayList<GameElement>();
+        collidableList = new ArrayList<GameElement>();
         illumination = 0f;
 		callbackManager = new CallbackManager();
     }
@@ -76,13 +76,15 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     // From their configuration in the game world.
     public void ScreenInit() {
         map.setBatch(getBatch());
-        map.TimedGameMapInit();
+        map.setGameWorld(gameWorld);
 
         cam.setToOrtho(false);
         cam.update();
         int portIndex = 0;
-        ControllerManager.setControllerConnectionListener(this);
-        for(PlayerController controller : ControllerManager.getConnectedControllers()) {
+        controllerManager.setControllerConnectionListener(this);
+        Iterator<PlayerController> iterator = controllerManager.getConnectedControllersIterator();
+        while(iterator.hasNext()) {
+            PlayerController controller = iterator.next();
             onControllerConnected(portIndex, controller);
             portIndex++;
         }
@@ -120,9 +122,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
      * This method will render the scene always after a fixed time step
      */
     private void performRender(float delta) {
-        if (!renderEnabled)
-            return;
-
         viewport.apply();
         cam.update();
 
@@ -175,8 +174,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	 * elements.
 	 */
     protected void performRenderSprites() {
-        for (GameElement collideable : collideableList) {
-            collideable.draw(getBatch());
+        for (GameElement collidable : collidableList) {
+            collidable.draw(getBatch());
         }
         for (GameElement charac : characterList) {
             charac.draw(getBatch());
@@ -260,7 +259,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     {}
 
 	/**
-	 * This method must be implemented as a way to identify differnt 
+	 * This method must be implemented as a way to identify different
 	 * child classes. It's use is still not well defined.
 	 */
     protected abstract int levelId();
@@ -304,28 +303,28 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     public void hide() {
     }
 
-    public List<BaseCharacter> getCharacterList() {
-        return characterList;
+    public void addCharacter(BaseCharacter character) {
+        characterList.add(character);
     }
 
-    public void setCharacterList(List<BaseCharacter> characterList) {
-        this.characterList = characterList;
+    public void removeCharacter(BaseCharacter character) {
+        characterList.remove(character);
     }
 
-    public List<GameElement> getCollideableList() {
-        return collideableList;
+    public void addCollidable(GameElement collidable) {
+        collidableList.add(collidable);
     }
 
-    public void setCollideableList(List<GameElement> collideableList) {
-        this.collideableList = collideableList;
+    public void removeCollidable(GameElement collidable) {
+        collidableList.remove(collidable);
     }
 
-    public boolean isRenderEnabled() {
-        return renderEnabled;
+    public Iterator<BaseCharacter> getCharacterIterator() {
+        return characterList.iterator();
     }
 
-    public void setRenderEnabled(boolean renderEnabled) {
-        this.renderEnabled = renderEnabled;
+    public Iterator<GameElement> getCollidableIterator() {
+        return collidableList.iterator();
     }
 
     public SpriteBatch getBatch() {
@@ -390,5 +389,13 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     public void setDebugRenderer(Box2DDebugRenderer debugRenderer) {
         this.debugRenderer = debugRenderer;
+    }
+
+    public ControllerManager getControllerManager() {
+        return controllerManager;
+    }
+
+    public void setControllerManager(ControllerManager controllerManager) {
+        this.controllerManager = controllerManager;
     }
 }

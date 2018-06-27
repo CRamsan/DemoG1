@@ -1,7 +1,7 @@
 package com.cramsan.demog1.screen;
 
 import com.badlogic.gdx.math.Vector2;
-import com.cramsan.demog1.gameelements.Collideable;
+import com.cramsan.demog1.gameelements.Collidable;
 import com.cramsan.demog1.gameelements.GameElement;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * There are two teams, snipers and thieves. Thieves will try 
  * to touch all the coins and snipers will try to kill all thieves.
  * A sniper can tag a character as innocent. Snipers only have a
- * limited ammount of bullets.
+ * limited amount of bullets.
  */
 public class CatchAThiefScreen extends GameScreen {
 
@@ -41,26 +41,26 @@ public class CatchAThiefScreen extends GameScreen {
 	}
 	private void createCoin() {
 		Vector2 position = getMap().getRandomNonSolidTile();
-		Collideable newCollideable = new Collideable(this, getGameWorld());
-		newCollideable.setTilePosition((int)(position.x * newCollideable.getWidth()), (int)(position.y * newCollideable.getHeight()));
-		newCollideable.setScale(0.5f);
-		addCollidable(newCollideable);
+		Collidable newCollidable = new Collidable(this, getGameWorld());
+		newCollidable.setTilePosition((int)(position.x * newCollidable.getWidth()), (int)(position.y * newCollidable.getHeight()));
+		newCollidable.setScale(0.5f);
+		addCollidable(newCollidable);
 	}
 
 	@Override
 	protected void performCustomUpdate(float delta) {
 		super.performCustomUpdate(delta);
-		for (GameElement collideable : removedQueue)
+		for (GameElement collidable : removedQueue)
 		{
-			removeCollidable(collideable);
+			removeCollidable(collidable);
 		}
 		removedQueue.clear();
 	}
 
 	@Override
-	public void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player) {
-		removedQueue.add(collideable);
-		if (collideableIndex == this.countCount) {
+	public void onCharacterCollidableTouched(GameElement collidable, int collidableIndex, PlayerCharacter player) {
+		removedQueue.add(collidable);
+		if (collidableIndex == this.countCount) {
 			disableAllPlayers();
 			getUiSystem().displayEndGameMenu();
 		}

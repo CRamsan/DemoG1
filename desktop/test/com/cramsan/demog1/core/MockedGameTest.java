@@ -17,7 +17,7 @@ import java.util.concurrent.Semaphore;
 public class MockedGameTest {
 
     private static Application application;
-    private static Semaphore sem = new Semaphore(0);;
+    private static Semaphore sem = new Semaphore(0);
 
     @BeforeClass
     public static void oneTimeSetUp() {

@@ -16,16 +16,13 @@ import java.util.List;
  */
 public class GetReadyMenuController {
 
-    private Table contentTable;
-    private Skin skin;
+    private ControllerManager controllerManager;
     private HashMap<Integer, Label> tableMap;
     private int players;
     private GameParameterManager parameterManager;
     private boolean allowTeamChange;
 
     public GetReadyMenuController(Table contentTable, Skin skin){
-        this.contentTable = contentTable;
-        this.skin = skin;
         tableMap = new HashMap<Integer, Label>();
         players = 0;
         for (int i = 0; i < 4; i++) {
@@ -44,7 +41,7 @@ public class GetReadyMenuController {
         if (!allowTeamChange)
             return;
 
-        List<ControllerManager.ControllerEventTuple> tupleList = ControllerManager.getInstance().getUIEvents();
+        List<ControllerManager.ControllerEventTuple> tupleList = controllerManager.getUIEvents();
         for (ControllerManager.ControllerEventTuple tuple : tupleList) {
             IUISystem.UI_EVENTS event = tuple.event;
             handleGetReadyEvent(tuple.index, event);
@@ -84,5 +81,13 @@ public class GetReadyMenuController {
         Label labelView = tableMap.get(controller.getControllerIndex());
         labelView.setText("Not Connected");
         players--;
+    }
+
+    public ControllerManager getControllerManager() {
+        return controllerManager;
+    }
+
+    public void setControllerManager(ControllerManager controllerManager) {
+        this.controllerManager = controllerManager;
     }
 }

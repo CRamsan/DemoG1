@@ -95,7 +95,7 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 	}
 
 	// This methods will receive the calls from the Controller and pass them to the
-	// ExternalControllerListerner
+	// ExternalControllerListener
 	@Override
 	public boolean buttonDown(Controller controller, int buttonCode) {
 		return this.buttonDown(this.controller, buttonCode);

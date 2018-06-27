@@ -1,7 +1,7 @@
 package com.cramsan.demog1.screen;
 
 import com.badlogic.gdx.math.Vector2;
-import com.cramsan.demog1.gameelements.Collideable;
+import com.cramsan.demog1.gameelements.Collidable;
 import com.cramsan.demog1.gameelements.GameElement;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
@@ -34,14 +34,14 @@ public class KnightsVsNinjasScreen extends GameScreen {
 	}
 	private void createStatue() {
 		Vector2 position = getMap().getRandomNonSolidTile();
-		Collideable newCollideable = new Collideable(this, getGameWorld());
-		newCollideable.setTilePosition((int)(position.x * newCollideable.getWidth()), (int)(position.y * newCollideable.getHeight()));
-		addCollidable(newCollideable);
+		Collidable newCollidable = new Collidable(this, getGameWorld());
+		newCollidable.setTilePosition((int)(position.x * newCollidable.getWidth()), (int)(position.y * newCollidable.getHeight()));
+		addCollidable(newCollidable);
 	}
 
 	@Override
-	public void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player) {
-		if (collideableIndex == this.statueCount) {
+	public void onCharacterCollidableTouched(GameElement collidable, int collidableIndex, PlayerCharacter player) {
+		if (collidableIndex == this.statueCount) {
 			disableAllPlayers();
 			getUiSystem().displayEndGameMenu();
 		}

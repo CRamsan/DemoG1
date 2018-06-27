@@ -2,7 +2,7 @@ package com.cramsan.demog1;
 
 /**
  * IGameListener allows the caller to listen for Game-wide events. This event are related to gameplay
- * or screen changes and should not be used for any porpose other than testing.
+ * or screen changes and should not be used for any purpose other than testing.
  */
 public interface IGameStateListener {
 

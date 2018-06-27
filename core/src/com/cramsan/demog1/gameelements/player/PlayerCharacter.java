@@ -18,16 +18,16 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 
 	private PlayerControllerAdapter controller;
 	private boolean hasAttacked, hasPaused;
-	private Set<GameElement> collideableSet;
+	private Set<GameElement> collidableSet;
 	private int Id;
 	private float dx, dy;
 	private boolean isEventBased;
 
-	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener, TiledGameMap map,
+	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener,
 						   World gameWorld) {
-		super(type, listener, map, gameWorld);
+		super(type, listener, gameWorld);
 		this.controller = new PlayerControllerAdapter(this);
-		this.collideableSet = new HashSet<GameElement>();
+		this.collidableSet = new HashSet<GameElement>();
 		this.Id = Id;
 		this.isEventBased = false;
 	}
@@ -63,13 +63,13 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	}
 
 	@Override
-	public void onContact(GameElement collideable) {
-		if (collideable.getType() != TYPE.CHAR_STATUE)
+	public void onContact(GameElement collidable) {
+		if (collidable.getType() != TYPE.CHAR_STATUE)
 			return;
 
-		if (!collideableSet.contains(collideable)){
-			collideableSet.add(collideable);
-			listener.onCharacterCollideableTouched(collideable, collideableSet.size(), this);
+		if (!collidableSet.contains(collidable)){
+			collidableSet.add(collidable);
+			listener.onCharacterCollidableTouched(collidable, collidableSet.size(), this);
 			//AudioManager.PlaySound(AudioManager.SOUND.BELL);
 		}
 	}
@@ -109,7 +109,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	/***
 	 * This function will send an event to the listener that this character has attacked.
 	 */
-	protected void attack() {
+	private void attack() {
 		//AudioManager.PlaySound(AudioManager.SOUND.ATTACK);
 		this.listener.onCharacterAttack(this);
 	}
@@ -117,7 +117,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	/***
 	 * Signal to the listener that this character has send a pause event.
 	 */
-	protected void onCharacterPause() { this.listener.onCharacterPause(this);}
+	private void onCharacterPause() { this.listener.onCharacterPause(this);}
 
 	public void setController(PlayerController controller) {
 		this.controller.setController(controller);

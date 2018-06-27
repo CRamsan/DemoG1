@@ -14,8 +14,8 @@ public class AICharacter extends BaseCharacter
 	private Vector2 lastMovementVector;
 	private int aiState;
 	
-	public AICharacter(TYPE type, CharacterEventListener listerner, TiledGameMap map, World gameWorld) {
-		super(type, listerner, map, gameWorld);
+	public AICharacter(TYPE type, CharacterEventListener listener, World gameWorld) {
+		super(type, listener, gameWorld);
         lastMovementVector = new Vector2();
         aiState = 0;
 	}
@@ -28,8 +28,8 @@ public class AICharacter extends BaseCharacter
 		// Every 15 frames there is a chance that we will decide a new movement vector
 		if (aiState % 15 == 0
 				&& Globals.rand.nextInt() % 800 < 1) {
-			lastMovementVector = new Vector2((float)((Globals.rand.nextFloat() * 2) - 1)/ 3f,
-					(float)((Globals.rand.nextFloat() * 2) - 1)/ 3f);
+			lastMovementVector = new Vector2(((Globals.rand.nextFloat() * 2) - 1) / 3f,
+					((Globals.rand.nextFloat() * 2) - 1) / 3f);
 		}
 	}
 
@@ -40,7 +40,7 @@ public class AICharacter extends BaseCharacter
 	}
 
 	@Override
-	public void onContact(GameElement collideable) {
+	public void onContact(GameElement collidable) {
 
 	}
 

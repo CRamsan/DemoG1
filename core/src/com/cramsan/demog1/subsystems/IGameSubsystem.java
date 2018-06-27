@@ -2,11 +2,15 @@ package com.cramsan.demog1.subsystems;
 
 public interface IGameSubsystem {
 
-    public void InitSystem();
+    void OnGameLoad();
 
-    public void InitScreen();
+    void OnScreenLoad();
 
-    public void UnInitScreen();
+    void OnLoopStart();
 
-    public void UnInitSystem();
+    void OnLoopEnd();
+
+    void OnScreenClose();
+
+    void OnGameClose();
 }

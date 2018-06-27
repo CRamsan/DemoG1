@@ -6,14 +6,14 @@ import com.badlogic.gdx.physics.box2d.World;
  * This class will handle collidable game elements. This classes do no have the capability
  * to move.
  */
-public class Collideable extends GameElement {
+public class Collidable extends GameElement {
 
-    public Collideable(CharacterEventListener listerner, World world) {
-        super(TYPE.CHAR_STATUE, listerner, world);
+    public Collidable(CharacterEventListener listener, World world) {
+        super(TYPE.CHAR_STATUE, listener, world);
     }
 
     @Override
-    public void onContact(GameElement collideable) {
+    public void onContact(GameElement Collidable) {
 
     }
 }

@@ -6,15 +6,13 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.gameelements.*;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 import com.cramsan.demog1.subsystems.ui.PauseMenuEventListener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class GameScreen extends BaseScreen implements CharacterEventListener, PauseMenuEventListener {
 
@@ -50,28 +48,35 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	protected void createAICharacters() {
 		for (int i = 0; i < aiCount; i++) {
 			GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-			AICharacter newChar = new AICharacter(type, this, getMap(), getGameWorld());
+			AICharacter newChar = new AICharacter(type, this, getGameWorld());
 			Vector2 charPos = getMap().getRandomNonSolidTile();
 			newChar.init(getAssetManager());
 			newChar.setTilePosition((int) (charPos.x * newChar.getWidth()), (int)(charPos.y * newChar.getHeight()));
-			addAICharacter(newChar);
+			addCharacter(newChar);
 		}
 	}
 
 	@Override
 	protected void performCustomUpdate(float delta) {
-		for (GameElement collideable : getCollideableList()) {
-			collideable.update(delta);
+		Iterator<GameElement> gameElementIterator = getCollidableIterator();
+		while(gameElementIterator.hasNext()) {
+			GameElement collidable = gameElementIterator.next();
+			collidable.update(delta);
 		}
-		for (BaseCharacter character : getCharacterList()) {
-			character.updateInputs();
+
+		Iterator<BaseCharacter> baseCharacterIterator = getCharacterIterator();
+		while(baseCharacterIterator.hasNext()) {
+			BaseCharacter baseCharacter = baseCharacterIterator.next();
+			baseCharacter.updateInputs();
 		}
 
 		if (isPaused)
 			return;
 
-		for (BaseCharacter character : getCharacterList()) {
-			character.update(delta);
+		baseCharacterIterator = getCharacterIterator();
+		while(baseCharacterIterator.hasNext()) {
+			BaseCharacter baseCharacter = baseCharacterIterator.next();
+			baseCharacter.update(delta);
 		}
 
 		Array<Body> bodies = new Array<Body>();
@@ -93,9 +98,9 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 			if (player.getType() != GameElement.TYPE.CHAR_HUMAN)
 				continue;
 			if (player.hasMoved()) {
-				for (Collideable collideable : collideableList) {
-					if (player.getCenterPosition().dst(collideable.getCenterPosition()) < (player.getRadious() + collideable.getRadious())) {
-						player.onContact(collideable);
+				for (Collidable collidable : collidableList) {
+					if (player.getCenterPosition().dst(collidable.getCenterPosition()) < (player.getRadius() + collidable.getRadius())) {
+						player.onContact(collidable);
 					}
 				}
 			}
@@ -103,8 +108,8 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	*/
 	}
 
-	protected void createPlayerCharacter(int index, PlayerController controller, GameElement.TYPE type) {
-		PlayerCharacter newChar = new PlayerCharacter(index, type, this, getMap(), getGameWorld());
+	private void createPlayerCharacter(int index, PlayerController controller, GameElement.TYPE type) {
+		PlayerCharacter newChar = new PlayerCharacter(index, type, this, getGameWorld());
 		if (type == GameElement.TYPE.CHAR_HUMAN) {
 
         } else if(type == GameElement.TYPE.CHAR_RETICLE){
@@ -116,7 +121,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		newChar.init(getAssetManager());
         newChar.setTilePosition((int) (characterPos.x * newChar.getWidth()), (int)(characterPos.y * newChar.getHeight()));
 		newChar.setController(controller);
-		getCharacterList().add(newChar);
+		addCharacter(newChar);
 		playerList.add(newChar);
 		playerCharacterMap.put(index, newChar);
 		if (!playerFound) {
@@ -125,18 +130,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	private boolean playerFound;
-
-	protected void addAICharacter(AICharacter character) {
-		getCharacterList().add(character);
-	}
-
-	protected void addCollidable(GameElement collideable) {
-		getCollideableList().add(collideable);
-	}
-
-	protected void removeCollidable(GameElement collideable) {
-		getCollideableList().remove(collideable);
-	}
 
 	@Override
 	public void dispose()
@@ -233,13 +226,15 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	protected void disableAllPlayers() {
-		for (BaseCharacter closingPlayer : getCharacterList()) {
-			closingPlayer.disableCharacter();
+		Iterator<BaseCharacter> characterIterator = getCharacterIterator();
+		while (characterIterator.hasNext()) {
+			BaseCharacter character = characterIterator.next();
+			character.disableCharacter();
 		}
 	}
 
 	@Override
-	public abstract void onCharacterCollideableTouched(GameElement collideable, int collideableIndex, PlayerCharacter player);
+	public abstract void onCharacterCollidableTouched(GameElement collidable, int collidableIndex, PlayerCharacter player);
 
 	@Override
 	public void onPlayerCharacterDied(PlayerCharacter  victim, PlayerCharacter killer) {

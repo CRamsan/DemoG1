@@ -11,11 +11,11 @@ public class CallbackManager implements IGameSubsystem
 		queue = new PriorityQueue<ExecutionBlockEvent>();
 	}
 	
-	public void registerEventFromNow(float futureTime, ExecutioBlockInterface block) {
+	public void registerEventFromNow(float futureTime, ExecutionBlockInterface block) {
 		queue.add(new ExecutionBlockEvent(futureTime, block));
 	}
 	
-	public void registerEventAtTime(float waitTime, ExecutioBlockInterface block) {
+	public void registerEventAtTime(float waitTime, ExecutionBlockInterface block) {
 		registerEventFromNow(time + waitTime, block);
 	}
 	
@@ -36,22 +36,32 @@ public class CallbackManager implements IGameSubsystem
 	}
 
 	@Override
-	public void InitSystem() {
+	public void OnGameLoad() {
 
 	}
 
 	@Override
-	public void InitScreen() {
+	public void OnScreenLoad() {
 
 	}
 
 	@Override
-	public void UnInitScreen() {
+	public void OnLoopStart() {
 
 	}
 
 	@Override
-	public void UnInitSystem() {
+	public void OnLoopEnd() {
+
+	}
+
+	@Override
+	public void OnScreenClose() {
+
+	}
+
+	@Override
+	public void OnGameClose() {
 
 	}
 
@@ -61,10 +71,10 @@ public class CallbackManager implements IGameSubsystem
 	 */
 	private class ExecutionBlockEvent implements Comparable
 	{
-		private ExecutioBlockInterface block;
+		private ExecutionBlockInterface block;
 		private float time;
 
-		public ExecutionBlockEvent(float time, ExecutioBlockInterface block) {
+		public ExecutionBlockEvent(float time, ExecutionBlockInterface block) {
 			this.block = block;
 			this.time = time;
 		}
@@ -84,7 +94,7 @@ public class CallbackManager implements IGameSubsystem
 		}
 	}
 
-	public interface ExecutioBlockInterface {
+	public interface ExecutionBlockInterface {
 		void execute();
 	}
 }

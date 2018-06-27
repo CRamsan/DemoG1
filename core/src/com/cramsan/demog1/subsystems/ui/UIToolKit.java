@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class UIToolKit {
 
-    public static int DIALOG_WIDTH = 200;
+    private static int DIALOG_WIDTH = 200;
     public static int INTERNAL_WIDTH = 40;
     public static int DIALOG_PAD = 10;
     public static int DIALOG_TABLE_PAD = 5;
