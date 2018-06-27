@@ -41,7 +41,7 @@ public class CatchAThiefScreen extends GameScreen {
 	}
 	private void createCoin() {
 		Vector2 position = getMap().getRandomNonSolidTile();
-		Collidable newCollidable = new Collidable(this, getGameWorld());
+		Collidable newCollidable = new Collidable(this, getGameWorld(), getAssetManager());
 		newCollidable.setTilePosition((int)(position.x * newCollidable.getWidth()), (int)(position.y * newCollidable.getHeight()));
 		newCollidable.setScale(0.5f);
 		addCollidable(newCollidable);

@@ -21,7 +21,6 @@ public class AudioManager implements IGameSubsystem {
 
     private HashMap<MUSIC, Music> musicMap;
     private HashMap<SOUND, Sound> soundMap;
-    private int level;
 
     @Override
     public void OnGameLoad() {
@@ -68,17 +67,6 @@ public class AudioManager implements IGameSubsystem {
         }
     }
 
-    @Override
-    public void OnLoopStart() {
-
-    }
-
-    @Override
-    public void OnLoopEnd() {
-
-    }
-
-
     /**
      * Call this function to unload any assets for the current scene
      */
@@ -101,19 +89,11 @@ public class AudioManager implements IGameSubsystem {
 
     }
 
-    public int getLevel() {
-        return level;
+    public void PlaySound(SOUND sound) {
+        soundMap.get(sound).play();
     }
 
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    private boolean PlaySound(SOUND sound) {
-        return soundMap.get(sound).play() != -1;
-    }
-
-    private void PlayMusic() {
+    public void PlayMusic() {
         musicMap.get(MUSIC.BG_1).play();
     }
 }

@@ -37,9 +37,8 @@ public class MainMenuScreen extends BaseScreen implements Screen, ControllerConn
 		super.ScreenInit();
 		for (int i = 0; i < 1; i++) {
 			GameElement.TYPE type = GameElement.TYPE.FEMALE_VILLAGER;
-			AICharacter newChar = new AICharacter(type, null, getGameWorld());
+			AICharacter newChar = new AICharacter(type, null, getGameWorld(), getAssetManager());
 			Vector2 position = getMap().getRandomNonSolidTile();
-			newChar.init(getAssetManager());
 			newChar.setTilePosition((int) (position.x * newChar.getWidth()), (int)(position.y * newChar.getHeight()));
 			characterList.add(newChar);
 		}

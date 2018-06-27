@@ -31,7 +31,8 @@ public class TiledGameMap implements IGameSubsystem
 	private int width, height, tileWidth, tileHeight;
 	private SpriteBatch batch;
 
-	public TiledGameMap() {
+	public TiledGameMap(SpriteBatch batch) {
+	    this.batch = batch;
 	}
 
 	public void performUpdate(float delta) {
@@ -95,14 +96,6 @@ public class TiledGameMap implements IGameSubsystem
 		}
 	}
 
-	public SpriteBatch getBatch() {
-		return batch;
-	}
-
-	public void setBatch(SpriteBatch batch) {
-		this.batch = batch;
-	}
-
 	@Override
 	public void OnGameLoad() {
 	}
@@ -115,11 +108,8 @@ public class TiledGameMap implements IGameSubsystem
         tileWidth = map.getProperties().get("tilewidth", Integer.class);
         tileHeight = map.getProperties().get("tileheight", Integer.class);
         collisionMap = new boolean[width][height];
-        renderer = new OrthogonalTiledMapRenderer(map, getBatch());
-	}
+        renderer = new OrthogonalTiledMapRenderer(map, batch);
 
-	@Override
-	public void OnLoopStart() {
 		//The collision layer should be located on the first layer
 		TiledMapTileLayer layer = (TiledMapTileLayer)map.getLayers().get(2);
 
@@ -182,11 +172,6 @@ public class TiledGameMap implements IGameSubsystem
 		groundBody.createFixture(fixtureDef);
 
 		groundBox.dispose();
-	}
-
-	@Override
-	public void OnLoopEnd() {
-
 	}
 
 	@Override

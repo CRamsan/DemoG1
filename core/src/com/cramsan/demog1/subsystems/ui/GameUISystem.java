@@ -58,8 +58,9 @@ public class GameUISystem implements IUISystem {
     private Actor confirmationMenu;
     private Actor pauseMenu;
 
-    public GameUISystem() {
+    public GameUISystem(ControllerManager controllerManager) {
         uiVisible = false;
+        this.controllerManager = controllerManager;
     }
 
     @Override
@@ -196,7 +197,7 @@ public class GameUISystem implements IUISystem {
     public GetReadyMenuController initGetReadyMenu() {
         Table mainPane = UIToolKit.GenerateSinglePaneContainer(skin);
         Table containerPane = UIToolKit.GenerateHorizontalContainer(mainPane, skin);
-        getReadyMenuController = new GetReadyMenuController(containerPane, skin);
+        getReadyMenuController = new GetReadyMenuController(containerPane, skin, controllerManager);
         Button  buttonStart = UIToolKit.AddButtonToParentWithAction(mainPane,TEXT_LABEL_START, skin, new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -341,16 +342,6 @@ public class GameUISystem implements IUISystem {
 
     @Override
     public void OnScreenLoad() {
-    }
-
-    @Override
-    public void OnLoopStart() {
-
-    }
-
-    @Override
-    public void OnLoopEnd() {
-
     }
 
     @Override

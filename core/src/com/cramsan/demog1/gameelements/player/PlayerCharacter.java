@@ -2,7 +2,7 @@ package com.cramsan.demog1.gameelements.player;
 
 import com.badlogic.gdx.physics.box2d.World;
 import com.cramsan.demog1.subsystems.AudioManager;
-import com.cramsan.demog1.subsystems.map.TiledGameMap;
+import com.cramsan.demog1.subsystems.SingleAssetManager;
 import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.gameelements.BaseCharacter;
 import com.cramsan.demog1.gameelements.CharacterEventListener;
@@ -17,6 +17,8 @@ import java.util.Set;
 public class PlayerCharacter extends BaseCharacter implements PlayerControllerAdapterInterface {
 
 	private PlayerControllerAdapter controller;
+	private AudioManager audioManager;
+
 	private boolean hasAttacked, hasPaused;
 	private Set<GameElement> collidableSet;
 	private int Id;
@@ -24,12 +26,13 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	private boolean isEventBased;
 
 	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener,
-						   World gameWorld) {
-		super(type, listener, gameWorld);
+						   World gameWorld, AudioManager audioManager, SingleAssetManager assetManager) {
+		super(type, listener, gameWorld, assetManager);
 		this.controller = new PlayerControllerAdapter(this);
 		this.collidableSet = new HashSet<GameElement>();
 		this.Id = Id;
 		this.isEventBased = false;
+		this.audioManager = audioManager;
 	}
 
 	@Override
@@ -70,7 +73,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		if (!collidableSet.contains(collidable)){
 			collidableSet.add(collidable);
 			listener.onCharacterCollidableTouched(collidable, collidableSet.size(), this);
-			//AudioManager.PlaySound(AudioManager.SOUND.BELL);
+			audioManager.PlaySound(AudioManager.SOUND.BELL);
 		}
 	}
 
@@ -110,7 +113,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	 * This function will send an event to the listener that this character has attacked.
 	 */
 	private void attack() {
-		//AudioManager.PlaySound(AudioManager.SOUND.ATTACK);
+		audioManager.PlaySound(AudioManager.SOUND.ATTACK);
 		this.listener.onCharacterAttack(this);
 	}
 
@@ -130,5 +133,9 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 
 	public float attackRadius() {
 		return width / 2;
+	}
+
+	public void setAudioManager(AudioManager audioManager) {
+		this.audioManager = audioManager;
 	}
 }

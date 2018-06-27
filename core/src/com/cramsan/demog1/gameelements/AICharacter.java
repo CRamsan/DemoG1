@@ -3,6 +3,7 @@ package com.cramsan.demog1.gameelements;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.cramsan.demog1.Globals;
+import com.cramsan.demog1.subsystems.SingleAssetManager;
 import com.cramsan.demog1.subsystems.map.TiledGameMap;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 
@@ -14,8 +15,8 @@ public class AICharacter extends BaseCharacter
 	private Vector2 lastMovementVector;
 	private int aiState;
 	
-	public AICharacter(TYPE type, CharacterEventListener listener, World gameWorld) {
-		super(type, listener, gameWorld);
+	public AICharacter(TYPE type, CharacterEventListener listener, World gameWorld, SingleAssetManager assetManager) {
+		super(type, listener, gameWorld, assetManager);
         lastMovementVector = new Vector2();
         aiState = 0;
 	}

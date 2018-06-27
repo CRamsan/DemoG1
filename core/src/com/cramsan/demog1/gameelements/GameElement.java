@@ -45,7 +45,6 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 	private float scale;
     protected float state;
 	protected com.cramsan.demog1.gameelements.CharacterEventListener listener;
-	private boolean shouldRender;
 	protected Body body;
 	private World gameWorld;
 
@@ -59,7 +58,7 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
      * and generate animations.
      * @param type
      */
-    public GameElement(TYPE type, com.cramsan.demog1.gameelements.CharacterEventListener listener, World gameWorld) {
+    public GameElement(TYPE type, com.cramsan.demog1.gameelements.CharacterEventListener listener, World gameWorld, SingleAssetManager assetManager) {
         this.type = type;
         this.x = 0;
         this.y = 0;
@@ -68,18 +67,9 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 		this.direction = DIRECTION.values()[ Globals.rand.nextInt(4)];
 		this.isDirty = false;
 		this.gameWorld = gameWorld;
-    }
-
-    /***
-     * Private method that will handle lower level details of the object such as handling instance count and loading
-     * assets.
-     */
-    public void init(SingleAssetManager assetManager) {
+		this.state = 0;
 		assetManager.getPlayerTextures(type, this);
-
-		state = 0;
-		shouldRender = true;
-	}
+    }
 
 	@Override
 	public void setAnimations(Animation<TextureRegion> walkUp, Animation<TextureRegion> walkRight, Animation<TextureRegion> walkDown, Animation<TextureRegion> walkLeft) {

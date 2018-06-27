@@ -57,6 +57,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     private Texture mainLightTexture;
     private Texture lightTexture;
     private FrameBuffer lightBuffer;
+    private boolean isRunning;
 
     public BaseScreen()
     {
@@ -69,15 +70,13 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         characterList = new ArrayList<BaseCharacter>();
         collidableList = new ArrayList<GameElement>();
         illumination = 0f;
+        isRunning = true;
 		callbackManager = new CallbackManager();
     }
 
     // This method will be called to configure objects. This is used to decouple the object initialization
     // From their configuration in the game world.
     public void ScreenInit() {
-        map.setBatch(getBatch());
-        map.setGameWorld(gameWorld);
-
         cam.setToOrtho(false);
         cam.update();
         int portIndex = 0;
@@ -103,9 +102,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         }
 
         getUiSystem().resize((int)viewport.getWorldWidth(), (int)viewport.getWorldHeight());
-        // TODO: Fix this ASAP!
-	    //AudioManager.LoadAssets(levelId());
-        //AudioManager.PlayMusic();
+        getAudioManager().PlayMusic();
 
         lightTexture = getAssetManager().getLightTexture();
         mainLightTexture = getAssetManager().getSceneLightTexture();
@@ -145,6 +142,9 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 	 * that are tied to the life time of a screen.
 	 */
     private void performUpdate(float delta) {
+        if (!isRunning)
+            return;
+
 		callbackManager.update(delta);
 		map.performUpdate(delta);
 		performCustomUpdate(delta);
@@ -271,8 +271,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     @Override
     public void dispose() {
-        //UISystem.disposeMenu();
-	    //AudioManager.UnloadAssets();
+
     }
 
     public void setIllumination(float illumination) {
@@ -373,6 +372,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     public void setMap(TiledGameMap map) {
         this.map = map;
+        this.map.setGameWorld(gameWorld);
     }
 
     public World getGameWorld() {
@@ -397,5 +397,13 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     public void setControllerManager(ControllerManager controllerManager) {
         this.controllerManager = controllerManager;
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
+
+    public boolean isRunning() {
+        return this.isRunning;
     }
 }

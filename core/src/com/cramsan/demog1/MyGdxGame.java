@@ -23,7 +23,6 @@ public class MyGdxGame extends Game {
     private boolean useFixedStep;
     private boolean enableRender;
     private boolean enableGame;
-    private SpriteBatch spriteBatch;
     private float timeBuffer;
 
     // Game subsystems. All this classes implement IGameSubsystem to make them easier to
@@ -35,8 +34,8 @@ public class MyGdxGame extends Game {
     private TiledGameMap gameMap;
     private ControllerManager controllerManager;
 
+    private SpriteBatch spriteBatch;
     private ArrayList<IGameSubsystem> subsystemList;
-
     private IGameStateListener listener;
 
     public MyGdxGame() {
@@ -59,8 +58,13 @@ public class MyGdxGame extends Game {
             setSpriteBatch(new SpriteBatch());
         }
 
+        if (getControllerManager() == null) {
+            setControllerManager(new ControllerManager());
+        }
+        subsystemList.add(getControllerManager());
+
         if (getUiSystem() == null) {
-            setUiSystem(new GameUISystem());
+            setUiSystem(new GameUISystem(getControllerManager()));
         }
         subsystemList.add(getUiSystem());
 
@@ -80,16 +84,9 @@ public class MyGdxGame extends Game {
         subsystemList.add(getAssetManager());
 
         if (getGameMap() == null) {
-            TiledGameMap map = new TiledGameMap();
-            map.setBatch(getSpriteBatch());
-            setGameMap(map);
+            setGameMap(new TiledGameMap(getSpriteBatch()));
         }
         subsystemList.add(getGameMap());
-
-        if (getControllerManager() == null) {
-            setControllerManager(new ControllerManager());
-        }
-        subsystemList.add(getControllerManager());
 
         for (IGameSubsystem subsystem : subsystemList) {
             subsystem.OnGameLoad();
@@ -109,12 +106,9 @@ public class MyGdxGame extends Game {
         // Check if there was an existing screen and if there was hide it.
         if (this.screen != null) {
             for (IGameSubsystem subsystem : subsystemList) {
-                subsystem.OnLoopEnd();
-            }
-            this.screen.hide();
-            for (IGameSubsystem subsystem : subsystemList) {
                 subsystem.OnScreenClose();
             }
+            this.screen.hide();
         }
 
         // Prepare the new screen
@@ -133,9 +127,7 @@ public class MyGdxGame extends Game {
 
         // Set the screen and show it.
         this.screen = newScreen;
-        for (IGameSubsystem subsystem : subsystemList) {
-            subsystem.OnLoopStart();
-        }
+
         this.screen.show();
         this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
@@ -167,9 +159,6 @@ public class MyGdxGame extends Game {
 
     @Override
     public void dispose () {
-        for (IGameSubsystem subsystem : subsystemList) {
-            subsystem.OnLoopEnd();
-        }
         super.dispose();
         for (IGameSubsystem subsystem : subsystemList) {
             subsystem.OnGameClose();

@@ -6,10 +6,9 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.compression.lzma.Base;
-import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.gameelements.*;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
+import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.subsystems.ui.PauseMenuEventListener;
 
 import java.util.*;
@@ -22,8 +21,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	private PlayerCharacter pauseCaller;
 	private GameParameterManager parameterManager;
 
-	private boolean isPaused;
-
 	private List<PlayerCharacter> playerList;
 	private int aiCount;
 
@@ -32,7 +29,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		super();
 		playerList = new ArrayList<PlayerCharacter>();
 		playerCharacterMap = new HashMap<Integer, PlayerCharacter>();
-		isPaused = false;
 		this.parameterManager = parameterManager;
 	}
 
@@ -48,9 +44,8 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	protected void createAICharacters() {
 		for (int i = 0; i < aiCount; i++) {
 			GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-			AICharacter newChar = new AICharacter(type, this, getGameWorld());
+			AICharacter newChar = new AICharacter(type, this, getGameWorld(), getAssetManager());
 			Vector2 charPos = getMap().getRandomNonSolidTile();
-			newChar.init(getAssetManager());
 			newChar.setTilePosition((int) (charPos.x * newChar.getWidth()), (int)(charPos.y * newChar.getHeight()));
 			addCharacter(newChar);
 		}
@@ -58,11 +53,9 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	@Override
 	protected void performCustomUpdate(float delta) {
-		Iterator<GameElement> gameElementIterator = getCollidableIterator();
-		while(gameElementIterator.hasNext()) {
-			GameElement collidable = gameElementIterator.next();
-			collidable.update(delta);
-		}
+
+		if(!isRunning())
+			return;
 
 		Iterator<BaseCharacter> baseCharacterIterator = getCharacterIterator();
 		while(baseCharacterIterator.hasNext()) {
@@ -70,8 +63,11 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 			baseCharacter.updateInputs();
 		}
 
-		if (isPaused)
-			return;
+		Iterator<GameElement> gameElementIterator = getCollidableIterator();
+		while(gameElementIterator.hasNext()) {
+			GameElement collidable = gameElementIterator.next();
+			collidable.update(delta);
+		}
 
 		baseCharacterIterator = getCharacterIterator();
 		while(baseCharacterIterator.hasNext()) {
@@ -109,7 +105,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	private void createPlayerCharacter(int index, PlayerController controller, GameElement.TYPE type) {
-		PlayerCharacter newChar = new PlayerCharacter(index, type, this, getGameWorld());
+		PlayerCharacter newChar = new PlayerCharacter(index, type, this, getGameWorld(), getAudioManager(), getAssetManager());
 		if (type == GameElement.TYPE.CHAR_HUMAN) {
 
         } else if(type == GameElement.TYPE.CHAR_RETICLE){
@@ -118,7 +114,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 		    throw new RuntimeException("Type not supported for PlayerCharacter" + type);
         }
 		Vector2 characterPos = getMap().getRandomNonSolidTile();
-		newChar.init(getAssetManager());
         newChar.setTilePosition((int) (characterPos.x * newChar.getWidth()), (int)(characterPos.y * newChar.getHeight()));
 		newChar.setController(controller);
 		addCharacter(newChar);
@@ -181,16 +176,15 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
     @Override
     public void onCharacterPause(PlayerCharacter character) {
-	    if (isPaused)
+	    if (!isRunning())
         {
         	if (pauseCaller == character) {
 				getUiSystem().hideMenu();
-				isPaused = false;
 			}
         }
         else {
 			getUiSystem().displayPauseMenu();
-            isPaused = true;
+			setRunning(false);
             pauseCaller = character;
         }
     }
@@ -272,7 +266,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	@Override
 	public void onPauseMenuDisappeared() {
-		isPaused = false;
+		setRunning(true);
 		pauseCaller = null;
 	}
 }

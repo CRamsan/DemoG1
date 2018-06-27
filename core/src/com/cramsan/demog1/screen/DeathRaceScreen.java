@@ -33,7 +33,7 @@ public class DeathRaceScreen extends GameScreen {
 
 	private void createStatue() {
 		Vector2 position = getMap().getRandomNonSolidTile();
-		Collidable newCollidable = new Collidable(this, getGameWorld());
+		Collidable newCollidable = new Collidable(this, getGameWorld(), getAssetManager());
 		newCollidable.setTilePosition((int)(position.x * newCollidable.getWidth()), (int)(position.y * newCollidable.getHeight()));
 		addCollidable(newCollidable);
 	}

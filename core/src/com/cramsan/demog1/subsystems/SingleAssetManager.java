@@ -37,12 +37,37 @@ public class SingleAssetManager implements IGameSubsystem{
         manager = new AssetManager();
     }
 
-    public Texture getLightTexture() {
-        return lightTexture;
+    @Override
+    public void OnGameLoad() {
+        manager.load(ASSET_SPRITE_SHEET, Texture.class);
+        manager.finishLoading();
+        texture = manager.get(ASSET_SPRITE_SHEET);
+        spriteRegion = TextureRegion.split(texture,
+                texture.getWidth() / ASSET_SPRITE_SHEET_COLUMNS,
+                texture.getHeight() / ASSET_SPRITE_SHEET_ROWS);
+        typeToTextureMapping = new HashMap<GameElement.TYPE, TextureRegion>();
+        lightTexture = new Texture(Gdx.files.internal(ASSET_LIGHT));
+        sceneLightTexture = new Texture(Gdx.files.internal(ASSET_MAIN_LIGHT));
     }
 
-    public Texture getSceneLightTexture() {
-        return sceneLightTexture;
+    @Override
+    public void OnScreenLoad() {
+
+    }
+
+    @Override
+    public void OnScreenClose() {
+
+    }
+
+    @Override
+    public void OnGameClose() {
+        manager.unload(ASSET_SPRITE_SHEET);
+        texture = null;
+        spriteRegion = null;
+        lightTexture = null;
+        sceneLightTexture = null;
+        typeToTextureMapping = null;
     }
 
     private TextureRegion getTextureRegionForType(GameElement.TYPE type) {
@@ -125,47 +150,12 @@ public class SingleAssetManager implements IGameSubsystem{
         receiver.setTextureSize(ASSET_SPRITE_SHEET_SPRITE_WIDTH, ASSET_SPRITE_SHEET_SPRITE_HEIGHT);
     }
 
-    @Override
-    public void OnGameLoad() {
-        manager.load(ASSET_SPRITE_SHEET, Texture.class);
-        manager.finishLoading();
-        texture = manager.get(ASSET_SPRITE_SHEET);
-        spriteRegion = TextureRegion.split(texture,
-                texture.getWidth() / ASSET_SPRITE_SHEET_COLUMNS,
-                texture.getHeight() / ASSET_SPRITE_SHEET_ROWS);
-        typeToTextureMapping = new HashMap<GameElement.TYPE, TextureRegion>();
-        lightTexture = new Texture(Gdx.files.internal(ASSET_LIGHT));
-        sceneLightTexture = new Texture(Gdx.files.internal(ASSET_MAIN_LIGHT));
+    public Texture getLightTexture() {
+        return lightTexture;
     }
 
-    @Override
-    public void OnScreenLoad() {
-
-    }
-
-    @Override
-    public void OnLoopStart() {
-
-    }
-
-    @Override
-    public void OnLoopEnd() {
-
-    }
-
-    @Override
-    public void OnScreenClose() {
-
-    }
-
-    @Override
-    public void OnGameClose() {
-        manager.unload(ASSET_SPRITE_SHEET);
-        texture = null;
-        spriteRegion = null;
-        lightTexture = null;
-        sceneLightTexture = null;
-        typeToTextureMapping = null;
+    public Texture getSceneLightTexture() {
+        return sceneLightTexture;
     }
 
     public interface TextureAnimationReceiver {

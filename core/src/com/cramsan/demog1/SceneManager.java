@@ -42,8 +42,9 @@ public class SceneManager {
                 parameterManager = newParameterManager;
             else
                 throw new RuntimeException("GameParameterManager not provided.");
-        } else
+        } else if (newParameterManager != null) {
             throw new RuntimeException("GameParameterManager already set and cannot be overridden");
+        }
 
         GameScreen screen;
         switch (parameterManager.getType()) {

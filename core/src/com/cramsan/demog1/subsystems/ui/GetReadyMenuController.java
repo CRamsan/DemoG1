@@ -22,8 +22,9 @@ public class GetReadyMenuController {
     private GameParameterManager parameterManager;
     private boolean allowTeamChange;
 
-    public GetReadyMenuController(Table contentTable, Skin skin){
-        tableMap = new HashMap<Integer, Label>();
+    public GetReadyMenuController(Table contentTable, Skin skin, ControllerManager controllerManager){
+        this.tableMap = new HashMap<Integer, Label>();
+        this.controllerManager = controllerManager;
         players = 0;
         for (int i = 0; i < 4; i++) {
             Label descriptionLabel = new Label("Not Connected", skin);

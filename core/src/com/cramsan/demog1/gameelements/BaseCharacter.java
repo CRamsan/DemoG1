@@ -2,6 +2,7 @@ package com.cramsan.demog1.gameelements;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.cramsan.demog1.subsystems.SingleAssetManager;
 import com.cramsan.demog1.subsystems.map.TiledGameMap;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 
@@ -14,8 +15,8 @@ public abstract class BaseCharacter extends GameElement {
 	protected boolean isRunning;
 
     public BaseCharacter(TYPE type, CharacterEventListener listener,
-                         World gameWorld) {
-        super(type, listener, gameWorld);
+                         World gameWorld, SingleAssetManager assetManager) {
+        super(type, listener, gameWorld, assetManager);
         if (type == TYPE.CHAR_STATUE)
             throw new RuntimeException("Characters cannot be of this type");
         this.isDead = false;
@@ -61,13 +62,6 @@ public abstract class BaseCharacter extends GameElement {
 	public void disableCharacter() {
 		isRunning = false;
 	}
-	
-    /**
-     * This method will return if the Character has moved.
-     */
-    public boolean hasMoved() {
-        return isDirty;
-    }
 
     /***
      * Callback to be called when this character is killed.

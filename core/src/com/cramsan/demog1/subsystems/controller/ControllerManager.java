@@ -27,16 +27,6 @@ public class ControllerManager extends ControllerAdapter implements IGameSubsyst
     }
 
     @Override
-    public void OnLoopStart() {
-
-    }
-
-    @Override
-    public void OnLoopEnd() {
-
-    }
-
-    @Override
     public void OnScreenClose() {
 
     }

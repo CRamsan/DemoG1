@@ -6,10 +6,6 @@ public interface IGameSubsystem {
 
     void OnScreenLoad();
 
-    void OnLoopStart();
-
-    void OnLoopEnd();
-
     void OnScreenClose();
 
     void OnGameClose();

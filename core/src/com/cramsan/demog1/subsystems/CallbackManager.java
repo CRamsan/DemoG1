@@ -10,30 +10,6 @@ public class CallbackManager implements IGameSubsystem
 		time = 0f;
 		queue = new PriorityQueue<ExecutionBlockEvent>();
 	}
-	
-	public void registerEventFromNow(float futureTime, ExecutionBlockInterface block) {
-		queue.add(new ExecutionBlockEvent(futureTime, block));
-	}
-	
-	public void registerEventAtTime(float waitTime, ExecutionBlockInterface block) {
-		registerEventFromNow(time + waitTime, block);
-	}
-	
-	public void update(float delta) {
-		time += delta;
-		for (int i = 0; i < queue.size(); i++) {
-			ExecutionBlockEvent nextBlock = queue.peek();
-			
-			// If the next block is expected to run in the future then
-			// we know that we can stop checking for more events.
-			if (nextBlock.time > time) {
-				break;
-			}
-			
-			queue.poll();
-			nextBlock.executeBlock();
-		}
-	}
 
 	@Override
 	public void OnGameLoad() {
@@ -42,16 +18,6 @@ public class CallbackManager implements IGameSubsystem
 
 	@Override
 	public void OnScreenLoad() {
-
-	}
-
-	@Override
-	public void OnLoopStart() {
-
-	}
-
-	@Override
-	public void OnLoopEnd() {
 
 	}
 
@@ -65,7 +31,31 @@ public class CallbackManager implements IGameSubsystem
 
 	}
 
-	/** 
+    public void registerEventAtTime(float futureTime, ExecutionBlockInterface block) {
+        queue.add(new ExecutionBlockEvent(futureTime, block));
+    }
+
+    public void registerEventFromNow(float waitTime, ExecutionBlockInterface block) {
+        registerEventAtTime(time + waitTime, block);
+    }
+
+    public void update(float delta) {
+        time += delta;
+        for (int i = 0; i < queue.size(); i++) {
+            ExecutionBlockEvent nextBlock = queue.peek();
+
+            // If the next block is expected to run in the future then
+            // we know that we can stop checking for more events.
+            if (nextBlock.time > time) {
+                break;
+            }
+
+            queue.poll();
+            nextBlock.executeBlock();
+        }
+    }
+
+    /**
 	 * This object will wrap the callback interface and the time it needs to be called.
 	 * The time is represents the game time when the block will be called.
 	 */

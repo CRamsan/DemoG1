@@ -30,8 +30,7 @@ public class NinjaPartyScreen extends GameScreen {
 	private void createStatues() {
 		statueCount = 0;
 		for (Vector2 pos : getMap().getStatueSpawner()) {
-			GameElement newCollidable = new Collidable(this, getGameWorld());
-			newCollidable.init(getAssetManager());
+			GameElement newCollidable = new Collidable(this, getGameWorld(), getAssetManager());
 			newCollidable.setTilePosition((int)(pos.x * newCollidable.getWidth()), (int)(pos.y * newCollidable.getHeight()));
 			addCollidable(newCollidable);
 			addLightSource(newCollidable);
