@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.utils.Array;
 import com.cramsan.demog1.gameelements.*;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
+import com.cramsan.demog1.subsystems.AudioManager;
 import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.subsystems.ui.PauseMenuEventListener;
 
@@ -20,7 +21,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	private Map<Integer, PlayerCharacter> playerCharacterMap;
 	private PlayerCharacter pauseCaller;
 	private GameParameterManager parameterManager;
-
 	private List<PlayerCharacter> playerList;
 	private int aiCount;
 
@@ -105,7 +105,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	private void createPlayerCharacter(int index, PlayerController controller, GameElement.TYPE type) {
-		PlayerCharacter newChar = new PlayerCharacter(index, type, this, getGameWorld(), getAudioManager(), getAssetManager());
+		PlayerCharacter newChar = new PlayerCharacter(index, type, this, getGameWorld(), getAssetManager());
 		if (type == GameElement.TYPE.CHAR_HUMAN) {
 
         } else if(type == GameElement.TYPE.CHAR_RETICLE){
@@ -154,6 +154,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 
 	@Override
 	public void onCharacterAttack(final PlayerCharacter character) {
+		getAudioManager().PlaySound(AudioManager.SOUND.ATTACK);
 		getGameWorld().QueryAABB(new QueryCallback() {
 			@Override
 			public boolean reportFixture(Fixture fixture) {
@@ -228,11 +229,12 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	@Override
-	public abstract void onCharacterCollidableTouched(GameElement collidable, int collidableIndex, PlayerCharacter player);
+	public void onCharacterCollidableTouched(GameElement collidable, PlayerCharacter player) {
+		getAudioManager().PlaySound(AudioManager.SOUND.BELL);
+	}
 
 	@Override
 	public void onPlayerCharacterDied(PlayerCharacter  victim, PlayerCharacter killer) {
-		victim.disableCharacter();
 		playerCharacterMap.remove(victim.getId());
 		playerList.remove(victim);
 		if (playerList.size() == 1) {

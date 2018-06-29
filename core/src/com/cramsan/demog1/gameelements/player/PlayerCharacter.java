@@ -17,26 +17,25 @@ import java.util.Set;
 public class PlayerCharacter extends BaseCharacter implements PlayerControllerAdapterInterface {
 
 	private PlayerControllerAdapter controller;
-	private AudioManager audioManager;
-
 	private boolean hasAttacked, hasPaused;
-	private Set<GameElement> collidableSet;
 	private int Id;
-	private float dx, dy;
+	private float dx;
+	private float dy;
 	private boolean isEventBased;
 
 	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener,
-						   World gameWorld, AudioManager audioManager, SingleAssetManager assetManager) {
+						   World gameWorld, SingleAssetManager assetManager) {
 		super(type, listener, gameWorld, assetManager);
 		this.controller = new PlayerControllerAdapter(this);
-		this.collidableSet = new HashSet<GameElement>();
 		this.Id = Id;
 		this.isEventBased = false;
-		this.audioManager = audioManager;
 	}
 
 	@Override
 	public void updateInputs() {
+		hasAttacked = false;
+		hasPaused = false;
+
 		if (isDead || !isRunning)
 			return;
 
@@ -44,16 +43,11 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 			controller.poll();
 		}
 		if(hasAttacked){
-			attack();
+			this.listener.onCharacterAttack(this);
 		}
 		if(hasPaused){
-			onCharacterPause();
+			this.listener.onCharacterPause(this);
 		}
-		// After handling buttons, reset them back to neutral(false)
-		// Do not do the same for axises since those will receive an
-		// event once the axis goes back to normal.
-		hasAttacked = false;
-		hasPaused = false;
 	}
 
 	@Override
@@ -70,11 +64,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		if (collidable.getType() != TYPE.CHAR_STATUE)
 			return;
 
-		if (!collidableSet.contains(collidable)){
-			collidableSet.add(collidable);
-			listener.onCharacterCollidableTouched(collidable, collidableSet.size(), this);
-			audioManager.PlaySound(AudioManager.SOUND.BELL);
-		}
+		listener.onCharacterCollidableTouched(collidable, this);
 	}
 
 	public void handleControllerInput(int buttonCode, boolean value) {
@@ -109,19 +99,6 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		return Id;
 	}
 
-	/***
-	 * This function will send an event to the listener that this character has attacked.
-	 */
-	private void attack() {
-		audioManager.PlaySound(AudioManager.SOUND.ATTACK);
-		this.listener.onCharacterAttack(this);
-	}
-
-	/***
-	 * Signal to the listener that this character has send a pause event.
-	 */
-	private void onCharacterPause() { this.listener.onCharacterPause(this);}
-
 	public void setController(PlayerController controller) {
 		this.controller.setController(controller);
 		this.isEventBased = controller.supportsEvents();
@@ -135,7 +112,20 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		return width / 2;
 	}
 
-	public void setAudioManager(AudioManager audioManager) {
-		this.audioManager = audioManager;
+	public boolean hasAttacked() {
+		return hasAttacked;
 	}
+
+	public boolean hasPaused() {
+		return hasPaused;
+	}
+
+	public float getDx() {
+		return dx;
+	}
+
+	public float getDy() {
+		return dy;
+	}
+
 }

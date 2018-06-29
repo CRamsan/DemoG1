@@ -17,7 +17,8 @@ import java.util.concurrent.Semaphore;
 public class MockedGameTest {
 
     private static Application application;
-    private static Semaphore sem = new Semaphore(0);
+    private static Semaphore sem = new Semaphore(0);;
+    protected static MyGdxGame gdxGame;
 
     @BeforeClass
     public static void oneTimeSetUp() {
@@ -40,6 +41,8 @@ public class MockedGameTest {
         game.setListener(new TestLifeCycleListener());
 
         application = new HeadlessApplication(game);
+        gdxGame = game;
+
         try {
             waitThread();
         } catch (InterruptedException e) {

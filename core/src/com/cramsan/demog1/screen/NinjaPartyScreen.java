@@ -39,11 +39,14 @@ public class NinjaPartyScreen extends GameScreen {
 	}
 
 	@Override
-	public void onCharacterCollidableTouched(GameElement collidable, int collidableIndex, PlayerCharacter player) {
+	public void onCharacterCollidableTouched(GameElement collidable, PlayerCharacter player) {
+		super.onCharacterCollidableTouched(collidable, player);
+		/*
 		if (collidableIndex == this.statueCount) {
 			disableAllPlayers();
 			getUiSystem().displayEndGameMenu();
 		}
+		*/
 	}
 
 	@Override
