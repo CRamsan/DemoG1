@@ -15,6 +15,18 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 	private PlayerControllerAdapterInterface player;
 	private HashMap<Integer, Boolean> buttonStateMap;
 
+	public enum INPUT {
+		ATTACK,
+		PAUSE,
+		NOOP
+	}
+
+	public enum AXIS {
+        DX,
+        DY,
+		NOOP
+    }
+
 	public PlayerControllerAdapter(PlayerControllerAdapterInterface player) {
 		this.player = player;
 		this.buttonStateMap = new HashMap<Integer, Boolean>();
@@ -77,33 +89,33 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 	}
 
 	@Override
-	public boolean buttonDown(PlayerController controller, int buttonCode) {
+	public boolean buttonDown(PlayerController controller, INPUT buttonCode) {
 		this.player.handleControllerInput(buttonCode, true);
 		return false;
 	}
 
 	@Override
-	public boolean buttonUp(PlayerController controller, int buttonCode) {
+	public boolean buttonUp(PlayerController controller, INPUT buttonCode) {
 		this.player.handleControllerInput(buttonCode, false);
-        return false;
+		return false;
 	}
 
 	@Override
-	public boolean axisMoved(PlayerController controller, int axisCode, float value) {
+	public boolean axisMoved(PlayerController controller, AXIS axisCode, float value) {
 		this.player.handleControllerInput(axisCode, value);
-        return false;
+		return false;
 	}
 
 	// This methods will receive the calls from the Controller and pass them to the
 	// ExternalControllerListener
 	@Override
 	public boolean buttonDown(Controller controller, int buttonCode) {
-		return this.buttonDown(this.controller, buttonCode);
+		return this.buttonDown(this.controller, getInput(buttonCode));
 	}
 
 	@Override
 	public boolean buttonUp(Controller controller, int buttonCode) {
-		return this.buttonUp(this.controller, buttonCode);
+		return this.buttonUp(this.controller, getInput(buttonCode));
 	}
 
 	@Override
@@ -111,7 +123,7 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 		float modifier = 1f;
 		if (axisCode == 1)
 			modifier = -1f;
-		return this.axisMoved(this.controller, axisCode, value * modifier);
+		return this.axisMoved(this.controller, getAxis(axisCode), value * modifier);
 	}
 
 	@Override
@@ -142,5 +154,27 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 	@Override
 	public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
 		throw new RuntimeException("Not Implemented");
+	}
+
+	private INPUT getInput(int buttonCode) {
+		switch (buttonCode) {
+			case 0:
+				return INPUT.ATTACK;
+			case 7:
+				return INPUT.PAUSE;
+			default:
+					return INPUT.NOOP;
+		}
+	}
+
+	private AXIS getAxis(int axis) {
+		switch (axis) {
+			case 0:
+				return AXIS.DX;
+			case 1:
+				return AXIS.DY;
+			default:
+				return AXIS.NOOP;
+		}
 	}
 }

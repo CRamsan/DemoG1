@@ -68,7 +68,8 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 		this.isDirty = false;
 		this.gameWorld = gameWorld;
 		this.state = 0;
-		assetManager.getPlayerTextures(type, this);
+		if (assetManager != null)
+			assetManager.getPlayerTextures(type, this);
     }
 
 	@Override
@@ -83,6 +84,7 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 	public void setTextureSize(int width, int height) {
     	this.width = width;
     	this.height = height;
+
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
 		bodyDef.position.set(new Vector2(x + (width/2), y + (height/2)));

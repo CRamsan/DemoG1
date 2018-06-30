@@ -67,23 +67,23 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		listener.onCharacterCollidableTouched(collidable, this);
 	}
 
-	public void handleControllerInput(int buttonCode, boolean value) {
-		switch (buttonCode) {
-			case 0:
+	public void handleControllerInput(PlayerControllerAdapter.INPUT inputCode, boolean value) {
+		switch (inputCode) {
+			case ATTACK:
 				hasAttacked = value;
 				break;
-			case 7:
+			case PAUSE:
 				hasPaused = value;
 				break;
 		}
 	}
 
-	public void handleControllerInput(int axisCode, float value) {
+	public void handleControllerInput(PlayerControllerAdapter.AXIS axisCode, float value) {
 		switch (axisCode) {
-			case 0:
+			case DX:
 				dx = value;
 				break;
-			case 1:
+			case DY:
 				dy = value;
 				break;
 		}

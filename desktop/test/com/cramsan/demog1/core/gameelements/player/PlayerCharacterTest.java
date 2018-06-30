@@ -7,6 +7,7 @@ import com.cramsan.demog1.gameelements.CharacterEventAdapter;
 import com.cramsan.demog1.gameelements.Collidable;
 import com.cramsan.demog1.gameelements.GameElement;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
+import com.cramsan.demog1.gameelements.player.PlayerControllerAdapter;
 import com.cramsan.demog1.subsystems.controller.DummyController;
 
 import static org.junit.Assert.assertFalse;
@@ -75,10 +76,10 @@ public class PlayerCharacterTest extends MockedGameTest {
             controller.setAxis(0, x);
             controller.setAxis(1, y);
             character.updateInputs();
-            assertTrue(character.getDx() == x && character.getDy() == y);
+            assertTrue(character.getDx() == x && character.getDy() == (y * -1)); // The Y value is inverted so we account for that here
         }
 
-        // Test flags
+        // Test killing a player
         controller.clearInputs();
         PlayerCharacter newCharacter = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, new CharacterEventAdapter(), world, gdxGame.getAssetManager());
         newCharacter.setController(controller);
@@ -90,7 +91,7 @@ public class PlayerCharacterTest extends MockedGameTest {
         assertFalse(character.hasAttacked());
         assertFalse(character.hasPaused());
 
-
+        // Test disabling a player
         newCharacter = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, new CharacterEventAdapter(), world, gdxGame.getAssetManager());
         newCharacter.setController(controller);
         newCharacter.updateInputs();
@@ -125,97 +126,19 @@ public class PlayerCharacterTest extends MockedGameTest {
 
     @org.junit.Test
     public void handleControllerInput() {
-    }
-
-    @org.junit.Test
-    public void onKilled() {
-    }
-
-    @org.junit.Test
-    public void getId() {
-    }
-
-    @org.junit.Test
-    public void setController() {
-    }
-
-    @org.junit.Test
-    public void removeController() {
-    }
-
-    @org.junit.Test
-    public void attackRadius() {
-    }
-
-    @org.junit.Test
-    public void handleMovement() {
-    }
-
-    @org.junit.Test
-    public void disableCharacter() {
-    }
-
-    @org.junit.Test
-    public void setAnimations() {
-    }
-
-    @org.junit.Test
-    public void setTextureSize() {
-    }
-
-    @org.junit.Test
-    public void draw() {
-    }
-
-    @org.junit.Test
-    public void updateDirection() {
-    }
-
-    @org.junit.Test
-    public void setCenterPosition() {
-    }
-
-    @org.junit.Test
-    public void setTilePosition() {
-    }
-
-    @org.junit.Test
-    public void unload() {
-    }
-
-    @org.junit.Test
-    public void getCenterPosition() {
-    }
-
-    @org.junit.Test
-    public void getRadius() {
-    }
-
-    @org.junit.Test
-    public void setScale() {
-    }
-
-    @org.junit.Test
-    public void getX() {
-    }
-
-    @org.junit.Test
-    public void getY() {
-    }
-
-    @org.junit.Test
-    public void getHeight() {
-    }
-
-    @org.junit.Test
-    public void getWidth() {
-    }
-
-    @org.junit.Test
-    public void getType() {
-    }
-
-    @org.junit.Test
-    public void setType() {
+        World world = new World(Vector2.Zero, true);
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, new CharacterEventAdapter(), world, gdxGame.getAssetManager());
+        character.handleControllerInput(PlayerControllerAdapter.AXIS.DX, 5);
+        assertTrue(character.getDx() == 5);
+        character.handleControllerInput(PlayerControllerAdapter.AXIS.DY, -3);
+        assertTrue(character.getDy() == -3);
+        character.handleControllerInput(PlayerControllerAdapter.INPUT.ATTACK, true);
+        assertTrue(character.hasAttacked());
+        character.handleControllerInput(PlayerControllerAdapter.INPUT.ATTACK, false);
+        assertFalse(character.hasAttacked());
+        character.handleControllerInput(PlayerControllerAdapter.INPUT.PAUSE, true);
+        assertTrue(character.hasPaused());
+        character.handleControllerInput(PlayerControllerAdapter.INPUT.PAUSE, false);
+        assertFalse(character.hasPaused());
     }
 }
