@@ -15,6 +15,7 @@ import com.cramsan.demog1.gameelements.GameCollision;
 import com.cramsan.demog1.subsystems.IGameSubsystem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class will handle the tiled map. Both rendering and interaction with the tiled
@@ -28,12 +29,14 @@ public class TiledGameMap implements IGameSubsystem
 	private TiledMapRenderer renderer;
 	private World gameWorld;
 	private boolean[][] collisionMap;
+	private List<Vector2> nonCollisionList;
 	private int width, height, tileWidth, tileHeight;
 	private SpriteBatch batch;
 
 	public TiledGameMap(SpriteBatch batch) {
 	    this.batch = batch;
-	}
+        this.nonCollisionList = new ArrayList<Vector2>();
+    }
 
 	public void performUpdate(float delta) {
 
@@ -60,10 +63,6 @@ public class TiledGameMap implements IGameSubsystem
 		return tileHeight;
 	}
 
-	public boolean isTileOutOfBounds(int x, int y) {
-		return (x < 0 || y < 0 || y >= height || x >= width);
-	}
-
 	public boolean isTileSolid(int x, int y) {
 		return collisionMap[x][y];
 	}
@@ -85,15 +84,12 @@ public class TiledGameMap implements IGameSubsystem
 	}
 
 	public Vector2 getRandomNonSolidTile() {
-		// Dangerous loop with risk of running forever
-		while (true) {
-			int posX = Globals.rand.nextInt(this.getWidth());
-			int posY = Globals.rand.nextInt(this.getHeight());
-			if (this.isTileSolid(posX, posY)) {
-				continue;
-			}
-			return new Vector2(posX, posY);
-		}
+		int length = nonCollisionList.size();
+		if (length == 0)
+			return null;
+		int pos = Globals.rand.nextInt(length);
+		Vector2 tile = nonCollisionList.get(pos);
+		return tile;
 	}
 
 	@Override
@@ -108,33 +104,35 @@ public class TiledGameMap implements IGameSubsystem
         tileWidth = map.getProperties().get("tilewidth", Integer.class);
         tileHeight = map.getProperties().get("tileheight", Integer.class);
         collisionMap = new boolean[width][height];
+
         renderer = new OrthogonalTiledMapRenderer(map, batch);
 
 		//The collision layer should be located on the first layer
 		TiledMapTileLayer layer = (TiledMapTileLayer)map.getLayers().get(2);
 
-		for (int y = 0; y < width; y++) {
-			for (int x = 0; x < height; x++) {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
 				TiledMapTileLayer.Cell cell = layer.getCell(x, y);
-				if (cell == null)
-					continue;
-				MapProperties props = cell.getTile().getProperties();
-				if (props != null) {
-					if (props.containsKey("Solid") && props.get("Solid", Boolean.class)) {
+				if (cell != null) {
+					MapProperties props = cell.getTile().getProperties();
+					if (props != null && props.containsKey("Solid") && props.get("Solid", Boolean.class)) {
 						BodyDef groundBodyDef = new BodyDef();
 						groundBodyDef.type = BodyDef.BodyType.StaticBody;
-						groundBodyDef.position.set(new Vector2((x * tileWidth) + (tileWidth/2), (y * tileHeight) + (tileHeight/2)));
+						groundBodyDef.position.set(new Vector2((x * tileWidth) + (tileWidth / 2), (y * tileHeight) + (tileHeight / 2)));
 						Body groundBody = gameWorld.createBody(groundBodyDef);
 						PolygonShape groundBox = new PolygonShape();
-						groundBox.setAsBox(tileWidth/2, tileHeight/2);
+						groundBox.setAsBox(tileWidth / 2, tileHeight / 2);
 						FixtureDef fixtureDef = new FixtureDef();
 						fixtureDef.shape = groundBox;
 						fixtureDef.filter.categoryBits = GameCollision.Obstacle;
 						fixtureDef.filter.maskBits = GameCollision.Player;
 						groundBody.createFixture(fixtureDef);
 						groundBox.dispose();
+						collisionMap[x][y] = true;
+						continue;
 					}
 				}
+				nonCollisionList.add(new Vector2(x, y));
 			}
 		}
 		// Build the external walls
