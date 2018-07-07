@@ -37,11 +37,7 @@ public class TiledGameMap implements IGameSubsystem
 	    this.batch = batch;
         this.nonCollisionList = new ArrayList<Vector2>();
     }
-
-	public void performUpdate(float delta) {
-
-	}
-
+    
 	public void render (OrthographicCamera camera, float delta) {
 		renderer.setView(camera);
 		renderer.render();

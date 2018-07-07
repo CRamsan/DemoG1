@@ -146,7 +146,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
             return;
 
 		callbackManager.update(delta);
-		map.performUpdate(delta);
 		performCustomUpdate(delta);
         gameWorld.step(delta, 6, 2);
 	}
