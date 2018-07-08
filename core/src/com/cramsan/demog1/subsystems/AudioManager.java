@@ -24,8 +24,6 @@ public class AudioManager implements IGameSubsystem {
 
     @Override
     public void OnGameLoad() {
-        musicMap = new HashMap<MUSIC, Music>();
-        soundMap = new HashMap<SOUND, Sound>();
     }
 
     /**
