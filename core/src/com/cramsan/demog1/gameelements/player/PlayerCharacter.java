@@ -1,15 +1,11 @@
 package com.cramsan.demog1.gameelements.player;
 
 import com.badlogic.gdx.physics.box2d.World;
-import com.cramsan.demog1.subsystems.AudioManager;
 import com.cramsan.demog1.subsystems.SingleAssetManager;
 import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.gameelements.BaseCharacter;
 import com.cramsan.demog1.gameelements.CharacterEventListener;
 import com.cramsan.demog1.gameelements.GameElement;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This class will handle the controller interaction for a character
@@ -17,7 +13,8 @@ import java.util.Set;
 public class PlayerCharacter extends BaseCharacter implements PlayerControllerAdapterInterface {
 
 	private PlayerControllerAdapter controller;
-	private boolean hasAttacked, hasPaused;
+	private boolean willAttack;
+	private boolean willPause;
 	private int Id;
 	private float dx;
 	private float dy;
@@ -33,20 +30,23 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 
 	@Override
 	public void updateInputs() {
-		hasAttacked = false;
-		hasPaused = false;
-
-		if (isDead || !isRunning)
+		if (isDead || !isRunning) {
+			// If dead or running then ignore any changes
+			willAttack = false;
+			willPause = false;
 			return;
+		}
 
 		if (!isEventBased) {
 			controller.poll();
 		}
-		if(hasAttacked){
+		if(willAttack){
 			this.listener.onCharacterAttack(this);
+			willAttack = false;
 		}
-		if(hasPaused){
+		if(willPause){
 			this.listener.onCharacterPause(this);
+			willPause = false;
 		}
 	}
 
@@ -70,10 +70,10 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	public void handleControllerInput(PlayerControllerAdapter.INPUT inputCode, boolean value) {
 		switch (inputCode) {
 			case ATTACK:
-				hasAttacked = value;
+				willAttack = value;
 				break;
 			case PAUSE:
-				hasPaused = value;
+				willPause = value;
 				break;
 		}
 	}
@@ -112,14 +112,6 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		return width / 2;
 	}
 
-	public boolean hasAttacked() {
-		return hasAttacked;
-	}
-
-	public boolean hasPaused() {
-		return hasPaused;
-	}
-
 	public float getDx() {
 		return dx;
 	}
@@ -128,4 +120,11 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 		return dy;
 	}
 
+	public boolean isWillAttack() {
+		return willAttack;
+	}
+
+	public boolean isWillPause() {
+		return willPause;
+	}
 }

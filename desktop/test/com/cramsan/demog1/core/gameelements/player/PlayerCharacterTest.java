@@ -18,12 +18,21 @@ public class PlayerCharacterTest extends MockedGameTest {
     private boolean attackTriggered;
     private boolean pauseTriggered;
     private boolean collisionTriggered;
+    private CharacterEventAdapter eventAdapter;
 
     @org.junit.Before
     public void setUp() throws Exception {
         attackTriggered = false;
-        pauseTriggered = false ;
-        collisionTriggered = false ;
+        pauseTriggered = false;
+        collisionTriggered = false;
+        eventAdapter = new CharacterEventAdapter() {
+            public void onCharacterAttack(PlayerCharacter character) {
+                attackTriggered = true;
+            }
+            public void onCharacterPause(PlayerCharacter character) {
+                pauseTriggered = true;
+            }
+        };
     }
 
     @org.junit.After
@@ -31,45 +40,128 @@ public class PlayerCharacterTest extends MockedGameTest {
     }
 
     @org.junit.Test
-    public void updateInputs() {
+    public void updateInputsEventBasedAttack() {
         World world = new World(Vector2.Zero, true);
-        DummyController controller = new DummyController(0);
-
-        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, new CharacterEventAdapter() {
-            public void onCharacterAttack(PlayerCharacter character) {
-                attackTriggered = true;
-            }
-            public void onCharacterPause(PlayerCharacter character) {
-                pauseTriggered = true;
-            }
-        }, world, gdxGame.getAssetManager());
+        DummyController controller = new DummyController(0, true);
+        assertTrue(controller.supportsEvents());
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, eventAdapter, world, gdxGame.getAssetManager());
         character.setController(controller);
         character.updateInputs();
 
-        // Test the buttons
-        controller.setButton(0, true);
+        controller.buttonDown(null, 0);
         character.updateInputs();
-        assertTrue(character.hasAttacked() && !character.hasPaused() && attackTriggered);
+        assertTrue(!pauseTriggered && attackTriggered);
+    }
 
-        attackTriggered = false;
-        controller.clearInputs();
-        controller.setButton(7, true);
+    @org.junit.Test
+    public void updateInputsEventBasedPause() {
+        World world = new World(Vector2.Zero, true);
+        DummyController controller = new DummyController(0, true);
+        assertTrue(controller.supportsEvents());
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, eventAdapter, world, gdxGame.getAssetManager());
+        character.setController(controller);
         character.updateInputs();
-        assertTrue(!character.hasAttacked() && character.hasPaused() && pauseTriggered);
 
-        pauseTriggered = false;
-        attackTriggered = false;
-        controller.clearInputs();
+        controller.buttonDown(null, 7);
         character.updateInputs();
-        assertFalse(character.hasAttacked());
-        assertFalse(character.hasPaused());
-        assertFalse(attackTriggered);
-        assertFalse(pauseTriggered);
+        assertTrue(!attackTriggered && pauseTriggered);
+    }
 
-        // Test axis
+    @org.junit.Test
+    public void updateInputsEventBasedTestAxis() {
+        World world = new World(Vector2.Zero, true);
+        DummyController controller = new DummyController(0, true);
+        assertTrue(controller.supportsEvents());
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, eventAdapter, world, gdxGame.getAssetManager());
+        character.setController(controller);
+        character.updateInputs();
+
         float[] xAxis = {0, 0.2f, -0.5f, 1, -1};
         float[] yAxis = {1, 0.5f, -1, 0.1f, -0};
-        controller.clearInputs();
+        for (int i = 0; i < xAxis.length; i++) {
+            float x = xAxis[i];
+            float y = yAxis[i];
+            controller.axisMoved(null, 0, x);
+            controller.axisMoved(null, 1, y);
+            character.updateInputs();
+            assertTrue(character.getDx() == x && character.getDy() == (y * -1)); // The Y value is inverted so we account for that here
+        }
+    }
+
+    @org.junit.Test
+    public void updateInputsEventBasedKillOtherPlayer() {
+        World world = new World(Vector2.Zero, true);
+        DummyController controller = new DummyController(0, true);
+        assertTrue(controller.supportsEvents());
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, null, world, gdxGame.getAssetManager());
+
+        PlayerCharacter newCharacter = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, eventAdapter, world, gdxGame.getAssetManager());
+        newCharacter.setController(controller);
+        newCharacter.updateInputs();
+        controller.buttonDown(null, 0);
+        controller.buttonDown(null, 7);
+        newCharacter.onKilled(character);
+        newCharacter.updateInputs();
+        assertFalse(attackTriggered);
+        assertFalse(pauseTriggered);
+    }
+
+    @org.junit.Test
+    public void updateInputsEventBasedDisablePlayer() {
+        World world = new World(Vector2.Zero, true);
+        DummyController controller = new DummyController(0, true);
+        assertTrue(controller.supportsEvents());
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, eventAdapter, world, gdxGame.getAssetManager());
+        character.setController(controller);
+        character.updateInputs();
+
+        controller.buttonDown(null, 0);
+        controller.buttonDown(null, 7);
+        character.disableCharacter();
+        character.updateInputs();
+        assertFalse(attackTriggered);
+        assertFalse(pauseTriggered);
+    }
+
+    @org.junit.Test
+    public void updateInputsPollBasedAttack() {
+        World world = new World(Vector2.Zero, true);
+        DummyController controller = new DummyController(0);
+        assertFalse(controller.supportsEvents());
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, eventAdapter, world, gdxGame.getAssetManager());
+        character.setController(controller);
+        character.updateInputs();
+
+        controller.setButton(0, true);
+        character.updateInputs();
+        assertTrue(!pauseTriggered && attackTriggered);
+    }
+
+    @org.junit.Test
+    public void updateInputsPollBasedPause() {
+        World world = new World(Vector2.Zero, true);
+        DummyController controller = new DummyController(0);
+        assertFalse(controller.supportsEvents());
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, eventAdapter, world, gdxGame.getAssetManager());
+        character.setController(controller);
+        character.updateInputs();
+
+        controller.setButton(7, true);
+        character.updateInputs();
+        assertTrue(!attackTriggered && pauseTriggered);
+    }
+
+    @org.junit.Test
+    public void updateInputsPollBasedTestAxis() {
+        World world = new World(Vector2.Zero, true);
+        DummyController controller = new DummyController(0);
+        assertFalse(controller.supportsEvents());
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, eventAdapter, world, gdxGame.getAssetManager());
+        character.setController(controller);
+        character.updateInputs();
+
+        float[] xAxis = {0, 0.2f, -0.5f, 1, -1};
+        float[] yAxis = {1, 0.5f, -1, 0.1f, -0};
         for (int i = 0; i < xAxis.length; i++) {
             float x = xAxis[i];
             float y = yAxis[i];
@@ -78,9 +170,15 @@ public class PlayerCharacterTest extends MockedGameTest {
             character.updateInputs();
             assertTrue(character.getDx() == x && character.getDy() == (y * -1)); // The Y value is inverted so we account for that here
         }
+    }
 
-        // Test killing a player
-        controller.clearInputs();
+    @org.junit.Test
+    public void updateInputsPollBasedKillOtherPlayer() {
+        World world = new World(Vector2.Zero, true);
+        DummyController controller = new DummyController(0);
+        assertFalse(controller.supportsEvents());
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, eventAdapter, world, gdxGame.getAssetManager());
+
         PlayerCharacter newCharacter = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, new CharacterEventAdapter(), world, gdxGame.getAssetManager());
         newCharacter.setController(controller);
         newCharacter.updateInputs();
@@ -88,23 +186,25 @@ public class PlayerCharacterTest extends MockedGameTest {
         controller.setButton(7, true);
         newCharacter.onKilled(character);
         newCharacter.updateInputs();
-        assertFalse(character.hasAttacked());
-        assertFalse(character.hasPaused());
-
-        // Test disabling a player
-        newCharacter = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, new CharacterEventAdapter(), world, gdxGame.getAssetManager());
-        newCharacter.setController(controller);
-        newCharacter.updateInputs();
-        controller.setButton(0, true);
-        controller.setButton(7, true);
-        newCharacter.disableCharacter();
-        newCharacter.updateInputs();
-        assertFalse(character.hasAttacked());
-        assertFalse(character.hasPaused());
+        assertFalse(attackTriggered);
+        assertFalse(pauseTriggered);
     }
 
     @org.junit.Test
-    public void update() {
+    public void updateInputsPollBasedDisablePlayer() {
+        World world = new World(Vector2.Zero, true);
+        DummyController controller = new DummyController(0);
+        assertFalse(controller.supportsEvents());
+        PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, eventAdapter, world, gdxGame.getAssetManager());
+        character.setController(controller);
+        character.updateInputs();
+
+        controller.setButton(0, true);
+        controller.setButton(7, true);
+        character.disableCharacter();
+        character.updateInputs();
+        assertFalse(attackTriggered);
+        assertFalse(pauseTriggered);
     }
 
     @org.junit.Test
@@ -133,12 +233,12 @@ public class PlayerCharacterTest extends MockedGameTest {
         character.handleControllerInput(PlayerControllerAdapter.AXIS.DY, -3);
         assertTrue(character.getDy() == -3);
         character.handleControllerInput(PlayerControllerAdapter.INPUT.ATTACK, true);
-        assertTrue(character.hasAttacked());
+        assertTrue(character.isWillAttack());
         character.handleControllerInput(PlayerControllerAdapter.INPUT.ATTACK, false);
-        assertFalse(character.hasAttacked());
+        assertFalse(character.isWillAttack());
         character.handleControllerInput(PlayerControllerAdapter.INPUT.PAUSE, true);
-        assertTrue(character.hasPaused());
+        assertTrue(character.isWillPause());
         character.handleControllerInput(PlayerControllerAdapter.INPUT.PAUSE, false);
-        assertFalse(character.hasPaused());
+        assertFalse(character.isWillPause());
     }
 }
