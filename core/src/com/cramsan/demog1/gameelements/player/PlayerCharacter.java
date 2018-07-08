@@ -1,6 +1,7 @@
 package com.cramsan.demog1.gameelements.player;
 
 import com.badlogic.gdx.physics.box2d.World;
+import com.cramsan.demog1.gameelements.Collidable;
 import com.cramsan.demog1.subsystems.SingleAssetManager;
 import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.gameelements.BaseCharacter;
@@ -63,8 +64,8 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	public void onContact(GameElement collidable) {
 		if (collidable.getType() != TYPE.CHAR_STATUE)
 			return;
-
-		listener.onCharacterCollidableTouched(collidable, this);
+		if (collidable.getClass() == Collidable.class)
+			listener.onCharacterCollidableTouched((Collidable) collidable, this);
 	}
 
 	public void handleControllerInput(PlayerControllerAdapter.INPUT inputCode, boolean value) {

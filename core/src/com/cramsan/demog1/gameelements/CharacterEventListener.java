@@ -10,7 +10,7 @@ import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 public interface CharacterEventListener {
     void onCharacterAttack(PlayerCharacter character);
     void onCharacterPause(PlayerCharacter character);
-    void onCharacterCollidableTouched(GameElement collidable, PlayerCharacter player);
+    void onCharacterCollidableTouched(Collidable collidable, PlayerCharacter player);
     void onPlayerCharacterDied(PlayerCharacter victim, PlayerCharacter killer);
     void onAICharacterDied(AICharacter victim, PlayerCharacter killer);
 }

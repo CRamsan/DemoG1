@@ -5,6 +5,11 @@ import com.cramsan.demog1.gameelements.Collidable;
 import com.cramsan.demog1.gameelements.GameElement;
 import com.cramsan.demog1.gameelements.GameParameterManager;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
+import com.cramsan.demog1.subsystems.AudioManager;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * There are two winning conditions. Either touch the five statues or
@@ -13,11 +18,11 @@ import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 public class NinjaPartyScreen extends GameScreen {
 
 	private int statueCount;
+	private HashMap<PlayerCharacter, Set<Collidable>> scoreMap;
 
 	public NinjaPartyScreen(GameParameterManager parameterManager)
 	{
 		super(parameterManager);
-		setAiCount(10);
 	}
 
 	@Override
@@ -25,6 +30,8 @@ public class NinjaPartyScreen extends GameScreen {
 		super.ScreenInit();
 		createAICharacters();
 		createStatues();
+		setAiCount(10);
+		scoreMap = new HashMap<PlayerCharacter, Set<Collidable>>();
 	}
 
 	private void createStatues() {
@@ -39,14 +46,22 @@ public class NinjaPartyScreen extends GameScreen {
 	}
 
 	@Override
-	public void onCharacterCollidableTouched(GameElement collidable, PlayerCharacter player) {
-		super.onCharacterCollidableTouched(collidable, player);
-		/*
-		if (collidableIndex == this.statueCount) {
+	public void onCharacterCollidableTouched(Collidable collidable, PlayerCharacter player) {
+		if (!scoreMap.containsKey(player)) {
+			scoreMap.put(player, new HashSet<Collidable>());
+		}
+
+		Set<Collidable> statueSet = scoreMap.get(player);
+		if (statueSet.contains(collidable))
+			return;
+
+		statueSet.add(collidable);
+		getAudioManager().PlaySound(AudioManager.SOUND.BELL);
+
+		if (statueSet.size() == this.statueCount) {
 			disableAllPlayers();
 			getUiSystem().displayEndGameMenu();
 		}
-		*/
 	}
 
 	@Override

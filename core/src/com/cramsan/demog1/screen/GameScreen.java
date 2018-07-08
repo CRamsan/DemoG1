@@ -229,9 +229,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	}
 
 	@Override
-	public void onCharacterCollidableTouched(GameElement collidable, PlayerCharacter player) {
-		getAudioManager().PlaySound(AudioManager.SOUND.BELL);
-	}
+	public abstract void onCharacterCollidableTouched(Collidable collidable, PlayerCharacter player);
 
 	@Override
 	public void onPlayerCharacterDied(PlayerCharacter  victim, PlayerCharacter killer) {

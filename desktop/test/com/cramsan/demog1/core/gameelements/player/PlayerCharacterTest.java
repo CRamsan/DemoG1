@@ -211,7 +211,7 @@ public class PlayerCharacterTest extends MockedGameTest {
     public void onContact() {
         World world = new World(Vector2.Zero, true);
         PlayerCharacter character = new PlayerCharacter(0, GameElement.TYPE.CHAR_HUMAN, new CharacterEventAdapter() {
-            public void onCharacterCollidableTouched(GameElement collidable, PlayerCharacter player) {
+            public void onCharacterCollidableTouched(Collidable collidable, PlayerCharacter player) {
                 collisionTriggered = true;
             }
         }, world, gdxGame.getAssetManager());
