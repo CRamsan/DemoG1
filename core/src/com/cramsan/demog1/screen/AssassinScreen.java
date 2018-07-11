@@ -1,5 +1,6 @@
 package com.cramsan.demog1.screen;
 
+import com.cramsan.demog1.GameParameterManager;
 import com.cramsan.demog1.subsystems.CallbackManager;
 import com.cramsan.demog1.gameelements.*;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;

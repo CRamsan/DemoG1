@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.utils.Array;
+import com.cramsan.demog1.GameParameterManager;
 import com.cramsan.demog1.gameelements.*;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 import com.cramsan.demog1.subsystems.AudioManager;
@@ -88,20 +89,6 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 				e.setCenterPosition(b.getPosition().x, b.getPosition().y);
 			}
 		}
-	/*
-		for (PlayerCharacter player : playerList) {
-			// Ignore anything that is not CHAR_HUMAN, for example a type reticle will not trigger a collision
-			if (player.getType() != GameElement.TYPE.CHAR_HUMAN)
-				continue;
-			if (player.hasMoved()) {
-				for (Collidable collidable : collidableList) {
-					if (player.getCenterPosition().dst(collidable.getCenterPosition()) < (player.getRadius() + collidable.getRadius())) {
-						player.onContact(collidable);
-					}
-				}
-			}
-		}
-	*/
 	}
 
 	private void createPlayerCharacter(int index, PlayerController controller, GameElement.TYPE type) {

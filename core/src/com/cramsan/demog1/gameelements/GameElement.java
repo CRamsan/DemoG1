@@ -109,6 +109,10 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 		circle.dispose();
 	}
 
+	public void destroyBody() {
+    	gameWorld.destroyBody(body);
+	}
+
 	/***
      * Call this method to update the state of the object. This method will handle inputs and updating sny state.
      */

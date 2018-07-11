@@ -1,8 +1,5 @@
 package com.cramsan.demog1;
 
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.cramsan.demog1.gameelements.GameParameterManager;
 import com.cramsan.demog1.screen.*;
 
 public class SceneManager {

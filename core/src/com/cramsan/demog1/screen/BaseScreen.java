@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cramsan.demog1.Globals;
@@ -61,7 +60,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     public BaseScreen()
     {
-        cam = new OrthographicCamera(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
+        cam = new OrthographicCamera(Globals.INTERNAL_WIDTH, Globals.INTERNAL_HEIGHT);
         viewport = new StretchViewport(cam.viewportWidth, cam.viewportHeight, cam);
         gameWorld = new World(Vector2.Zero, true);
         gameWorld.setContactListener(this);
@@ -314,6 +313,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     }
 
     public void removeCollidable(GameElement collidable) {
+        collidable.destroyBody();
         collidableList.remove(collidable);
     }
 

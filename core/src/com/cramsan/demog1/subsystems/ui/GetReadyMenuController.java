@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.cramsan.demog1.subsystems.controller.ControllerManager;
 import com.cramsan.demog1.subsystems.controller.PlayerController;
 import com.cramsan.demog1.gameelements.GameElement;
-import com.cramsan.demog1.gameelements.GameParameterManager;
+import com.cramsan.demog1.GameParameterManager;
 
 import java.util.HashMap;
 import java.util.List;

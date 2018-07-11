@@ -3,7 +3,7 @@ package com.cramsan.demog1.screen;
 import com.badlogic.gdx.math.Vector2;
 import com.cramsan.demog1.gameelements.Collidable;
 import com.cramsan.demog1.gameelements.GameElement;
-import com.cramsan.demog1.gameelements.GameParameterManager;
+import com.cramsan.demog1.GameParameterManager;
 import com.cramsan.demog1.gameelements.player.PlayerCharacter;
 import com.cramsan.demog1.subsystems.AudioManager;
 
@@ -23,6 +23,7 @@ public class NinjaPartyScreen extends GameScreen {
 	public NinjaPartyScreen(GameParameterManager parameterManager)
 	{
 		super(parameterManager);
+		setAiCount(10);
 	}
 
 	@Override

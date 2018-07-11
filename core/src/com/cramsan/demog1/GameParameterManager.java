@@ -1,4 +1,6 @@
-package com.cramsan.demog1.gameelements;
+package com.cramsan.demog1;
+
+import com.cramsan.demog1.gameelements.GameElement;
 
 import java.util.HashMap;
 
@@ -54,7 +56,7 @@ public class GameParameterManager {
     private static GameParameterManager createCatchAThiefManager() {
         GameParameterManager manager = new GameParameterManager();
         manager.setType(GameType.CATCH_A_THIEF);
-        manager.setGoal(40);
+        manager.setGoal(10);
         manager.setAllowTeamChange(true);
         return manager;
     }

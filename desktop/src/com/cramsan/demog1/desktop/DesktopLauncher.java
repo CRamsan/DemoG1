@@ -14,7 +14,7 @@ public class DesktopLauncher {
 	public void startApplication(IGameStateListener listener) {
 		MyGdxGame game = new MyGdxGame();
 		Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-		//config.setWindowedMode(Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT);
+		//configuration.setWindowedMode(426, 240);
 		//config.setResizable(false);
 		if (listener != null) {
 			game.setListener(listener);

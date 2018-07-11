@@ -3,7 +3,6 @@ package com.cramsan.demog1.subsystems.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -14,14 +13,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.cramsan.demog1.SceneManager;
 import com.cramsan.demog1.subsystems.controller.ControllerManager;
-import com.cramsan.demog1.gameelements.GameParameterManager;
+import com.cramsan.demog1.GameParameterManager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.cramsan.demog1.Globals.SCREEN_HEIGHT;
-import static com.cramsan.demog1.Globals.SCREEN_WIDTH;
+import static com.cramsan.demog1.Globals.INTERNAL_HEIGHT;
+import static com.cramsan.demog1.Globals.INTERNAL_WIDTH;
 
 /**
  * This class provides static methods to configure UI components.
@@ -334,7 +332,7 @@ public class GameUISystem implements IUISystem {
     @Override
     public void OnGameLoad() {
         skin = new Skin(Gdx.files.internal(ASSET_SKIN_FILE));
-        stage = new Stage(new StretchViewport(SCREEN_WIDTH, SCREEN_HEIGHT)); // TODO: Remove this dependency, these values should be provided as a parameter
+        stage = new Stage(new StretchViewport(INTERNAL_WIDTH, INTERNAL_HEIGHT)); // TODO: Remove this dependency, these values should be provided as a parameter
         sequenceMap = new HashMap<Button, HashMap<UI_EVENTS, Button>>();
         defaultSelectionMap = new HashMap<Actor, Button>();
         stage.setDebugAll(true);
