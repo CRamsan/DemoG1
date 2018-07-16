@@ -14,6 +14,11 @@ import com.badlogic.gdx.math.Vector3;
 public class KeyboardController implements PlayerController, InputProcessor {
 
     private ControllerListener keyboardListener;
+    private boolean handlesEvents;
+
+    public KeyboardController() {
+        handlesEvents = false;
+    }
 
     @Override
     public boolean getButton(int buttonCode) {
@@ -49,9 +54,9 @@ public class KeyboardController implements PlayerController, InputProcessor {
                     return 0;
             case 1:
                 if (Gdx.input.isKeyPressed(Input.Keys.UP))
-                    return 1;
-                else if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
                     return -1;
+                else if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
+                    return 1;
                 else
                     return 0;
             default:
@@ -111,7 +116,7 @@ public class KeyboardController implements PlayerController, InputProcessor {
 
     @Override
     public boolean supportsEvents() {
-        return true;
+        return handlesEvents;
     }
 
     @Override
@@ -198,5 +203,9 @@ public class KeyboardController implements PlayerController, InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         return false;
+    }
+
+    public void setHandlesEvents(boolean handlesEvents) {
+        this.handlesEvents = handlesEvents;
     }
 }

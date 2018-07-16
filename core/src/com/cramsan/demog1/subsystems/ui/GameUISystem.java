@@ -45,6 +45,7 @@ public class GameUISystem implements IUISystem {
     private ControllerManager controllerManager;
 
     private boolean uiVisible;
+    private boolean renderDebug;
     private Button selected;
     private InputProcessor stashedProcessor;    // When the UI displays it will register itself as the InputProcessor.
                                                 // In case there is another IP already in place, such as a keyboard controller,
@@ -58,6 +59,7 @@ public class GameUISystem implements IUISystem {
 
     public GameUISystem(ControllerManager controllerManager) {
         uiVisible = false;
+        renderDebug = false;
         this.controllerManager = controllerManager;
     }
 
@@ -335,7 +337,7 @@ public class GameUISystem implements IUISystem {
         stage = new Stage(new StretchViewport(INTERNAL_WIDTH, INTERNAL_HEIGHT)); // TODO: Remove this dependency, these values should be provided as a parameter
         sequenceMap = new HashMap<Button, HashMap<UI_EVENTS, Button>>();
         defaultSelectionMap = new HashMap<Actor, Button>();
-        stage.setDebugAll(true);
+        stage.setDebugAll(renderDebug);
     }
 
     @Override

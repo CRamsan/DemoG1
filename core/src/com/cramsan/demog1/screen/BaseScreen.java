@@ -58,6 +58,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
     private FrameBuffer lightBuffer;
     private boolean isRunning;
 
+    private boolean debugRender;
+
     public BaseScreen()
     {
         cam = new OrthographicCamera(Globals.INTERNAL_WIDTH, Globals.INTERNAL_HEIGHT);
@@ -71,6 +73,7 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         illumination = 0f;
         isRunning = true;
 		callbackManager = new CallbackManager();
+		debugRender = false;
     }
 
     // This method will be called to configure objects. This is used to decouple the object initialization
@@ -131,7 +134,8 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         getBatch().end();
 
         performLightingRender();
-        debugRenderer.render(gameWorld, cam.combined);
+        if (debugRender)
+            debugRenderer.render(gameWorld, cam.combined);
         getUiSystem().render(delta);
     }
 
@@ -378,18 +382,6 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
         return gameWorld;
     }
 
-    public void setGameWorld(World gameWorld) {
-        this.gameWorld = gameWorld;
-    }
-
-    public Box2DDebugRenderer getDebugRenderer() {
-        return debugRenderer;
-    }
-
-    public void setDebugRenderer(Box2DDebugRenderer debugRenderer) {
-        this.debugRenderer = debugRenderer;
-    }
-
     public ControllerManager getControllerManager() {
         return controllerManager;
     }
@@ -404,5 +396,13 @@ public abstract class BaseScreen implements Screen, ControllerConnectionListener
 
     public boolean isRunning() {
         return this.isRunning;
+    }
+
+    public boolean isDebugRender() {
+        return debugRender;
+    }
+
+    public void setDebugRender(boolean debugRender) {
+        this.debugRender = debugRender;
     }
 }
