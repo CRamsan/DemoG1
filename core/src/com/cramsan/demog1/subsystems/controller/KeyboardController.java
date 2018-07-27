@@ -54,9 +54,9 @@ public class KeyboardController implements PlayerController, InputProcessor {
                     return 0;
             case 1:
                 if (Gdx.input.isKeyPressed(Input.Keys.UP))
-                    return -1;
-                else if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
                     return 1;
+                else if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
+                    return -1;
                 else
                     return 0;
             default:

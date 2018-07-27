@@ -20,6 +20,7 @@ public class MyGdxGame extends Game {
 
     private static final float FRAME_TIME = 1f/60f;
 
+    private boolean enableBox2dRender;
     private boolean useFixedStep;
     private boolean enableRender;
     private boolean enableGame;
@@ -39,10 +40,11 @@ public class MyGdxGame extends Game {
     private IGameStateListener listener;
 
     public MyGdxGame() {
-        useFixedStep = true;
-        enableGame = true;
+        enableBox2dRender = false;
         enableRender = true;
+        useFixedStep = true;
         spriteBatch = null;
+        enableGame = true;
         uiSystem = null;
         listener = null;
         timeBuffer = 0;
@@ -120,6 +122,7 @@ public class MyGdxGame extends Game {
         newScreen.setUiSystem(getUiSystem());
         newScreen.setMap(getGameMap());
         newScreen.setControllerManager(getControllerManager());
+        newScreen.setDebugRender(isEnableBox2dRender());
         for (IGameSubsystem subsystem : subsystemList) {
             subsystem.OnScreenLoad();
         }
@@ -256,5 +259,13 @@ public class MyGdxGame extends Game {
 
     public void setControllerManager(ControllerManager controllerManager) {
         this.controllerManager = controllerManager;
+    }
+
+    public void setEnableBox2dRender(boolean enableBox2dRender) {
+        this.enableBox2dRender = enableBox2dRender;
+    }
+
+    public boolean isEnableBox2dRender() {
+        return enableBox2dRender;
     }
 }

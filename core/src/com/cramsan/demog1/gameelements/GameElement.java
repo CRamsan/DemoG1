@@ -1,6 +1,5 @@
 package com.cramsan.demog1.gameelements;
 
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,6 +14,8 @@ import com.cramsan.demog1.subsystems.SingleAssetManager;
  * Any subclass should handle input and use the translate method to move this character.
  */
 public abstract class GameElement implements SingleAssetManager.TextureAnimationReceiver {
+
+	public static final int DEFAULT_SIZE = 32;
 
 	protected enum DIRECTION {
 		LEFT, RIGHT, UP, DOWN
@@ -40,13 +41,14 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 	protected boolean isDirty;
 	private DIRECTION direction;
 
-	protected float x, y;
-	protected int width, height;
+	protected float centerX, centerY;
+	private int textureWidth, textureHeight;
 	private float scale;
     protected float state;
 	protected com.cramsan.demog1.gameelements.CharacterEventListener listener;
 	protected Body body;
 	private World gameWorld;
+	private int rawSize;
 
 	private Animation<TextureRegion> walkUpAnimation;
 	private Animation<TextureRegion> walkDownAnimation;
@@ -58,16 +60,17 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
      * and generate animations.
      * @param type
      */
-    public GameElement(TYPE type, com.cramsan.demog1.gameelements.CharacterEventListener listener, World gameWorld, SingleAssetManager assetManager) {
+    public GameElement(TYPE type, com.cramsan.demog1.gameelements.CharacterEventListener listener, World gameWorld, SingleAssetManager assetManager, int rawSize) {
         this.type = type;
-        this.x = 0;
-        this.y = 0;
+        this.centerX = 0;
+        this.centerY = 0;
         this.scale = 1f;
         this.listener = listener;
 		this.direction = DIRECTION.values()[ Globals.rand.nextInt(4)];
 		this.isDirty = false;
 		this.gameWorld = gameWorld;
 		this.state = 0;
+		this.rawSize = rawSize;
 		if (assetManager != null)
 			assetManager.getPlayerTextures(type, this);
     }
@@ -82,16 +85,15 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 
 	@Override
 	public void setTextureSize(int width, int height) {
-    	this.width = width;
-    	this.height = height;
-
+    	this.textureWidth = width;
+		this.textureHeight = height;
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyDef.BodyType.DynamicBody;
-		bodyDef.position.set(new Vector2(x + (width/2), y + (height/2)));
+		bodyDef.position.set(new Vector2(centerX, centerY));
 		body = gameWorld.createBody(bodyDef);
 		body.setUserData(this);
 		CircleShape circle = new CircleShape();
-		circle.setRadius(width/2);
+		circle.setRadius(this.getWidth() /2);
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = circle;
 		if (type == TYPE.CHAR_STATUE) {
@@ -143,7 +145,9 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
                 break;
         }
         TextureRegion currentFrame = currentAnimation.getKeyFrame(state, true);
-        batch.draw(currentFrame, x, y, width, height);
+		float originX = centerX - getWidth()/2;
+		float originY = centerY - getHeight()/2;
+        batch.draw(currentFrame, originX, originY, getWidth(), getHeight());
     }
 
     /***
@@ -173,19 +177,17 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
     /***
      * This helper method will transport the character to the provided coordinates in world space. The direction will
      * not be affected by this call.
-     * @param x
-     * @param y
+     * @param centerX
+     * @param centerY
      */
-	public void setCenterPosition(float x, float y) {
-		this.x = x - (width/2);
-		this.y = y - (height/2);
-		this.body.setTransform(x, y, 0);
+	public void setCenterPosition(float centerX, float centerY) {
+		this.centerX = centerX;
+		this.centerY = centerY;
+		this.body.setTransform(this.centerX, this.centerY, 0);
 	}
 
 	public void setTilePosition(int x, int y) {
-		this.x = x;
-		this.y = y;
-		this.body.setTransform(x + (width/2), y + (height/2), 0);
+		setCenterPosition(x + (getWidth() / 2), y + (getHeight() / 2));
 	}
 
 	public abstract void onContact(GameElement collidable);
@@ -199,33 +201,19 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 	}
 
 	final public Vector2 getCenterPosition() {
-	    return new Vector2(x + (scale/2f), y + (scale/2));
+	    return new Vector2(centerX, centerY);
     }
 
     final public float getRadius() {
 		return scale / 2f;
 	}
 
-	final public void setScale(float scale) {
-		this.width = (int)(this.width * scale);
-		this.height = (int)(this.height * scale);
-		this.scale = scale;
-	}
-
-    final public float getX() {
-		return x;
-	}
-
-	final public float getY() {
-		return y;
-	}
-
 	final public int getHeight() {
-		return height;
+		return (int)(textureHeight * scale);
 	}
 
 	final public int getWidth() {
-		return width;
+		return (int)(textureWidth * scale);
 	}
 
 	final public TYPE getType() {
@@ -234,5 +222,17 @@ public abstract class GameElement implements SingleAssetManager.TextureAnimation
 
 	final public void setType(TYPE type) {
 		this.type = type;
+	}
+
+	final public float getScale() {
+		return scale;
+	}
+
+	final public void setScale(float scale) {
+		this.scale = scale;
+	}
+
+	final public void setRawSize(int rawSize) {
+		this.rawSize = rawSize;
 	}
 }

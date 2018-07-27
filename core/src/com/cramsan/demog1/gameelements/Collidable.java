@@ -10,7 +10,7 @@ import com.cramsan.demog1.subsystems.SingleAssetManager;
 public class Collidable extends GameElement {
 
     public Collidable(CharacterEventListener listener, World world, SingleAssetManager assetManager) {
-        super(TYPE.CHAR_STATUE, listener, world, assetManager);
+        super(TYPE.CHAR_STATUE, listener, world, assetManager, GameElement.DEFAULT_SIZE);
     }
 
     @Override

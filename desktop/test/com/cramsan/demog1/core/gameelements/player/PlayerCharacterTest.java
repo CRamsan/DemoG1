@@ -84,7 +84,7 @@ public class PlayerCharacterTest extends MockedGameTest {
             controller.axisMoved(null, 0, x);
             controller.axisMoved(null, 1, y);
             character.updateInputs();
-            assertTrue(character.getDx() == x && character.getDy() == (y * -1)); // The Y value is inverted so we account for that here
+            assertTrue(character.getDx() == x && character.getDy() == y); // The Y value is inverted so we account for that here
         }
     }
 
@@ -168,7 +168,7 @@ public class PlayerCharacterTest extends MockedGameTest {
             controller.setAxis(0, x);
             controller.setAxis(1, y);
             character.updateInputs();
-            assertTrue(character.getDx() == x && character.getDy() == (y * -1)); // The Y value is inverted so we account for that here
+            assertTrue(character.getDx() == x && character.getDy() == y); // The Y value is inverted so we account for that here
         }
     }
 

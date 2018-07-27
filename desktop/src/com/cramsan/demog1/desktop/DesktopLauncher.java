@@ -19,6 +19,7 @@ public class DesktopLauncher {
 		if (listener != null) {
 			game.setListener(listener);
 		}
+		game.setEnableBox2dRender(true);
 		new Lwjgl3Application(game, configuration);
 	}
 }

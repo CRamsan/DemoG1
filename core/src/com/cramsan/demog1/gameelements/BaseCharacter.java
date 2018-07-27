@@ -15,8 +15,8 @@ public abstract class BaseCharacter extends GameElement {
 	protected boolean isRunning;
 
     public BaseCharacter(TYPE type, CharacterEventListener listener,
-                         World gameWorld, SingleAssetManager assetManager) {
-        super(type, listener, gameWorld, assetManager);
+                         World gameWorld, SingleAssetManager assetManager, int rawSize) {
+        super(type, listener, gameWorld, assetManager, rawSize);
         if (type == TYPE.CHAR_STATUE)
             throw new RuntimeException("Characters cannot be of this type");
         this.isDead = false;

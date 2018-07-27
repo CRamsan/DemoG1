@@ -120,10 +120,7 @@ public class PlayerControllerAdapter implements ExternalControllerListener, Cont
 
 	@Override
 	public boolean axisMoved(Controller controller, int axisCode, float value) {
-		float modifier = 1f;
-		if (axisCode == 1)
-			modifier = -1f;
-		return this.axisMoved(this.controller, getAxis(axisCode), value * modifier);
+		return this.axisMoved(this.controller, getAxis(axisCode), value);
 	}
 
 	@Override

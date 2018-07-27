@@ -15,8 +15,8 @@ public class AICharacter extends BaseCharacter
 	private Vector2 lastMovementVector;
 	private int aiState;
 	
-	public AICharacter(TYPE type, CharacterEventListener listener, World gameWorld, SingleAssetManager assetManager) {
-		super(type, listener, gameWorld, assetManager);
+	public AICharacter(TYPE type, CharacterEventListener listener, World gameWorld, SingleAssetManager assetManager, int rawSize) {
+		super(type, listener, gameWorld, assetManager, rawSize);
         lastMovementVector = new Vector2();
         aiState = 0;
 	}

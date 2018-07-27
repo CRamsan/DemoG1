@@ -45,7 +45,7 @@ public abstract class GameScreen extends BaseScreen implements CharacterEventLis
 	protected void createAICharacters() {
 		for (int i = 0; i < aiCount; i++) {
 			GameElement.TYPE type = GameElement.TYPE.CHAR_BASEAI;
-			AICharacter newChar = new AICharacter(type, this, getGameWorld(), getAssetManager());
+			AICharacter newChar = new AICharacter(type, this, getGameWorld(), getAssetManager(), getMap().getTileWidth());
 			Vector2 charPos = getMap().getRandomNonSolidTile();
 			newChar.setTilePosition((int) (charPos.x * newChar.getWidth()), (int)(charPos.y * newChar.getHeight()));
 			addCharacter(newChar);

@@ -23,7 +23,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 
 	public PlayerCharacter(int Id, TYPE type, CharacterEventListener listener,
 						   World gameWorld, SingleAssetManager assetManager) {
-		super(type, listener, gameWorld, assetManager);
+		super(type, listener, gameWorld, assetManager, GameElement.DEFAULT_SIZE);
 		this.controller = new PlayerControllerAdapter(this);
 		this.Id = Id;
 		this.isEventBased = false;
@@ -110,7 +110,7 @@ public class PlayerCharacter extends BaseCharacter implements PlayerControllerAd
 	}
 
 	public float attackRadius() {
-		return width / 2;
+		return getWidth() / 2;
 	}
 
 	public float getDx() {
