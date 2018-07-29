@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.cramsan.demog1.screen.BaseScreen;
+import com.cramsan.demog1.screen.SplashScreen;
 import com.cramsan.demog1.subsystems.AudioManager;
 import com.cramsan.demog1.subsystems.CallbackManager;
 import com.cramsan.demog1.subsystems.IGameSubsystem;
@@ -25,6 +26,7 @@ public class MyGdxGame extends Game {
     private boolean enableRender;
     private boolean enableGame;
     private float timeBuffer;
+    private boolean skipSplashScreen;
 
     // Game subsystems. All this classes implement IGameSubsystem to make them easier to
     // manage and mock.
@@ -35,12 +37,14 @@ public class MyGdxGame extends Game {
     private TiledGameMap gameMap;
     private ControllerManager controllerManager;
 
+    private SplashScreen splashScreen;
     private SpriteBatch spriteBatch;
     private ArrayList<IGameSubsystem> subsystemList;
     private IGameStateListener listener;
 
     public MyGdxGame() {
         enableBox2dRender = false;
+        skipSplashScreen = false;
         enableRender = true;
         useFixedStep = true;
         spriteBatch = null;
@@ -53,6 +57,16 @@ public class MyGdxGame extends Game {
 
     @Override
     public void create() {
+
+        if (!skipSplashScreen) {
+            splashScreen = new SplashScreen(5f, new SplashScreen.IResourcesLoaded() {
+                @Override
+                public void onResourcesLoaded() {
+                    SceneManager.startMainMenuScreen(true);
+                }
+            });
+            this.setScreen(splashScreen);
+        }
 
         SceneManager.setGame(this);
 
@@ -97,18 +111,27 @@ public class MyGdxGame extends Game {
         // We don't need to mock Box2D so it is safe to be left here.
         Box2D.init();
 
-        if (isEnableGame())
-            SceneManager.startMainMenuScreen();
+        // Only load the main menu if the enableGame is true and we are skipping
+        // the splash screen. If splashScreen is in use, then the main menu will be delegated
+        // to it.
+        if (isEnableGame()) {
+            if (skipSplashScreen)
+                SceneManager.startMainMenuScreen();
+            else
+                splashScreen.setLoadCompleted(true);
+        }
 
         if (getListener() != null)
             getListener().onGameCreated();
     }
 
-    public void setScreen (BaseScreen newScreen) {
+    public void setScreen (BaseScreen newScreen, boolean isInitialLoad) {
         // Check if there was an existing screen and if there was hide it.
         if (this.screen != null) {
-            for (IGameSubsystem subsystem : subsystemList) {
-                subsystem.OnScreenClose();
+            if (!isInitialLoad) {
+                for (IGameSubsystem subsystem : subsystemList) {
+                    subsystem.OnScreenClose();
+                }
             }
             this.screen.hide();
         }
@@ -267,5 +290,13 @@ public class MyGdxGame extends Game {
 
     public boolean isEnableBox2dRender() {
         return enableBox2dRender;
+    }
+
+    public boolean isSkipSplashScreen() {
+        return skipSplashScreen;
+    }
+
+    public void setSkipSplashScreen(boolean skipSplashScreen) {
+        this.skipSplashScreen = skipSplashScreen;
     }
 }

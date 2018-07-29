@@ -67,11 +67,15 @@ public class SceneManager {
     }
 
     public static void startMainMenuScreen() {
+        startMainMenuScreen(false);
+    }
+
+    public static void startMainMenuScreen(boolean isInitialLoad) {
         if (game == null) {
             throw new RuntimeException("Game parameter is null");
         }
         parameterManager = null;
         MainMenuScreen screen = new MainMenuScreen();
-        game.setScreen(screen);
+        game.setScreen(screen, isInitialLoad);
     }
 }
